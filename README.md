@@ -26,4 +26,4 @@ The main program is created to simulate 2 laser beams coming head-on, both havin
 So executing `./LaserElectron 0.500` will create a file named `out-0.500.txt`, containing 16 numbers per column. The first 8 numbers are the initial 4-positions and 4-velocities of an electron, and the last 8 numbers are the final 4-positions and 4-velocities of the same electron, after the interaction with the lasers.
 
 ## References
-[1] Runge-Kutta 4th order solver: https://people.math.sc.edu/Burkardt/c_src/rk4/rk4.html
+[1] This software uses a modified version of the Runge-Kutta 4th order solver library, which is licensed under the GNU LGPL. The source code for this modified library is `rk.c` and `rk.h`. The original creator is John Burkardt, University of South Carolina, https://people.math.sc.edu/Burkardt/c_src/rk4/rk4.html.
