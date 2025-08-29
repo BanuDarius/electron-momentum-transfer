@@ -6,8 +6,9 @@ double pi = 3.1415926535;
 
 #define U_SIZE 8
 #define CORE_NUM 8
-#define CHUNK_SIZE 10
+#define CHUNK_SIZE 100
 #define DEG_TO_RAD (pi / 180.0)
+
 pthread_barrier_t barrierSync, barrierCompute;
 
 struct Particle {
@@ -18,6 +19,7 @@ struct Laser {
 	double E0, omega, xif, zetax, zetay, psi;
 	double epsilon1[3], epsilon2[3], n[3];
 };
+struct Laser *l;
 
 struct SharedData {
 	FILE *out;
@@ -26,7 +28,7 @@ struct SharedData {
 	struct Laser *l;
 	struct Particle *e;
 	int initIndex, finalIndex, steps, id;
-	double *(*fc)(double, int, double*, struct Laser*);
+	void (*fc)(double*, double*, double);
 };
 
 double RandVal(double min, double max) {
@@ -63,7 +65,7 @@ void SetVec(double *u1, double *u2, int n) {
 }
 
 double *NewVec(int n) {
-	double *u = malloc(n * sizeof(double));
+	double *u = (double *)malloc(n * sizeof(double));
 	return u;
 }
 
@@ -163,7 +165,7 @@ void CalcB(double *B, double *E, double *u, struct Laser *l, int i) {
 	MultVec(B, 1/c);
 }
 
-void ComputeEB(double *E, double *B, double *u, struct Laser *l) {
+void ComputeEB(double *E, double *B, double *u) {
 	double Et[3], Bt[3];
 	for(int i = 0; i < 2; i++) {
 		SetZero(Et);
@@ -175,11 +177,10 @@ void ComputeEB(double *E, double *B, double *u, struct Laser *l) {
 	}
 }
 
-double *f(double tau, int n, double u[], struct Laser *l) {
-	double *up = NewVec(8);
+void f(double *u, double *up, const double t) {
 	double E[3], B[3];
 	SetZero(E); SetZero(B);
-	ComputeEB(E, B, u, l);
+	ComputeEB(E, B, u);
 
 	up[0] = u[4];
 	up[1] = u[5];
@@ -190,13 +191,11 @@ double *f(double tau, int n, double u[], struct Laser *l) {
 	up[6] = E[1] * u[4] - B[2] * c * u[5] + B[0] * c * u[7];
 	up[7] = E[2] * u[4] + B[1] * c * u[5] - B[0] * c * u[6];
 	MultVec4(&up[4], q / (m * c));
-	return up;
 }
 
 #include "PondG.h"
 
-double *fP2G(double tau, int n, double u[], struct Laser *l) {
-	double *up = NewVec(8);
+void fP2G(double *u, double *up, const double t) {
 	double a = ComputeA(u, l);
 	double mass = m * sqrt(1 + a);
 	double dmdx[4];
@@ -211,7 +210,6 @@ double *fP2G(double tau, int n, double u[], struct Laser *l) {
 	up[6] = - u[6] * u[4] * dmdx[0] / c - u[6] * u[5] * dmdx[1] - (c * c) * dmdx[2] - u[6] * u[6] * dmdx[2] - u[6] * u[7] * dmdx[3];
 	up[7] = - u[7] * u[4] * dmdx[0] / c - u[7] * u[5] * dmdx[1] - u[7] * u[6] * dmdx[2] - (c * c) * dmdx[3] - u[7] * u[7] * dmdx[3];
 	MultVec4(&up[4], 1.0 / mass);
-	return up;
 }
 
 void SetPosition(struct Particle *p, double r, double h, double z) {
@@ -308,7 +306,7 @@ void SetParticles(struct Particle *p, int num, double r, double h, double z, dou
 }
 
 void SetSharedData(struct SharedData *sdata, struct Particle *e, struct Laser *l, FILE *out, double *ochunk,
-int num, int steps, double dtau, double *(*fc)(double, int, double*, struct Laser*)) {
+int num, int steps, double dtau, void (*fc)(double*, double*, double)) {
 	for(int i = 0; i < CORE_NUM; i++) {
 		sdata[i].l = l;
 		sdata[i].e = e;
@@ -324,7 +322,7 @@ int num, int steps, double dtau, double *(*fc)(double, int, double*, struct Lase
 }
 
 char *SetFilename(char *s) {
-	char *name = malloc(30 * sizeof(char));
+	char *name = (char *)malloc(30 * sizeof(char));
 	sprintf(name, "out-%s.txt", s);
 	return name;
 }

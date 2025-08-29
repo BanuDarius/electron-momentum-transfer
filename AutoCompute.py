@@ -3,8 +3,8 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-i = 1
-for a0 in np.arange(0.50, 0.51, 0.05):
+i = 100
+for a0 in np.arange(0.75, 0.76, 0.05):
     os.system(f"LaserElectron.exe {a0:0.3f}")
     '''data = None
     data = np.loadtxt(f"out-{a0:0.3f}.txt", usecols=(2, 3, 13))
