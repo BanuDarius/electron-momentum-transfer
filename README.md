@@ -1,5 +1,5 @@
 ## Introduction
-This is a C program that calculates the linear momentum transfer caused by multiple laser beams coming from arbitrary directions, to an assembly of electrons, producing a 2D momentum map.
+This is a C/C++ program that calculates the linear momentum transfer caused by multiple laser beams coming from arbitrary directions, to an assembly of electrons, producing a 2D momentum map.
 Parallelized with POSIX threads.
 
 ## Examples
@@ -13,7 +13,7 @@ To use the program, clone it, compile the `LaserElectron.cpp` file with a C++ co
 ```
 git clone https://github.com/BanuDarius/electron-momentum-transfer.git
 cd electron-momentum-transfer
-gcc LaserElectron.c
+g++ LaserElectron.cpp
 py AutoCompute.py
 ```
 
