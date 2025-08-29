@@ -34,4 +34,4 @@ So executing `./LaserElectron 0.500` will create a file named `out-0.500.txt`, c
 
 
 ## References
-[1] This software uses a modified version of the Runge-Kutta 4th order solver library, which is licensed under the GNU LGPL. The source code for this modified library is `rk.c` and `rk.h`. The original creator is John Burkardt, University of South Carolina, https://people.math.sc.edu/Burkardt/c_src/rk4/rk4.html.
+[1] Boost ODEINT library: https://www.boost.org/
