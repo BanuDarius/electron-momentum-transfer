@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 i = 100
 for a0 in np.arange(0.75, 0.76, 0.05):
-    os.system(f"LaserElectron.exe {a0:0.3f}")
+    os.system(f"./LaserElectron {a0:0.3f}")
     '''data = None
     data = np.loadtxt(f"out-{a0:0.3f}.txt", usecols=(2, 3, 13))
     x, y, color = data[:, 0], data[:, 1], data[:, 2]
@@ -73,4 +73,5 @@ for a0 in np.arange(0.75, 0.76, 0.05):
     print(f"Image saved: out-pz-{i}.png")
     plt.close()'''
     os.remove(f"out-{a0:0.3f}.txt")
+
     i+=1
