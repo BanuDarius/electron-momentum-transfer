@@ -71,18 +71,19 @@ void *Simulate(void *data) {
 }
 
 int main(int argc, char **argv) {
-	srand(time(NULL));
+	srand(128);
 	clock_t ti = clock();
 	pthread_t thread[CORE_NUM];
 	char *name = SetFilename(argv[1]);
 	printf("Output file: %s\n", name);
 	FILE *out = fopen(name, "w");
 
-	int num = 16000, steps = 4000;
+	int num = 16000, steps = 6000;
 	double a0 = atof(argv[1]);
-	double E0 = 0.057 * c * a0;
+	double omega = 0.057;
+	double E0 = omega * c * a0;
 	double tauf = 10000, dtau = tauf / steps;
-	double r = 20000, h = 0, z = 1e-12, xif = 0.0;
+	double r = 4.0 * pi * c / omega, h = 0.0, z = 0.0, xif = 4.0 * pi;
 	double alpha = pi / 2.0, beta = 0.0;
 	pthread_barrier_init(&barrierSync, NULL, CORE_NUM);
 	pthread_barrier_init(&barrierCompute, NULL, CORE_NUM);
@@ -95,10 +96,10 @@ int main(int argc, char **argv) {
 
 	CheckErrors(out, sdata);
 	SetInitialVel(vi, 0, 0, 0);
-	SetLaser(&l[0], E0, -alpha, beta, xif, -120*pi);
-	SetLaser(&l[1], E0, alpha, -beta, xif, -120*pi);
+	SetLaser(&l[0], E0, -alpha, beta, xif, omega, -120*pi);
+	SetLaser(&l[1], E0, alpha, -beta, xif, omega, -120*pi);
 	SetParticles(e, num, r, h, z, pi / 2.0, pi / 2.0, vi);
-	SetSharedData(sdata, e, l, out, ochunk, num, steps, dtau, fP2G);
+	SetSharedData(sdata, e, l, out, ochunk, num, steps, dtau, f);
 	//Here "f" for lorentz force and "fP2G" for ponderomotive
 
 	printf("Start simulation\n");

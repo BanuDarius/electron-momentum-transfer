@@ -5,7 +5,7 @@ double e = 2.7182818284;
 double pi = 3.1415926535;
 
 #define U_SIZE 8
-#define CORE_NUM 8
+#define CORE_NUM 4
 #define CHUNK_SIZE 100
 #define DEG_TO_RAD (pi / 180.0)
 
@@ -19,6 +19,7 @@ struct Laser {
 	double E0, omega, xif, zetax, zetay, psi;
 	double epsilon1[3], epsilon2[3], n[3];
 };
+
 struct Laser *l;
 
 struct SharedData {
@@ -134,9 +135,9 @@ double Env(double xi, double xif) {
 	if(xi > -xif && xi < xif)
 		return 1.0;
 	else if(xi >= xif)
-		return exp(-(xi - xif) * (xi - xif) / (sigma * sigma));
-	else if(xi <= -xif)
-		return exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
+		return exp(-(xi - xif) * (xi - xif) / (2.0 * sigma * sigma));
+	else
+		return exp(-(xi + xif) * (xi + xif) / (2.0 * sigma * sigma));
 }
 
 double EnvPrime(double xi, double xif) {
@@ -144,9 +145,9 @@ double EnvPrime(double xi, double xif) {
 	if(xi > -xif && xi < xif)
 		return 0.0;
 	else if(xi >= xif)
-		return (-2.0) * (xi - xif) / (sigma * sigma) * exp(-(xi - xif) * (xi - xif) / (sigma * sigma));
-	else if(xi <= -xif)
-		return (-2.0) * (xi + xif) / (sigma * sigma) * exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
+		return (-2.0) * (xi - xif) / (sigma * sigma) * exp(-(xi - xif) * (xi - xif) / (2.0 * sigma * sigma));
+	else
+		return (-2.0) * (xi + xif) / (sigma * sigma) * exp(-(xi + xif) * (xi + xif) / (2.0 * sigma * sigma));
 }
 
 void CalcE(double *E, double *u, struct Laser *l, int i) {
@@ -274,13 +275,13 @@ void SetInitialVel(double *vi, double m, double phi, double theta) {
 	MultVec(vi, m);
 }
 
-void SetLaser(struct Laser *l, double E0, double phi, double theta, double xif, double psi) {
+void SetLaser(struct Laser *l, double E0, double phi, double theta, double xif, double omega, double psi) {
 	l->E0 = E0;
 	l->zetax = 0;
 	l->zetay = 1;
 	l->psi = psi;
 	l->xif = xif;
-	l->omega = 0.057;
+	l->omega = omega;
 	double *nv = DirectionVec(phi, theta);
 	double epsilon1[3];
 	double epsilon2[3];

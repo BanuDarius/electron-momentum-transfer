@@ -3,75 +3,41 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-i = 100
-for a0 in np.arange(0.75, 0.76, 0.05):
-    os.system(f"./LaserElectron {a0:0.3f}")
-    '''data = None
-    data = np.loadtxt(f"out-{a0:0.3f}.txt", usecols=(2, 3, 13))
-    x, y, color = data[:, 0], data[:, 1], data[:, 2]
-    cMin = np.min(color)
-    cMax = np.max(color)
-    if cMax > abs(cMin):
-        cMax = -cMin
-    else:
-        cMin = -cMax
-    normColor = np.clip(color, cMin, cMax)
-    plt.figure(figsize=(10, 10))
-    plt.scatter(x, y, s = 2, c = color, cmap="gray", alpha=0.7)
-    plt.xlim(-20000, 20000)
-    plt.ylim(-20000, 20000)
-    plt.title(f"Exact method - px - a0 = {a0:0.3f}")
-    plt.xlabel("Y")
-    plt.ylabel("Z")
-    plt.axis('equal')
-    plt.colorbar()
-    plt.savefig(f"out-px-{i}.png", dpi=100)
-    print(f"Image saved: out-px-{i}.png")
-    plt.close()'''
+def create_plot(filename, a0, i):
+    fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(20, 10))
+    data_column = np.loadtxt(filename, usecols=(14))
     
-    data = np.loadtxt(f"out-{a0:0.3f}.txt", usecols=(2, 3, 14))
-    x, y, color = data[:, 0], data[:, 1], data[:, 2]
-    cMin = np.min(color)
-    cMax = np.max(color)
-    if cMax > abs(cMin):
-        cMax = -cMin
-    else:
-        cMin = -cMax
-    normColor = np.clip(color, cMin, cMax)
-    plt.figure(figsize=(10, 10))
-    plt.scatter(x, y, s = 2, c = normColor, cmap="bwr", alpha=0.7)
-    plt.xlim(-20000, 20000)
-    plt.ylim(-20000, 20000)
-    plt.title(f"Ponderomotive a0 = {a0:0.3f} max(p) = {np.max(color):0.3f}")
-    plt.xlabel("Y")
-    plt.ylabel("Z")
-    plt.axis('equal')
-    plt.colorbar()
-    plt.savefig(f"out-py-ponderomotive-{i}.png", dpi=100)
-    print(f"Image saved: out-py-{i}.png")
-    plt.close()
-    
-    '''data = np.loadtxt(f"out-{a0:0.3f}.txt", usecols=(2, 3, 15))
-    x, y, color = data[:, 0], data[:, 1], data[:, 2]
-    cMin = np.min(color)
-    cMax = np.max(color)
-    if cMax > abs(cMin):
-        cMax = -cMin
-    else:
-        cMin = -cMax
-    normColor = np.clip(color, cMin, cMax)
-    plt.figure(figsize=(10, 10))
-    plt.scatter(x, y, s = 2, c = color, cmap="bwr", alpha=0.7)
-    plt.xlim(-20000, 20000)
-    plt.ylim(-20000, 20000)
-    plt.title(f"Exact method - pz - a0 = {a0:0.3f}")
-    plt.xlabel("Y")
-    plt.ylabel("Z")
-    plt.axis('equal')
-    plt.colorbar()
-    plt.savefig(f"out-pz-{i}.png", dpi=100)
-    print(f"Image saved: out-pz-{i}.png")
-    plt.close()'''
-    os.remove(f"out-{a0:0.3f}.txt")
+    axes[0].hist(data_column, bins=150, edgecolor='black')
+    axes[0].set_title(f'a0 = {a0:0.3f}')
+    axes[0].set_xlim(-30, 30)
+    axes[0].set_ylim(0, 1100)
+    axes[0].set_xlabel('p_y')
+    axes[0].set_ylabel('N')
 
-    i+=1
+    data = np.loadtxt(filename, usecols=(2, 3, 14))
+    wavelength = 2 * 3.141592 * 137.036 / 0.057
+    x = data[:, 0] / wavelength
+    y = data[:, 1] / wavelength
+    c = data[:, 2]  # This is p_y (column 14)
+    sc = axes[1].scatter(x, y, c=c, cmap='bwr', s=5)
+    
+    #fig.colorbar(sc, ax=axes[1], label='p_y')
+    
+    axes[1].set_title(f'a0 = {a0:0.3f}')
+    axes[1].set_xlim(-2, 2)
+    axes[1].set_ylim(-2, 2)
+    axes[1].set_xlabel('Y [λ]')
+    axes[1].set_ylabel('Z [λ]')
+    axes[1].set_aspect('equal', adjustable='box')
+
+    imageFilename = f"out-{i}.png"
+    plt.savefig(imageFilename, dpi=200, bbox_inches='tight')
+    plt.close(fig)
+    print(f"Output image {imageFilename}")
+
+for i in range(0, 50):
+    a0 = 0.01 + i / 250
+    filename = f"out-{a0:0.3f}.txt"
+    os.system(f"LaserElectron {a0:0.3f}")
+    create_plot(filename, a0, i)
+    os.remove(filename)
