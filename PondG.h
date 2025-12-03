@@ -1,12 +1,12 @@
 void PotentialDerivA(double *a, double *u, struct Laser *l, int index, int n) {
 	double potentialA0 = l[n].E0 * m / (l[n].omega * fabs(q));
 	double epsilon4[4], kVec4[4];
-	double a1[4], a2[4];
+
 	kVec4[0] = 1.0;
 	epsilon4[0] = 0.0;
 	SetVec(&kVec4[1], l[n].n, 3);
 	MultVec4(kVec4, l[n].omega / c);
-	SetVec(&epsilon4[1], l[n].epsilon1, 3);
+
 	double phi = Dot4Rel(kVec4, u) + l[n].psi;
 	a[0] = 0.0;
 	double sign = (index > 0) ? -1.0 : +1.0;
@@ -20,11 +20,12 @@ void PotentialDerivA(double *a, double *u, struct Laser *l, int index, int n) {
 void PotentialA(double *a, double *u, struct Laser *l, int n) {
 	double potentialA0 = l[n].E0 * m / (l[n].omega * fabs(q));
 	double epsilon4[4], kVec4[4];
+
 	kVec4[0] = 1.0;
 	epsilon4[0] = 0.0;
 	SetVec(&kVec4[1], l[n].n, 3);
 	MultVec4(kVec4, l[n].omega / c);
-	SetVec(&epsilon4[1], l[n].epsilon1, 3);
+
 	double phi = Dot4Rel(kVec4, u) + l[n].psi;
 	double A0mult = Env(phi, l[n].xif) * potentialA0;
 	a[0] = 0.0;
