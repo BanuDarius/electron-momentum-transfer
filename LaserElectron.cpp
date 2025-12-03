@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
 	FILE *out = fopen(name, "wb");
 
 	double vi[3];
-	int num = 32000, steps = 64;
+	int num = 32000, steps = 128;
 	double a0 = atof(argv[1]);
 	double omega = 0.057;
 	double E0 = omega * c * a0;
