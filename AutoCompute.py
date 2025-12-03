@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
 scaleFactor = 3
-num = 32000
+num = 16000
 
 '''def create_plot(filename, a0, i):
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -34,13 +34,13 @@ num = 32000
 def create_plot(filename, a0, i):
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(20, 10))
     
-    line_data = np.loadtxt("out-file.bin")
+    line_data = np.loadtxt("out-file.txt")
     wavelength = 2 * 3.141592 * 137.036 / 0.057
     x = line_data[:, 0] / wavelength
     y = line_data[:, 1]
     
-    axes[0].plot(x, y, '-', linewidth=1, markersize=4)
-    axes[0].set_title(f'Ponderomotive - a0 = {a0:0.3f}')
+    axes[0].plot(x, y, '-', linewidth=1, markersize=3)
+    axes[0].set_title(f'a0 = {a0:0.3f}')
     axes[0].set_xlim(-scaleFactor, scaleFactor)
     axes[0].set_xlabel('Y [λ]')
     axes[0].set_ylabel('p_y')
@@ -54,11 +54,11 @@ def create_plot(filename, a0, i):
     y = data[:, 1] / wavelength
     c = data[:, 2]  # p_y (column 14)
     
-    sc = axes[1].scatter(x, y, c=c, cmap='bwr', s=5)
+    sc = axes[1].scatter(x, y, c=c, cmap='RdBu_r', s=6)
     
     # fig.colorbar(sc, ax=axes[1], label='p_y')
     
-    axes[1].set_title(f'Ponderomotive - a0 = {a0:0.3f}')
+    axes[1].set_title(f'a0 = {a0:0.3f}')
     axes[1].set_xlim(-scaleFactor, scaleFactor)
     axes[1].set_ylim(-scaleFactor, scaleFactor)
     axes[1].set_xlabel('Y [λ]')
@@ -66,15 +66,16 @@ def create_plot(filename, a0, i):
     axes[1].set_aspect('equal', adjustable='box')
 
     imageFilename = f"out-{i}.png"
-    plt.savefig(imageFilename, dpi=200, bbox_inches='tight')
+    plt.savefig(imageFilename, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Output image {imageFilename}")
 
-for i in range(0, 200):
-    a0 = 0.010 + i / 1000
+for i in range(0, 100):
+    a0 = 0.010 + i / 200
     scale = scaleFactor * wavelength
     filename = f"out-{a0:0.3f}.bin"
     os.system(f"./LaserElectron {a0:0.3f}")
     os.system(f"./OutputFormatter {filename} {num} {scale:0.3f}")
     create_plot(filename, a0, i)
     os.remove(filename)
+os.remove("out-file.txt")

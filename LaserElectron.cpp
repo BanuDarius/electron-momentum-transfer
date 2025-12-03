@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
 	FILE *out = fopen(name, "wb");
 
 	double vi[3];
-	int num = 32000, steps = 128;
+	int num = 16000, steps = 4096;
 	double a0 = atof(argv[1]);
 	double omega = 0.057;
 	double E0 = omega * c * a0;
@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
 	SetLaser(&l[0], E0, -alpha, beta, xif, omega, -120 * pi);
 	SetLaser(&l[1], E0, alpha, -beta, xif, omega, -120 * pi);
 	SetParticles(e, num, r, h, z, pi / 2.0, pi / 2.0, vi);
-	SetSharedData(sdata, e, l, out, ochunk, num, steps, dtau, fP2G);
+	SetSharedData(sdata, e, l, out, ochunk, num, steps, dtau, f);
 	//Here "f" for lorentz force and "fP2G" for ponderomotive
 
 	printf("Start simulation\n");

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
-	FILE *out = fopen("out-file.bin", "wb");
+	FILE *out = fopen("out-file.txt", "w");
 	FILE *in = fopen(argv[1], "r");
 	int steps = 2048;
 	int num = atoi(argv[2]);
@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 		double x1 = x0 + 2.0 * wavelength / steps;
 		for(int j = 0; j < num; j++) {
 			double current = data[j];
-			if(current > x0 && current < x1) {
+			if(current >= x0 && current < x1) {
 				c++;
 				y += data[num + j];
 			}
@@ -36,8 +36,10 @@ int main(int argc, char **argv) {
 		finalData[i] = x0;
 		if(c != 0)
 			finalData[steps + i] = y / c;
-		else
+		else if(i != 0)
 			finalData[steps + i] = finalData[steps + i - 1];
+		else
+			finalData[steps + i] = 0.0;
 	}
 
 	for(int i = 0; i < steps; i++)
