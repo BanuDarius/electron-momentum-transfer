@@ -35,15 +35,14 @@ void PotentialA(double *a, double *u, struct Laser *l, int n) {
 }
 
 double Integrate(double *u, struct Laser *l) {
-	int steps = 10;
 	double integral = 0.0;
 	double a1[4], a1temp[4], utemp[4];
-	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) steps;
+	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) PONDEROMOTIVE_STEPS;
 	
 	SetVec(utemp, u, 4);
 	utemp[0] -= lambda / 2.0;
 
-	for(int i = 0; i < steps; i++) {
+	for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
 		SetZeroN(a1, 4);
 		for(int j = 0; j < 2; j++) {
 			PotentialA(a1temp, utemp, l, j);
@@ -56,15 +55,14 @@ double Integrate(double *u, struct Laser *l) {
 }
 
 double IntegrateDMUDA(double *u, struct Laser *l, int index) {
-	int steps = 10;
 	double integral = 0.0;
 	double a1[4], a2[4], a1temp[4], a2temp[4], utemp[4];
-	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) steps;
+	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) PONDEROMOTIVE_STEPS;
 
 	SetVec(utemp, u, 4);
 	utemp[0] -= lambda / 2.0;
 
-	for(int i = 0; i < steps; i++) {
+	for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
 		SetZeroN(a1, 4); SetZeroN(a2, 4);
 		for(int j = 0; j < 2; j++) {
 			PotentialA(a1temp, utemp, l, j);

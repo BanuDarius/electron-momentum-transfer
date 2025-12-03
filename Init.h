@@ -7,6 +7,7 @@ double pi = 3.1415926535;
 #define U_SIZE 8
 #define CORE_NUM 4
 #define CHUNK_SIZE 100
+#define PONDEROMOTIVE_STEPS 10
 #define DEG_TO_RAD (pi / 180.0)
 
 pthread_barrier_t barrierSync, barrierCompute;
@@ -131,7 +132,7 @@ double Gamma(double *v) {
 }
 
 double Env(double xi, double xif) {
-	double sigma = 6 * pi;
+	double sigma = 6.0 * pi;
 	if(xi > -xif && xi < xif)
 		return 1.0;
 	else if(xi >= xif)
@@ -141,7 +142,7 @@ double Env(double xi, double xif) {
 }
 
 double EnvPrime(double xi, double xif) {
-	double sigma = 6 * pi;
+	double sigma = 6.0 * pi;
 	if(xi > -xif && xi < xif)
 		return 0.0;
 	else if(xi >= xif)
@@ -278,8 +279,8 @@ void SetInitialVel(double *vi, double m, double phi, double theta) {
 
 void SetLaser(struct Laser *l, double E0, double phi, double theta, double xif, double omega, double psi) {
 	l->E0 = E0;
-	l->zetax = 0;
-	l->zetay = 1;
+	l->zetax = 0.0;
+	l->zetay = 1.0;
 	l->psi = psi;
 	l->xif = xif;
 	l->omega = omega;
