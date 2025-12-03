@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
-	FILE *out = fopen("out-file.txt", "w");
+	FILE *out = fopen("out-file.bin", "wb");
 	FILE *in = fopen(argv[1], "r");
 	int steps = 2048;
 	int num = atoi(argv[2]);
@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
 	for(int i = 0; i < num; i++) {
 		for(int j = 0; j < 16; j++) {
-			fscanf(in, "%lf", &t);
+			fread(&t, sizeof(double), 1, in);
 			if(j == 2)
 				data[i] = t;
 			else if(j == 14)

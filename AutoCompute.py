@@ -34,7 +34,7 @@ num = 32000
 def create_plot(filename, a0, i):
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(20, 10))
     
-    line_data = np.loadtxt("out-file.txt")
+    line_data = np.loadtxt("out-file.bin")
     wavelength = 2 * 3.141592 * 137.036 / 0.057
     x = line_data[:, 0] / wavelength
     y = line_data[:, 1]
@@ -45,8 +45,10 @@ def create_plot(filename, a0, i):
     axes[0].set_xlabel('Y [λ]')
     axes[0].set_ylabel('p_y')
     axes[0].axhline(y=0, color='black', linestyle='--', linewidth=1)
-
-    data = np.loadtxt(filename, usecols=(2, 3, 14))
+    
+    raw_data = np.fromfile(filename, dtype=np.float64)
+    data_matrix = raw_data.reshape(-1, 16)
+    data = data_matrix[:, [2, 3, 14]]
 
     x = data[:, 0] / wavelength
     y = data[:, 1] / wavelength
@@ -71,8 +73,8 @@ def create_plot(filename, a0, i):
 for i in range(0, 200):
     a0 = 0.010 + i / 1000
     scale = scaleFactor * wavelength
-    filename = f"out-{a0:0.3f}.txt"
-    os.system(f"./LaserElectron {a0:0.3f} {i}")
+    filename = f"out-{a0:0.3f}.bin"
+    os.system(f"./LaserElectron {a0:0.3f}")
     os.system(f"./OutputFormatter {filename} {num} {scale:0.3f}")
     create_plot(filename, a0, i)
     os.remove(filename)

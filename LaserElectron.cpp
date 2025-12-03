@@ -4,8 +4,8 @@
  Copyright 2013 Pascal Germroth
 
  Distributed under the Boost Software License, Version 1.0.
- (See accompanying file LICENSE_1_0.txt or
- copy at http://www.boost.org/LICENSE_1_0.txt)
+ (See accompanying file LICENSE_1_0.bin or
+ copy at http://www.boost.org/LICENSE_1_0.bin)
  */
 
 #include <boost/numeric/odeint.hpp>
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 	pthread_t thread[CORE_NUM];
 	char *name = SetFilename(argv[1]);
 	printf("Output file: %s\n", name);
-	FILE *out = fopen(name, "w");
+	FILE *out = fopen(name, "wb");
 
 	double vi[3];
 	int num = 32000, steps = 64;

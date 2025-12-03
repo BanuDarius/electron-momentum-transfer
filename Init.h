@@ -39,20 +39,14 @@ double RandVal(double min, double max) {
 }
 
 void PrintChunk(FILE *out, double *chunk) {
-	for(int i = 0; i < CORE_NUM * CHUNK_SIZE; i++) {
-		for(int j = 0; j < 2 * U_SIZE; j++) {
-			fprintf(out, "%e ", chunk[2 * U_SIZE * i + j]);
-			//fwrite(&chunk[2 * U_SIZE * i + j], sizeof(double), 1, out);
-		}
-		fprintf(out, "\n");
-	}
+	fwrite(chunk, sizeof(double), 16 * CHUNK_SIZE, out);
 }
 
 void CopyInitial(double *ch, double *u, int k, int id) {
-    int index = id * 2 * U_SIZE * CHUNK_SIZE + 2 * U_SIZE * k;
-    for(int i = index; i < index + U_SIZE; i++) {
+	int index = id * 2 * U_SIZE * CHUNK_SIZE + 2 * U_SIZE * k;
+	for(int i = index; i < index + U_SIZE; i++) {
 		ch[i] = u[i - index];
-    }
+	}
 }
 
 void SetChunk(double *ochunk, double *chunk, int init, int fin) {
@@ -326,7 +320,7 @@ int num, int steps, double dtau, void (*fc)(double*, double*, double)) {
 
 char *SetFilename(char *s) {
 	char *name = (char *)malloc(30 * sizeof(char));
-	sprintf(name, "out-%s.txt", s);
+	sprintf(name, "out-%s.bin", s);
 	return name;
 }
 
