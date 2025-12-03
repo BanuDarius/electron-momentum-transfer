@@ -145,9 +145,9 @@ double EnvPrime(double xi, double xif) {
 	if(xi > -xif && xi < xif)
 		return 0.0;
 	else if(xi >= xif)
-		return (-2.0) * (xi - xif) / (sigma * sigma) * exp(-(xi - xif) * (xi - xif) / (2.0 * sigma * sigma));
+		return - (xi - xif) / (sigma * sigma) * exp(-(xi - xif) * (xi - xif) / (2.0 * sigma * sigma));
 	else
-		return (-2.0) * (xi + xif) / (sigma * sigma) * exp(-(xi + xif) * (xi + xif) / (2.0 * sigma * sigma));
+		return - (xi + xif) / (sigma * sigma) * exp(-(xi + xif) * (xi + xif) / (2.0 * sigma * sigma));
 }
 
 void CalcE(double *E, double *u, struct Laser *l, int i) {
@@ -155,10 +155,18 @@ void CalcE(double *E, double *u, struct Laser *l, int i) {
 	double t = u[0] / c;
 	double xif = l[i].xif;
 	double alpha = l[i].omega * t - k * Dot(l[i].n, &u[1]);
-	double Ec = Env(alpha + l[i].psi, xif) * l[i].E0;
+	double Ec1 = Env(alpha + l[i].psi, xif);
+	double Ec2 = EnvPrime(alpha + l[i].psi, xif);
+	double E1[3], E2[3];
 	for(int j = 0; j < 3; j++)
-		E[j] = l[i].epsilon1[j] * l[i].zetax * cos(alpha) + l[i].epsilon2[j] * l[i].zetay * sin(alpha);
-	MultVec(E, Ec);
+		E1[j] = l[i].epsilon1[j] * l[i].zetax * cos(alpha) + l[i].epsilon2[j] * l[i].zetay * sin(alpha);
+	for(int j = 0; j < 3; j++)
+		E2[j] = l[i].epsilon1[j] * l[i].zetax * sin(alpha) + l[i].epsilon2[j] * l[i].zetay * (-cos(alpha));
+	MultVec(E1, Ec1);
+	MultVec(E2, Ec2);
+	SetVec(E, E1, 3);
+	AddVec(E, E2);
+	MultVec(E, l[i].E0);
 }
 
 void CalcB(double *B, double *E, double *u, struct Laser *l, int i) {
@@ -214,16 +222,9 @@ void fP2G(double *u, double *up, const double t) {
 }
 
 void SetPosition(struct Particle *p, double r, double h, double z) {
-	double x[3];
-	x[0] = RandVal(-r, r);
-	x[1] = RandVal(-r, r);
-	double dist = sqrt(x[0] * x[0] + x[1] * x[1]);
-	if (dist <= r) {
-		p->u[1] = x[0];
-		p->u[2] = x[1];
-		p->u[3] = RandVal(h - z, h + z);
-	} else
-		SetPosition(p, r, h, z);
+	p->u[1] = RandVal(-r, r);
+	p->u[2] = RandVal(-r, r);
+	p->u[3] = RandVal(h - z, h + z);
 }
 
 void Rotate(double *u, double phi, double theta) {

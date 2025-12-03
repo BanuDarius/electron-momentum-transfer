@@ -1,19 +1,24 @@
 void PotentialDerivA(double *a, double *u, struct Laser *l, int index, int n) {
-	double potentialA0 = l[n].E0 * m / (l[n].omega * abs(q));
+	double potentialA0 = l[n].E0 * m / (l[n].omega * fabs(q));
 	double epsilon4[4], kVec4[4];
+	double a1[4], a2[4];
 	kVec4[0] = 1.0;
 	epsilon4[0] = 0.0;
 	SetVec(&kVec4[1], l[n].n, 3);
 	MultVec4(kVec4, l[n].omega / c);
 	SetVec(&epsilon4[1], l[n].epsilon1, 3);
 	double phi = Dot4Rel(kVec4, u) + l[n].psi;
-	for(int i = 0; i < 4; i++) {
-		a[i] = potentialA0 * kVec4[index] * creal(epsilon4[i] * cexp(I * phi) * (I * Env(phi, l[n].xif) + EnvPrime(phi, l[n].xif)));
+	a[0] = 0.0;
+	double sign = (index > 0) ? -1.0 : +1.0;
+	for(int i = 0; i < 3; i++) {
+		double t1 = l[n].epsilon1[i] * l[n].zetax * (-sin(phi)) + l[n].epsilon2[i] * l[n].zetay * cos(phi);
+		double t2 = l[n].epsilon1[i] * l[n].zetax * (-cos(phi)) + l[n].epsilon2[i] * l[n].zetay * (-sin(phi));
+		a[i+1] = sign * potentialA0 * kVec4[index] * (Env(phi, l[n].xif) * t2 + EnvPrime(phi, l[n].xif) * t1);
 	}
 }
 
 void PotentialA(double *a, double *u, struct Laser *l, int n) {
-	double potentialA0 = l[n].E0 * m / (l[n].omega * abs(q));
+	double potentialA0 = l[n].E0 * m / (l[n].omega * fabs(q));
 	double epsilon4[4], kVec4[4];
 	kVec4[0] = 1.0;
 	epsilon4[0] = 0.0;
@@ -21,13 +26,15 @@ void PotentialA(double *a, double *u, struct Laser *l, int n) {
 	MultVec4(kVec4, l[n].omega / c);
 	SetVec(&epsilon4[1], l[n].epsilon1, 3);
 	double phi = Dot4Rel(kVec4, u) + l[n].psi;
-	for(int i = 0; i < 4; i++) {
-		a[i] = potentialA0 * creal(epsilon4[i] * cexp(I * phi) * Env(phi, l[n].xif));
-	}
+	double A0mult = Env(phi, l[n].xif) * potentialA0;
+	a[0] = 0.0;
+	for(int i = 0; i < 3; i++)
+		a[i+1] = (l[n].epsilon1[i] * l[n].zetax * (-sin(phi)) + l[n].epsilon2[i] * l[n].zetay * cos(phi));
+	MultVec(&a[1], A0mult);
 }
 
 double Integrate(double *u, struct Laser *l) {
-	int steps = 20;
+	int steps = 10;
 	double integral = 0.0;
 	double a1[4], a1temp[4], utemp[4];
 	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) steps;
@@ -35,7 +42,7 @@ double Integrate(double *u, struct Laser *l) {
 	SetVec(utemp, u, 4);
 	utemp[0] -= lambda / 2.0;
 
-	for(int i = 0; i <= steps; i++) {
+	for(int i = 0; i < steps; i++) {
 		SetZeroN(a1, 4);
 		for(int j = 0; j < 2; j++) {
 			PotentialA(a1temp, utemp, l, j);
@@ -48,7 +55,7 @@ double Integrate(double *u, struct Laser *l) {
 }
 
 double IntegrateDMUDA(double *u, struct Laser *l, int index) {
-	int steps = 20;
+	int steps = 10;
 	double integral = 0.0;
 	double a1[4], a2[4], a1temp[4], a2temp[4], utemp[4];
 	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) steps;
@@ -56,7 +63,7 @@ double IntegrateDMUDA(double *u, struct Laser *l, int index) {
 	SetVec(utemp, u, 4);
 	utemp[0] -= lambda / 2.0;
 
-	for(int i = 0; i <= steps; i++) {
+	for(int i = 0; i < steps; i++) {
 		SetZeroN(a1, 4); SetZeroN(a2, 4);
 		for(int j = 0; j < 2; j++) {
 			PotentialA(a1temp, utemp, l, j);

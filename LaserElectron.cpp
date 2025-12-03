@@ -51,6 +51,12 @@ void *Simulate(void *data) {
 			stepper.do_step(arrayFC, newV, tau, dtau);
 			std::copy(newV.begin(), newV.end(), e[k].u);
 			tau += dtau;
+			/*if(k == 0) {
+				for(int w = 0; w < 8; w++) {
+					fprintf(out, "%e ", e[k].u[w]);
+				}
+				fprintf(out, "\n");
+			}*/
 		}
 		for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
 			ochunk[id * 2 * U_SIZE * CHUNK_SIZE + chunkC + j] = e[k].u[j - U_SIZE];
@@ -59,7 +65,7 @@ void *Simulate(void *data) {
 		if((k + 1) % CHUNK_SIZE == 0 && k - initIndex != 0) {
 			pthread_barrier_wait(&barrierCompute);
 			if(id == 0) {
-				printf("Chunk processed: %i/%i\n", CORE_NUM * (k - initIndex + 1), CORE_NUM * finalIndex);
+				printf("Particles processed: %i/%i\n", CORE_NUM * (k - initIndex + 1), CORE_NUM * finalIndex);
 				PrintChunk(out, ochunk);
 				SetZeroN(ochunk, 2 * U_SIZE * CHUNK_SIZE * CORE_NUM);
 			}
@@ -78,17 +84,18 @@ int main(int argc, char **argv) {
 	printf("Output file: %s\n", name);
 	FILE *out = fopen(name, "w");
 
-	int num = 16000, steps = 6000;
+	double vi[3];
+	int num = 32000, steps = 50;
 	double a0 = atof(argv[1]);
 	double omega = 0.057;
 	double E0 = omega * c * a0;
 	double tauf = 10000, dtau = tauf / steps;
-	double r = 4.0 * pi * c / omega, h = 0.0, z = 0.0, xif = 4.0 * pi;
+	double wavelength = 2.0 * pi * c / omega;
+	double r = 3.0 * wavelength, h = 0.0, z = 0.0, xif = 2.0 * pi;
 	double alpha = pi / 2.0, beta = 0.0;
 	pthread_barrier_init(&barrierSync, NULL, CORE_NUM);
 	pthread_barrier_init(&barrierCompute, NULL, CORE_NUM);
 
-	double *vi = (double*)malloc(3 * sizeof(double));
 	l = (struct Laser*)malloc(2 * sizeof(struct Laser));
 	struct Particle *e = (struct Particle*)malloc(num * sizeof(struct Particle));
 	double *ochunk = NewVec(2 * U_SIZE * CHUNK_SIZE * CORE_NUM);
@@ -96,10 +103,10 @@ int main(int argc, char **argv) {
 
 	CheckErrors(out, sdata);
 	SetInitialVel(vi, 0, 0, 0);
-	SetLaser(&l[0], E0, -alpha, beta, xif, omega, -120*pi);
-	SetLaser(&l[1], E0, alpha, -beta, xif, omega, -120*pi);
+	SetLaser(&l[0], E0, -alpha, beta, xif, omega, -120 * pi);
+	SetLaser(&l[1], E0, alpha, -beta, xif, omega, -120 * pi);
 	SetParticles(e, num, r, h, z, pi / 2.0, pi / 2.0, vi);
-	SetSharedData(sdata, e, l, out, ochunk, num, steps, dtau, f);
+	SetSharedData(sdata, e, l, out, ochunk, num, steps, dtau, fP2G);
 	//Here "f" for lorentz force and "fP2G" for ponderomotive
 
 	printf("Start simulation\n");
@@ -109,7 +116,7 @@ int main(int argc, char **argv) {
 		pthread_join(thread[i], NULL);
 
 	printf("Simulation ended\n");
-	printf("Time taken: %0.3f\n", (double)(clock() - ti) / (CLOCKS_PER_SEC));
+	printf("Time taken: %0.3f\n", (double)(clock() - ti) / (CLOCKS_PER_SEC * CORE_NUM));
 	pthread_barrier_destroy(&barrierCompute);
 	pthread_barrier_destroy(&barrierSync);
 	fclose(out);
