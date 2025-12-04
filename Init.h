@@ -39,7 +39,7 @@ double RandVal(double min, double max) {
 }
 
 void PrintChunk(FILE *out, double *chunk) {
-	fwrite(chunk, sizeof(double), 16 * CHUNK_SIZE, out);
+	fwrite(chunk, sizeof(double), 2 * U_SIZE * CHUNK_SIZE * CORE_NUM, out);
 }
 
 void CopyInitial(double *ch, double *u, int k, int id) {

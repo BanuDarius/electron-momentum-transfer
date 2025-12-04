@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
 	FILE *out = fopen(name, "wb");
 
 	double vi[3];
-	int num = 16000, steps = 4096;
+	int num = atoi(argv[2]), steps = 4096;
 	double a0 = atof(argv[1]);
 	double omega = 0.057;
 	double E0 = omega * c * a0;
@@ -115,11 +115,11 @@ int main(int argc, char **argv) {
 	for(int i = 0; i < CORE_NUM; i++)
 		pthread_join(thread[i], NULL);
 
+	fclose(out);
 	printf("Simulation ended\n");
 	printf("Time taken: %0.3f\n", (double)(clock() - ti) / (CLOCKS_PER_SEC * CORE_NUM));
 	pthread_barrier_destroy(&barrierCompute);
 	pthread_barrier_destroy(&barrierSync);
-	fclose(out);
 	return 0;
 }
 

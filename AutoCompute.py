@@ -4,8 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
-scaleFactor = 3
-num = 16000
+waveNum = 1
+num = 8000
 
 '''def create_plot(filename, a0, i):
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -41,7 +41,7 @@ def create_plot(filename, a0, i):
     
     axes[0].plot(x, y, '-', linewidth=1, markersize=3)
     axes[0].set_title(f'a0 = {a0:0.3f}')
-    axes[0].set_xlim(-scaleFactor, scaleFactor)
+    axes[0].set_xlim(-waveNum, waveNum)
     axes[0].set_xlabel('Y [λ]')
     axes[0].set_ylabel('p_y')
     axes[0].axhline(y=0, color='black', linestyle='--', linewidth=1)
@@ -59,8 +59,8 @@ def create_plot(filename, a0, i):
     # fig.colorbar(sc, ax=axes[1], label='p_y')
     
     axes[1].set_title(f'a0 = {a0:0.3f}')
-    axes[1].set_xlim(-scaleFactor, scaleFactor)
-    axes[1].set_ylim(-scaleFactor, scaleFactor)
+    axes[1].set_xlim(-waveNum, waveNum)
+    axes[1].set_ylim(-waveNum, waveNum)
     axes[1].set_xlabel('Y [λ]')
     axes[1].set_ylabel('Z [λ]')
     axes[1].set_aspect('equal', adjustable='box')
@@ -70,12 +70,20 @@ def create_plot(filename, a0, i):
     plt.close(fig)
     print(f"Output image {imageFilename}")
 
-for i in range(0, 100):
-    a0 = 0.010 + i / 200
-    scale = scaleFactor * wavelength
-    filename = f"out-{a0:0.3f}.bin"
-    os.system(f"./LaserElectron {a0:0.3f}")
-    os.system(f"./OutputFormatter {filename} {num} {scale:0.3f}")
-    create_plot(filename, a0, i)
-    os.remove(filename)
-os.remove("out-file.txt")
+
+if __name__ == "__main__":
+    try:
+        os.remove("out-deriv.txt")
+    except OSError:
+        pass
+
+    for i in range(0, 50):
+        a0 = 0.010 + i / 250
+        scale = waveNum * wavelength
+        filename = f"out-{a0:0.3f}.bin"
+        os.system(f"./LaserElectron {a0:0.3f} {num}")
+        os.system(f"./DataAnalyst {filename} {num} {waveNum}")
+        create_plot(filename, a0, i)
+        os.remove(filename)
+    os.remove("out-file.txt")
+    #os.remove("out-deriv.txt")
