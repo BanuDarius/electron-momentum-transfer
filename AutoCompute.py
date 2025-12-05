@@ -5,23 +5,30 @@ import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
 waveCount = 2
-num = 16000
+num = 4000
 
 def plot_slope(filename):
+    n = 2 * waveCount
     data = np.loadtxt(filename)
+    
     x = data[:, 0]
-    y = data[:, 1]
     
     plt.figure(figsize=(10, 10))
     
-    plt.plot(x, y, '-', linewidth=1)
-    
+    for i in range(1, n + 1):
+        y = data[:, i]
+        plt.plot(x, y, '-', linewidth=1, label=f'node {i}')
+        
     plt.title(f'Slope of dpy/dy in node point')
     plt.xlabel('a0')
     plt.ylabel('dpy/dy')
+    
     plt.axhline(y=0, color='black', linestyle='--', linewidth=0.5)
+    
+    plt.legend()
+    
     plt.savefig("slope.png", dpi=150, bbox_inches='tight')
-    os.remove("out-deriv.txt")
+    #os.remove("out-deriv.txt")
     
 
 def create_plot(filename, a0, i):
@@ -70,8 +77,8 @@ if __name__ == "__main__":
     except OSError:
         pass
 
-    for i in range(0, 100):
-        a0 = 0.010 + i / 500.0
+    for i in range(0, 50):
+        a0 = 0.010 + i / 250.0
         scale = waveCount * wavelength
         filename = f"out-{a0:0.3f}.bin"
         os.system(f"./LaserElectron {a0:0.3f} {num} {waveCount}")

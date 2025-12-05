@@ -45,15 +45,17 @@ int main(int argc, char **argv) {
 		else
 			finalData[steps + i] = 0.0;
 	}
-	int centerIndex = steps / 2;
+	int centerIndex = steps / 2 + steps / (8 * waveCount);
+	fprintf(outDeriv, "%e ", a0);
 	for(int i = 0; i < 2 * waveCount; i++) {
-		centerIndex += steps / (8 * waveCount);
 		int offset = 2;
 		double left = finalData[steps + centerIndex - offset];
 		double right = finalData[steps + centerIndex + offset];
 		double slope = (right - left) / (2 * offset);
-		fprintf(outDeriv, "%e %e\n", a0, slope);
+		fprintf(outDeriv, "%e ", slope);
+		centerIndex += 2 * steps / (8 * waveCount);
 	}
+	fprintf(outDeriv, "\n");
 	for(int i = 0; i < steps; i++)
 		fprintf(out, "%e %e\n", finalData[i], finalData[steps + i]);
 
