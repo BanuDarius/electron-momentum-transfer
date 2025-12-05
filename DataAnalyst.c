@@ -6,7 +6,7 @@ int main(int argc, char **argv) {
 	FILE *out = fopen("out-file.txt", "w");
 	FILE *outDeriv = fopen("out-deriv.txt", "a");
 
-	int steps = 2048;
+	int steps = 4096;
 	int num = atoi(argv[2]);
 	double waveCount = atoi(argv[3]);
 	double a0 = atof(argv[4]);

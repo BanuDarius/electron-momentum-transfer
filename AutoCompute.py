@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
 waveCount = 2
-num = 4000
+num = 16000
 
 def plot_slope(filename):
     n = 2 * waveCount
@@ -17,9 +17,9 @@ def plot_slope(filename):
     
     for i in range(1, n + 1):
         y = data[:, i]
-        plt.plot(x, y, '-', linewidth=1, label=f'node {i}')
+        plt.plot(x, y, '-', linewidth=1, label=f'Node {i}')
         
-    plt.title(f'Slope of dpy/dy in node point')
+    plt.title(f'Slope of dpy/dy in node points')
     plt.xlabel('a0')
     plt.ylabel('dpy/dy')
     
@@ -28,7 +28,8 @@ def plot_slope(filename):
     plt.legend()
     
     plt.savefig("slope.png", dpi=150, bbox_inches='tight')
-    #os.remove("out-deriv.txt")
+    print("Slope plot completed")
+    os.remove("out-deriv.txt")
     
 
 def create_plot(filename, a0, i):
@@ -58,7 +59,7 @@ def create_plot(filename, a0, i):
     
     # fig.colorbar(sc, ax=axes[1], label='p_y')
     
-    axes[1].set_title(f'a0 = {a0:0.3f}')
+    axes[1].set_title(f'(Ponderomotive) a0 = {a0:0.3f}')
     axes[1].set_xlim(-waveCount, waveCount)
     axes[1].set_ylim(-waveCount, waveCount)
     axes[1].set_xlabel('Y [λ]')

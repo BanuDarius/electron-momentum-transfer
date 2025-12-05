@@ -51,12 +51,12 @@ void *Simulate(void *data) {
 			stepper.do_step(arrayFC, newV, tau, dtau);
 			std::copy(newV.begin(), newV.end(), e[k].u);
 			tau += dtau;
-			/*if(k == 0) {
+			if(k == 0) {
 				for(int w = 0; w < 8; w++) {
 					fprintf(out, "%e ", e[k].u[w]);
 				}
 				fprintf(out, "\n");
-			}*/
+			}
 		}
 		for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
 			ochunk[id * 2 * U_SIZE * CHUNK_SIZE + chunkC + j] = e[k].u[j - U_SIZE];
@@ -66,7 +66,7 @@ void *Simulate(void *data) {
 			pthread_barrier_wait(&barrierCompute);
 			if(id == 0) {
 				printf("Particles processed: %i/%i\n", CORE_NUM * (k - initIndex + 1), CORE_NUM * finalIndex);
-				PrintChunk(out, ochunk);
+				//PrintChunk(out, ochunk);
 				SetZeroN(ochunk, 2 * U_SIZE * CHUNK_SIZE * CORE_NUM);
 			}
 			chunkC = 0;
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 	double E0 = omega * c * a0;
 	double tauf = 10000, dtau = tauf / steps;
 	double wavelength = 2.0 * pi * c / omega;
-	double r = atoi(argv[3]) * wavelength, h = 0.0, z = 0.0, xif = 0.0;
+	double r = atoi(argv[3]) * wavelength, h = 0.0, z = 0.0, xif = 2.0 * pi;
 	double alpha = pi / 2.0, beta = 0.0;
 	pthread_barrier_init(&barrierSync, NULL, CORE_NUM);
 	pthread_barrier_init(&barrierCompute, NULL, CORE_NUM);
