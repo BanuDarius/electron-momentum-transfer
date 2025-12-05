@@ -51,12 +51,12 @@ void *Simulate(void *data) {
 			stepper.do_step(arrayFC, newV, tau, dtau);
 			std::copy(newV.begin(), newV.end(), e[k].u);
 			tau += dtau;
-			if(k == 0) {
+			/*if(k == 0) {
 				for(int w = 0; w < 8; w++) {
 					fprintf(out, "%e ", e[k].u[w]);
 				}
 				fprintf(out, "\n");
-			}
+			}*/
 		}
 		for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
 			ochunk[id * 2 * U_SIZE * CHUNK_SIZE + chunkC + j] = e[k].u[j - U_SIZE];
@@ -66,7 +66,7 @@ void *Simulate(void *data) {
 			pthread_barrier_wait(&barrierCompute);
 			if(id == 0) {
 				printf("Particles processed: %i/%i\n", CORE_NUM * (k - initIndex + 1), CORE_NUM * finalIndex);
-				//PrintChunk(out, ochunk);
+				PrintChunk(out, ochunk);
 				SetZeroN(ochunk, 2 * U_SIZE * CHUNK_SIZE * CORE_NUM);
 			}
 			chunkC = 0;
