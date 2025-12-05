@@ -1,0 +1,16 @@
+*.o
+*.obj
+*.so
+*.a
+*.lib
+*.out
+*.app
+*.exe
+*.hex
+*.txt
+*.bin
+*.cubin
+*.ptx
+*.fatbin
+*.pdf
+*.mp4

@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 	double E0 = omega * c * a0;
 	double tauf = 10000, dtau = tauf / steps;
 	double wavelength = 2.0 * pi * c / omega;
-	double r = 3.0 * wavelength, h = 0.0, z = 0.0, xif = 2.0 * pi;
+	double r = atoi(argv[3]) * wavelength, h = 0.0, z = 0.0, xif = 0.0;
 	double alpha = pi / 2.0, beta = 0.0;
 	pthread_barrier_init(&barrierSync, NULL, CORE_NUM);
 	pthread_barrier_init(&barrierCompute, NULL, CORE_NUM);
