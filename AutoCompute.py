@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
 waveCount = 2
-num = 16000
+num = 32000
 
 def plot_slope(filename):
     n = 2 * waveCount
@@ -59,7 +59,7 @@ def create_plot(filename, a0, i):
     
     # fig.colorbar(sc, ax=axes[1], label='p_y')
     
-    axes[1].set_title(f'(Ponderomotive) a0 = {a0:0.3f}')
+    axes[1].set_title(f'a0 = {a0:0.3f}')
     axes[1].set_xlim(-waveCount, waveCount)
     axes[1].set_ylim(-waveCount, waveCount)
     axes[1].set_xlabel('Y [λ]')
