@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
 waveCount = 2
-num = 32000
+num = 16000
 
 def plot_slope(filename):
     n = 2 * waveCount
@@ -71,6 +71,7 @@ def create_plot(filename, a0, i):
     plt.close(fig)
     print(f"Output image {imageFilename}")
     os.remove(filename)
+    os.remove("out-file.txt")
 
 if __name__ == "__main__":
     try:
@@ -86,6 +87,5 @@ if __name__ == "__main__":
         os.system(f"./DataAnalyst {filename} {num} {waveCount} {a0:0.3f}")
         create_plot(filename, a0, i)
     plot_slope("out-deriv.txt")
-    os.remove("out-file.txt")
     
     print(f"Program executed successfully. \a")
