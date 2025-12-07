@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
 waveCount = 2
-num = 50
+num = 100
 
 def plot_slope(filename):
     n = 2 * waveCount
@@ -34,9 +34,9 @@ def plot_slope(filename):
 def exp_graph(filename):
     data = np.loadtxt(filename)
 
-    x = data[:, 1]
-    y = data[:, 2]
-    z = data[:, 3]
+    x = data[:, 5]
+    y = data[:, 6]
+    z = data[:, 7]
     
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111, projection='3d')
@@ -45,7 +45,7 @@ def exp_graph(filename):
     ax.set_xlabel('$x$')
     ax.set_ylabel('$y$')
     ax.set_zlabel('$z$')
-    ax.set_title(f'N = {num}')
+    ax.set_title(f'(Velocity) N = {num}')
 
     num_frames = 60
     for i in range(num_frames):
