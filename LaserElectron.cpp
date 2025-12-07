@@ -51,14 +51,14 @@ void *Simulate(void *data) {
 			stepper.do_step(arrayFC, newV, tau, dtau);
 			std::copy(newV.begin(), newV.end(), e[k].u);
 			tau += dtau;
-			/*if(k == 0) {
+			if(i % 1 == 0) {
 				for(int w = 0; w < 8; w++) {
 					fprintf(out, "%e ", e[k].u[w]);
 				}
 				fprintf(out, "\n");
-			}*/
+			}
 		}
-		for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
+		/*for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
 			ochunk[id * 2 * U_SIZE * CHUNK_SIZE + chunkC + j] = e[k].u[j - U_SIZE];
 		}
 		chunkC += 2 * U_SIZE;
@@ -71,7 +71,7 @@ void *Simulate(void *data) {
 			}
 			chunkC = 0;
 			pthread_barrier_wait(&barrierSync);
-		}
+		}*/
 	}
 	return NULL;
 }
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 	pthread_t thread[CORE_NUM];
 	char *name = SetFilename(argv[1]);
 	printf("Output file: %s\n", name);
-	FILE *out = fopen(name, "wb");
+	FILE *out = fopen(name, "w");
 
 	double vi[3];
 	int num = atoi(argv[2]), steps = 4096;

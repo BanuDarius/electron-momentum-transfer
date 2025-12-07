@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
 waveCount = 2
-num = 16000
+num = 50
 
 def plot_slope(filename):
     n = 2 * waveCount
@@ -31,6 +31,31 @@ def plot_slope(filename):
     print("Slope plot completed")
     os.remove("out-deriv.txt")
     
+def exp_graph(filename):
+    data = np.loadtxt(filename)
+
+    x = data[:, 1]
+    y = data[:, 2]
+    z = data[:, 3]
+    
+    fig = plt.figure(figsize=(10, 10))
+    ax = fig.add_subplot(111, projection='3d')
+    scatter = ax.scatter(x, y, z, c=z, cmap='viridis', s=1, alpha=0.7)
+    
+    ax.set_xlabel('$x$')
+    ax.set_ylabel('$y$')
+    ax.set_zlabel('$z$')
+    ax.set_title(f'N = {num}')
+
+    num_frames = 60
+    for i in range(num_frames):
+        angle = (360 / num_frames) * i
+        
+        ax.view_init(elev=30, azim=angle)
+        plt.savefig(f"frame-{i:02d}.png", dpi=150, bbox_inches='tight')
+        print(f"Saved image: {i}")
+
+    plt.close(fig)
 
 def create_plot(filename, a0, i):
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(20, 10))
@@ -78,14 +103,15 @@ if __name__ == "__main__":
     except OSError:
         pass
 
-    for i in range(0, 50):
+    for i in range(0, 1):
         a0 = 0.010 + i / 250.0
         scale = waveCount * wavelength
         filename = f"out-{a0:0.3f}.bin"
         os.system(f"./LaserElectron {a0:0.3f} {num} {waveCount}")
         os.system(f"./DataAnalyst {filename} {num} {waveCount} {a0:0.3f}")
-        create_plot(filename, a0, i)
-    plot_slope("out-deriv.txt")
-    os.remove("out-file.txt")
+        #create_plot(filename, a0, i)
+        exp_graph(filename)
+    #plot_slope("out-deriv.txt")
+    #os.remove("out-file.txt")
     
     print(f"Program executed successfully. \a")
