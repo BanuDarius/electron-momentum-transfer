@@ -2,11 +2,18 @@
 
 !*/
 
-!*.*
-
 !*.c
 !*.cpp
 !*.h
+!*.hpp
 !*.py
+!*.sh
+
+!*.cu
+!*.cuh
+
 !LICENSE
 !README
+!README.md
+!Makefile
+!CMakeLists.txt
