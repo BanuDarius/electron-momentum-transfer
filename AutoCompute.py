@@ -31,12 +31,13 @@ def plot_slope(filename):
     print("Slope plot completed")
     os.remove("out-deriv.txt")
     
-def exp_graph(filename):
-    data = np.loadtxt(filename)
+def exp_graph(filename, a0, i):
+    raw_data = np.fromfile(filename, dtype=np.float64)
+    data = raw_data.reshape(-1, 8)
 
-    x = data[:, 5]
-    y = data[:, 6]
-    z = data[:, 7]
+    x = data[:, 1]
+    y = data[:, 2]
+    z = data[:, 3]
     
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111, projection='3d')
@@ -45,15 +46,15 @@ def exp_graph(filename):
     ax.set_xlabel('$x$')
     ax.set_ylabel('$y$')
     ax.set_zlabel('$z$')
-    ax.set_title(f'(Velocity) N = {num}')
+    ax.set_title(f'N = {num}, a0 = {a0:0.3f}')
 
-    num_frames = 60
-    for i in range(num_frames):
-        angle = (360 / num_frames) * i
+    num_frames = 1
+    #for i in range(num_frames):
+        #angle = (360 / num_frames) * i
         
-        ax.view_init(elev=30, azim=angle)
-        plt.savefig(f"frame-{i:02d}.png", dpi=150, bbox_inches='tight')
-        print(f"Saved image: {i}")
+    ax.view_init(elev=30, azim=0)
+    plt.savefig(f"frame-{i:02d}.png", dpi=150, bbox_inches='tight')
+    print(f"Saved image: {i}")
 
     plt.close(fig)
 
@@ -95,7 +96,6 @@ def create_plot(filename, a0, i):
     plt.savefig(imageFilename, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Output image {imageFilename}")
-    os.remove(filename)
 
 if __name__ == "__main__":
     try:
@@ -103,14 +103,15 @@ if __name__ == "__main__":
     except OSError:
         pass
 
-    for i in range(0, 1):
-        a0 = 0.010 + i / 250.0
+    for i in range(0, 100):
+        a0 = 0.010 + i / 500.0
         scale = waveCount * wavelength
         filename = f"out-{a0:0.3f}.bin"
         os.system(f"./LaserElectron {a0:0.3f} {num} {waveCount}")
         os.system(f"./DataAnalyst {filename} {num} {waveCount} {a0:0.3f}")
         #create_plot(filename, a0, i)
-        exp_graph(filename)
+        exp_graph(filename, a0, i)
+        os.remove(filename)
     #plot_slope("out-deriv.txt")
     #os.remove("out-file.txt")
     

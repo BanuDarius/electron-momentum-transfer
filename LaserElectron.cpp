@@ -52,10 +52,7 @@ void *Simulate(void *data) {
 			std::copy(newV.begin(), newV.end(), e[k].u);
 			tau += dtau;
 			if(i % 1 == 0) {
-				for(int w = 0; w < 8; w++) {
-					fprintf(out, "%e ", e[k].u[w]);
-				}
-				fprintf(out, "\n");
+				fwrite(&e[k].u[0], sizeof(double), 8, out);
 			}
 		}
 		/*for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
@@ -82,10 +79,10 @@ int main(int argc, char **argv) {
 	pthread_t thread[CORE_NUM];
 	char *name = SetFilename(argv[1]);
 	printf("Output file: %s\n", name);
-	FILE *out = fopen(name, "w");
+	FILE *out = fopen(name, "wb");
 
 	double vi[3];
-	int num = atoi(argv[2]), steps = 4096;
+	int num = atoi(argv[2]), steps = 8000;
 	double a0 = atof(argv[1]);
 	double omega = 0.057;
 	double E0 = omega * c * a0;
