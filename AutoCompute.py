@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
 waveCount = 2
-num = 20
+num = 100
 
 def plot_slope(filename):
     n = 2 * waveCount
@@ -41,7 +41,7 @@ def exp_graph_2d(filename, a0, i):
     plt.figure(figsize=(10, 10), dpi=150)
     current_indices = np.arange(len(x_data))
     
-    plt.scatter(x_data, y_data, c=current_indices, cmap='coolwarm', s=1, alpha=1)
+    plt.scatter(x_data, y_data, linestyle='-', c=current_indices, cmap='coolwarm', s=1, alpha=1)
     y0 = x_data[0] / wavelength
     plt.title(f"a0 = {a0:0.3f} - N = {num}")
     plt.xlabel(r"y [λ]")
@@ -68,7 +68,7 @@ def exp_graph_2d_all(filename, a0, i):
 
         plt.figure(figsize=(10, 10), dpi=150)
         
-        plt.scatter(x_data, y_data, linestyle='-', c=current_indices, cmap='coolwarm', s=1, alpha=1)
+        plt.scatter(x_data, y_data, c=current_indices, cmap='coolwarm', s=1, alpha=1)
         
         y0 = x_data[0]
         plt.title(f"y0 = {y0:0.3f} [λ]")
