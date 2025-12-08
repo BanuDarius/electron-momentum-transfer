@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
 waveCount = 2
-num = 100
+num = 20
 
 def plot_slope(filename):
     n = 2 * waveCount
@@ -31,7 +31,60 @@ def plot_slope(filename):
     print("Slope plot completed")
     os.remove("out-deriv.txt")
     
-def exp_graph(filename, a0, i):
+def exp_graph_2d(filename, a0, i):
+    raw_data = np.fromfile(filename, dtype=np.float64)
+    data = raw_data.reshape(-1, 8)
+
+    x_data = data[:, 2] / wavelength
+    y_data = data[:, 6]
+
+    plt.figure(figsize=(10, 10), dpi=150)
+    current_indices = np.arange(len(x_data))
+    
+    plt.scatter(x_data, y_data, c=current_indices, cmap='coolwarm', s=1, alpha=1)
+    y0 = x_data[0] / wavelength
+    plt.title(f"a0 = {a0:0.3f} - N = {num}")
+    plt.xlabel(r"y [λ]")
+    plt.ylabel(r"$p_y$")
+    filename_out = f"graph-phase-{i:03d}"
+    plt.savefig(filename_out, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Successfully saved plot")
+
+def exp_graph_2d_all(filename, a0, i):
+    raw_data = np.fromfile(filename, dtype=np.float64)
+    data = raw_data.reshape(-1, 8)
+    
+    for i in range(0, num):
+        chunk_size = 4096
+        start_idx = i * chunk_size
+        end_idx = start_idx + chunk_size
+        batch = data[start_idx : end_idx]
+
+        x_data = batch[:, 2] / wavelength
+        y_data = batch[:, 6]
+        current_indices = np.arange(len(x_data))
+
+        plt.figure(figsize=(10, 10), dpi=150)
+        
+        plt.scatter(x_data, y_data, linestyle='-', c=current_indices, cmap='coolwarm', s=1, alpha=1)
+        
+        y0 = x_data[0]
+        plt.title(f"y0 = {y0:0.3f} [λ]")
+        max_py = max(y_data) * 1.1
+        plt.ylim(-max_py, max_py)
+        plt.xlabel(r"y [λ]")
+        plt.ylabel(r"$p_y$")
+
+        filename_out = f"frame-{i:03d}.png"
+        plt.savefig(filename_out, bbox_inches='tight')
+        plt.close()
+        
+        print(f"Saved {filename_out}")
+
+
+def exp_graph_3d(filename, a0, i):
     raw_data = np.fromfile(filename, dtype=np.float64)
     data = raw_data.reshape(-1, 8)
 
@@ -53,7 +106,7 @@ def exp_graph(filename, a0, i):
         #angle = (360 / num_frames) * i
         
     ax.view_init(elev=30, azim=0)
-    plt.savefig(f"frame-{i:02d}.png", dpi=150, bbox_inches='tight')
+    plt.savefig(f"frame-{i:03d}.png", dpi=150, bbox_inches='tight')
     print(f"Saved image: {i}")
 
     plt.close(fig)
@@ -108,9 +161,10 @@ if __name__ == "__main__":
         scale = waveCount * wavelength
         filename = f"out-{a0:0.3f}.bin"
         os.system(f"./LaserElectron {a0:0.3f} {num} {waveCount}")
-        os.system(f"./DataAnalyst {filename} {num} {waveCount} {a0:0.3f}")
+        #os.system(f"./DataAnalyst {filename} {num} {waveCount} {a0:0.3f}")
         #create_plot(filename, a0, i)
-        exp_graph(filename, a0, i)
+        exp_graph_2d(filename, a0, i)
+        #exp_graph_2d_all(filename, a0, i)
         os.remove(filename)
     #plot_slope("out-deriv.txt")
     #os.remove("out-file.txt")

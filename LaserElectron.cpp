@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 	FILE *out = fopen(name, "wb");
 
 	double vi[3];
-	int num = atoi(argv[2]), steps = 8000;
+	int num = atoi(argv[2]), steps = 4096;
 	double a0 = atof(argv[1]);
 	double omega = 0.057;
 	double E0 = omega * c * a0;
