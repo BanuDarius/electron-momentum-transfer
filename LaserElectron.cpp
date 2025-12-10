@@ -42,18 +42,30 @@ void *Simulate(void *data) {
 		sdata->fc(const_cast<double*>(u.data()), up.data(), t);
 	}; //Complicated data transformation...
 	std::array<double, U_SIZE> newV;
+	
+	double uOld[8];
 
 	for(int k = initIndex; k < finalIndex; k++) {
 		tau = 0;
 		CopyInitial(ochunk, e[k].u, (k - initIndex) % CHUNK_SIZE, id);
+		bool ended = false;
 		for(int i = 0; i < steps; i++) {
 			std::copy(e[k].u, e[k].u + U_SIZE, newV.begin());
 			stepper.do_step(arrayFC, newV, tau, dtau);
 			std::copy(newV.begin(), newV.end(), e[k].u);
 			tau += dtau;
-			if(i % 1 == 0) {
-				fwrite(&e[k].u[0], sizeof(double), 8, out);
+			double outVec[8];
+			SetVec(outVec, &e[k].u[0], 8);
+			if(i % 100 == 0 && !ended)
+				SetVec(uOld, outVec, 8);
+			if(i > steps * 0.70 && fabs((uOld[6] - outVec[6]) / uOld[6]) < 0.01) {
+				SetVec(outVec, uOld, 8);
+				ended = true;
 			}
+			if(!ended)
+				fwrite(&outVec, sizeof(double), 8, out);
+			else
+				fwrite(&uOld, sizeof(double), 8, out);
 		}
 		/*for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
 			ochunk[id * 2 * U_SIZE * CHUNK_SIZE + chunkC + j] = e[k].u[j - U_SIZE];
@@ -82,7 +94,7 @@ int main(int argc, char **argv) {
 	FILE *out = fopen(name, "wb");
 
 	double vi[3];
-	int num = atoi(argv[2]), steps = 4096;
+	int num = atoi(argv[2]), steps = 8000;
 	double a0 = atof(argv[1]);
 	double omega = 0.057;
 	double E0 = omega * c * a0;

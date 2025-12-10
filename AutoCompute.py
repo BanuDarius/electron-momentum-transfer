@@ -4,8 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
-waveCount = 2
-num = 100
+waveCount = 1
+num = 250
 
 def plot_slope(filename):
     n = 2 * waveCount
@@ -35,18 +35,23 @@ def exp_graph_2d(filename, a0, i):
     raw_data = np.fromfile(filename, dtype=np.float64)
     data = raw_data.reshape(-1, 8)
 
+    t_data = data[:, 0] / 137.036
     x_data = data[:, 2] / wavelength
     y_data = data[:, 6]
+    final_index = int(num * 8000 / 16)
+    x_data = x_data[0 : final_index]
+    y_data = y_data[0 : final_index]
+    t_data = t_data[0 : final_index]
 
     plt.figure(figsize=(10, 10), dpi=150)
     current_indices = np.arange(len(x_data))
     
-    plt.scatter(x_data, y_data, linestyle='-', c=current_indices, cmap='coolwarm', s=1, alpha=1)
-    y0 = x_data[0] / wavelength
+    plt.scatter(x_data, y_data, c=t_data, cmap='coolwarm', s=1, alpha=1)
     plt.title(f"a0 = {a0:0.3f} - N = {num}")
+    plt.xlim(-1.1, 1.1)
     plt.xlabel(r"y [λ]")
     plt.ylabel(r"$p_y$")
-    filename_out = f"graph-phase-{i:03d}"
+    filename_out = f"graph-phase-{i:03d}.png"
     plt.savefig(filename_out, bbox_inches='tight')
     plt.close()
     
@@ -64,11 +69,11 @@ def exp_graph_2d_all(filename, a0, i):
 
         x_data = batch[:, 2] / wavelength
         y_data = batch[:, 6]
-        current_indices = np.arange(len(x_data))
+        t = batch[:, 0] / 137.036
 
         plt.figure(figsize=(10, 10), dpi=150)
         
-        plt.scatter(x_data, y_data, c=current_indices, cmap='coolwarm', s=1, alpha=1)
+        plt.scatter(x_data, y_data, c=t, cmap='coolwarm', s=1, alpha=1)
         
         y0 = x_data[0]
         plt.title(f"y0 = {y0:0.3f} [λ]")
@@ -156,8 +161,8 @@ if __name__ == "__main__":
     except OSError:
         pass
 
-    for i in range(0, 100):
-        a0 = 0.010 + i / 500.0
+    for i in range(0, 20):
+        a0 = 0.010 + i / 100.0
         scale = waveCount * wavelength
         filename = f"out-{a0:0.3f}.bin"
         os.system(f"./LaserElectron {a0:0.3f} {num} {waveCount}")

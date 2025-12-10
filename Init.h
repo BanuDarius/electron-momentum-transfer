@@ -218,7 +218,7 @@ void fP2G(double *u, double *up, const double t) {
 
 void SetPosition(struct Particle *p, double r, double h, double z, int i, int num) {
 	double wavelength = 2.0 * pi * c / 0.057;
-	p->u[1] = - wavelength + 2.0 * i * wavelength / num;
+	p->u[1] = - wavelength + 2.0 * i * wavelength / num + 100.0;
 	p->u[2] = 0.0;
 	p->u[3] = RandVal(h - z, h + z);
 }
