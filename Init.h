@@ -126,7 +126,7 @@ double Gamma(double *v) {
 }
 
 double Env(double xi, double xif) {
-	double sigma = 6.0 * pi;
+	double sigma = 2.0 * pi;
 	if(xi > -xif && xi < xif)
 		return 1.0;
 	else if(xi >= xif)
@@ -136,7 +136,7 @@ double Env(double xi, double xif) {
 }
 
 double EnvPrime(double xi, double xif) {
-	double sigma = 6.0 * pi;
+	double sigma = 2.0 * pi;
 	if(xi > -xif && xi < xif)
 		return 0.0;
 	else if(xi >= xif)

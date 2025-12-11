@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
 waveCount = 1
-num = 250
+num = 300
 
 def plot_slope(filename):
     n = 2 * waveCount
@@ -38,7 +38,7 @@ def exp_graph_2d(filename, a0, i):
     t_data = data[:, 0] / 137.036
     x_data = data[:, 2] / wavelength
     y_data = data[:, 6]
-    final_index = int(num * 8000 / 16)
+    final_index = int(num * 8000 / 8)
     x_data = x_data[0 : final_index]
     y_data = y_data[0 : final_index]
     t_data = t_data[0 : final_index]
@@ -161,8 +161,8 @@ if __name__ == "__main__":
     except OSError:
         pass
 
-    for i in range(0, 20):
-        a0 = 0.010 + i / 100.0
+    for i in range(0, 100):
+        a0 = 0.010 + i / 500.0
         scale = waveCount * wavelength
         filename = f"out-{a0:0.3f}.bin"
         os.system(f"./LaserElectron {a0:0.3f} {num} {waveCount}")

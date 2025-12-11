@@ -42,13 +42,10 @@ void *Simulate(void *data) {
 		sdata->fc(const_cast<double*>(u.data()), up.data(), t);
 	}; //Complicated data transformation...
 	std::array<double, U_SIZE> newV;
-	
-	double uOld[8];
 
 	for(int k = initIndex; k < finalIndex; k++) {
 		tau = 0;
 		CopyInitial(ochunk, e[k].u, (k - initIndex) % CHUNK_SIZE, id);
-		bool ended = false;
 		for(int i = 0; i < steps; i++) {
 			std::copy(e[k].u, e[k].u + U_SIZE, newV.begin());
 			stepper.do_step(arrayFC, newV, tau, dtau);
@@ -56,15 +53,7 @@ void *Simulate(void *data) {
 			tau += dtau;
 			double outVec[8];
 			SetVec(outVec, &e[k].u[0], 8);
-			if(i % 200 == 0 && !ended)
-				SetVec(uOld, outVec, 8);
-			if(ended)
-				SetVec(outVec, uOld, 8);
-			if(i > steps * 0.70 && fabs((uOld[6] - outVec[6]) / outVec[6]) < 0.001) {
-				SetVec(outVec, uOld, 8);
-				ended = true;
-			}
-			fwrite(&outVec, sizeof(double), 8, out);
+			fwrite(outVec, sizeof(double), 8, out);
 		}
 		/*for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
 			ochunk[id * 2 * U_SIZE * CHUNK_SIZE + chunkC + j] = e[k].u[j - U_SIZE];
@@ -99,7 +88,7 @@ int main(int argc, char **argv) {
 	double E0 = omega * c * a0;
 	double tauf = 10000, dtau = tauf / steps;
 	double wavelength = 2.0 * pi * c / omega;
-	double r = atoi(argv[3]) * wavelength, h = 0.0, z = 0.0, xif = 20.0 * pi;
+	double r = atoi(argv[3]) * wavelength, h = 0.0, z = 0.0, xif = 32.0 * pi;
 	double alpha = pi / 2.0, beta = 0.0;
 	pthread_barrier_init(&barrierSync, NULL, CORE_NUM);
 	pthread_barrier_init(&barrierCompute, NULL, CORE_NUM);
