@@ -53,7 +53,10 @@ void *Simulate(void *data) {
 			tau += dtau;
 			double outVec[8];
 			SetVec(outVec, &e[k].u[0], 8);
-			fwrite(outVec, sizeof(double), 8, out);
+			if(outVec[0] > 1.18e6)
+				memset(&outVec[1], 0, 7 * sizeof(double));
+			if(i % 2 == 0)
+				fwrite(outVec, sizeof(double), 8, out);
 		}
 		/*for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
 			ochunk[id * 2 * U_SIZE * CHUNK_SIZE + chunkC + j] = e[k].u[j - U_SIZE];
@@ -82,7 +85,7 @@ int main(int argc, char **argv) {
 	FILE *out = fopen(name, "wb");
 
 	double vi[3];
-	int num = atoi(argv[2]), steps = 8000;
+	int num = atoi(argv[2]), steps = 8192;
 	double a0 = atof(argv[1]);
 	double omega = 0.057;
 	double E0 = omega * c * a0;

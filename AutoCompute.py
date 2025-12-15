@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
 waveCount = 1
-num = 300
+num = 512
 
 def plot_slope(filename):
     n = 2 * waveCount
@@ -31,6 +31,79 @@ def plot_slope(filename):
     print("Slope plot completed")
     os.remove("out-deriv.txt")
     
+def exp_graph_fused_py(filename, a0, i):
+    raw_data = np.fromfile(filename, dtype=np.float64)
+    data = raw_data.reshape(-1, 8)
+
+    subset_num = int(num / 8)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 10), dpi=150)
+    
+    steps = 4096
+    t_data_raw = data[:, 0] / 137.036
+    y_data_raw = data[:, 2] / wavelength
+    py_data_raw = data[:, 6]
+    
+    t = t_data_raw.reshape(-1, steps)
+    py = py_data_raw.reshape(-1, steps)
+    y = y_data_raw.reshape(-1, steps)
+
+    ax1.axhline(y=0, color='black', linestyle='--', linewidth=0.5)
+
+    limit = min(t.shape[0], subset_num)
+    
+    cmap = plt.get_cmap('coolwarm') 
+
+    for p in range(limit):
+        fraction = p / max(limit - 1, 1)
+        line_color = cmap(fraction)
+
+        ax1.plot(t[p], py[p], linestyle='-', linewidth=0.5, color=line_color)
+        current_y = y[p]
+        current_py = py[p]
+
+        mask = (abs(current_y) > 0.01) | (abs(current_py) > 0.01)
+
+        ax2.plot(current_y[mask], current_py[mask], linestyle='-', linewidth=0.5, color=line_color)
+
+    ax1.set_title(f"a0 = {a0:0.3f} - N = {subset_num}")
+    ax1.set_xlabel('ct')
+    ax1.set_ylabel(r"$p_y$")
+
+    ax2.set_title(f"a0 = {a0:0.3f} - N = {subset_num}")
+    ax2.set_xlim(-1.1, 1.1)
+    ax2.set_xlabel(r"y [λ]")
+    ax2.set_ylabel(r"$p_y$")
+
+    filename_out = f"graph-combined-{i:03d}.png"
+    plt.savefig(filename_out, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Saved plot: {filename_out}")
+    
+def exp_graph_scatter(filename, a0, i):
+    raw_data = np.fromfile(filename, dtype=np.float64)
+    data = raw_data.reshape(-1, 8)
+    plt.figure(figsize=(10, 5), dpi=200)
+
+    t_data = data[:, 0]
+    y_data = data[:, 6]
+
+    steps = 4096
+    t = t_data.reshape(-1, steps)
+    Y = y_data.reshape(-1, steps)
+    
+
+    plt.axhline(y=0, color='black', linestyle='--', linewidth=0.5)
+    for p in range(t.shape[0]):
+        plt.plot(t[p], Y[p], linestyle='-', linewidth=1)
+    plt.title(f"a0 = {a0:0.3f} - N = {num}")
+    plt.xlabel('ct')
+    plt.ylabel('py')
+    
+    plt.savefig(f"graph-scatter-{i:03d}.png", bbox_inches='tight')
+    plt.close()
+    
 def exp_graph_2d(filename, a0, i):
     raw_data = np.fromfile(filename, dtype=np.float64)
     data = raw_data.reshape(-1, 8)
@@ -38,7 +111,7 @@ def exp_graph_2d(filename, a0, i):
     t_data = data[:, 0] / 137.036
     x_data = data[:, 2] / wavelength
     y_data = data[:, 6]
-    final_index = int(num * 8000 / 8)
+    final_index = int(num * 4096)
     x_data = x_data[0 : final_index]
     y_data = y_data[0 : final_index]
     t_data = t_data[0 : final_index]
@@ -99,7 +172,7 @@ def exp_graph_3d(filename, a0, i):
     
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111, projection='3d')
-    scatter = ax.scatter(x, y, z, c=z, cmap='viridis', s=1, alpha=0.7)
+    scatter = ax.scatter(x, y, z, c=z, cmap='viridis', s=1)
     
     ax.set_xlabel('$x$')
     ax.set_ylabel('$y$')
@@ -168,7 +241,9 @@ if __name__ == "__main__":
         os.system(f"./LaserElectron {a0:0.3f} {num} {waveCount}")
         #os.system(f"./DataAnalyst {filename} {num} {waveCount} {a0:0.3f}")
         #create_plot(filename, a0, i)
-        exp_graph_2d(filename, a0, i)
+        #exp_graph_scatter(filename, a0, i)
+        #exp_graph_2d(filename, a0, i)
+        exp_graph_fused_py(filename, a0, i)
         #exp_graph_2d_all(filename, a0, i)
         os.remove(filename)
     #plot_slope("out-deriv.txt")
