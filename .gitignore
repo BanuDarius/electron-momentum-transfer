@@ -1,0 +1,6 @@
+*.mp4
+*.pdf
+*.bin
+*.png
+*.txt
+__pycache__/
