@@ -1,12 +1,14 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
 	FILE *in = fopen(argv[1], "rb");
-	FILE *out = fopen("out-file.txt", "w");
+	FILE *out = fopen("out-stats.bin", "wb");
 	FILE *outDeriv = fopen("out-deriv.txt", "a");
+	FILE *outMaxP = fopen("out-max-py.txt", "a");
 
-	int steps = 4096;
+	int steps = 8192;
 	int num = atoi(argv[2]);
 	double waveCount = atoi(argv[3]);
 	double a0 = atof(argv[4]);
@@ -32,20 +34,34 @@ int main(int argc, char **argv) {
 		double x1 = x0 + 2.0 * fullSpaceSize / steps;
 		for(int j = 0; j < num; j++) {
 			double current = data[j];
-			if(current >= x0 && current < x1) {
+			if(current > x0 && current < x1) {
 				c++;
 				y += data[num + j];
 			}
 		}
 		finalData[i] = x0;
 		if(c != 0)
-			finalData[steps + i] = y / c;
+			finalData[steps + i] = y / (double)c;
 		else if(i != 0)
 			finalData[steps + i] = finalData[steps + i - 1];
 		else
 			finalData[steps + i] = 0.0;
 	}
-	int centerIndex = steps / 2 + steps / (8 * waveCount);
+	if(atoi(argv[5]) == 0) {
+		double maxP = -INFINITY;
+		for(int i = 0; i < num; i++) {
+			double py = data[num + i];
+			if(fabs(py) > maxP)
+				maxP = fabs(py);
+		}
+		fprintf(outMaxP, "%e %e\n", a0, maxP);
+	}
+	for(int i = 0; i < steps; i++) {
+		fwrite(&finalData[i], sizeof(double), 1, out);
+		fwrite(&finalData[steps + i], sizeof(double), 1, out);
+	}
+
+	/*int centerIndex = steps / 2 + steps / (8 * waveCount);
 	fprintf(outDeriv, "%e ", a0);
 	for(int i = 0; i < 2 * waveCount; i++) {
 		int offset = 2;
@@ -55,9 +71,7 @@ int main(int argc, char **argv) {
 		fprintf(outDeriv, "%e ", slope);
 		centerIndex += 2 * steps / (8 * waveCount);
 	}
-	fprintf(outDeriv, "\n");
-	for(int i = 0; i < steps; i++)
-		fprintf(out, "%e %e\n", finalData[i], finalData[steps + i]);
+	fprintf(outDeriv, "\n");*/
 
 	free(finalData); free(data);
 	fclose(outDeriv); fclose(out); fclose(in);

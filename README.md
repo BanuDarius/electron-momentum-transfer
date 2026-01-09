@@ -4,7 +4,7 @@ Parallelized with POSIX threads.
 
 ## Examples
 
-https://github.com/user-attachments/assets/90a7d7d3-5d6a-4e61-8df4-b9b999851b62
+https://github.com/user-attachments/assets/1535b362-bc3e-450c-ba59-d7517e42125d
 
 https://github.com/user-attachments/assets/06e6861b-48ff-45ea-b6d0-f5003de2d465
 
