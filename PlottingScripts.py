@@ -56,7 +56,7 @@ def plot_max_py(filename, a0, i):
     plt.figure(figsize=(10,10))
     plt.plot(x, y, linestyle='-', linewidth=1)
     plt.title(r"max($p_y$)")
-    plt.xlabel(r"$p_y$")
+    plt.xlabel(r"$a_0$")
     plt.ylabel(r"max($p_y$)")
     
     plt.axhline(0, color='black', linestyle='--')

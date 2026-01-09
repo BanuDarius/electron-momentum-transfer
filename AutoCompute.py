@@ -6,7 +6,7 @@ wavelength = 2 * 3.141592 * 137.036 / 0.057
 
 num = 4000
 stepsElectromagnetic = 8192
-stepsPonderomotive = 512
+stepsPonderomotive = 800
 waveCount = 1
 
 if __name__ == "__main__":
@@ -15,7 +15,8 @@ if __name__ == "__main__":
         os.remove("out-max-py.txt")
     except OSError:
         pass
-        
+    for i in range(0, 5):
+        a0 = 0.010 + i / 100.0
         filename = "out-data.bin"
         os.system(f"./LaserElectron 0 1 {a0:0.3f} {num} {stepsElectromagnetic} {waveCount}")
         psc.plot_2d_colormap(filename, a0, i, wavelength, waveCount)
@@ -33,6 +34,6 @@ if __name__ == "__main__":
 
         os.system(f"./ErrorCalculator {num}")
         psc.plot_errors("out-error.bin", a0, i, wavelength)
-
+    
     psc.plot_max_py("out-max-py.txt", a0, i)
     print(f"Program executed successfully. \a")
