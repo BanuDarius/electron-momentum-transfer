@@ -23,12 +23,18 @@ def plot_2d_colormap(filename, a0, i, wavelength, waveCount):
 
 def plot_errors(filename, a0, i, wavelength):
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
+    data2 = np.loadtxt("out-max-py.txt").reshape(-1, 2)
     
     x = data[:, 0] / wavelength
-    y = data[:, 1] * 100
+    y = data[:, 1]
+    
+    yMax = data2[i, 1]
+    print(f"THIS IS YMAX !!!!!!!!!!!!!!!!!!!!!!!!!! = {yMax:0.3f}")
+    
+    yFinal = y / yMax * 100
     
     plt.figure(figsize=(10,10))
-    plt.plot(x, y, linestyle='-', linewidth=1)
+    plt.plot(x, yFinal, linestyle='-', linewidth=1)
     plt.title(f"Errors for a0 = {a0:0.3f}")
     plt.xlabel(r"Y [$\lambda$]")
     plt.ylabel(f"Error (%)")
@@ -39,6 +45,27 @@ def plot_errors(filename, a0, i, wavelength):
     plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
     plt.close()
     print(f"Created error scatter plot for a0 = {a0:0.3f}.")
+    
+
+def plot_max_py(filename, a0, i):
+    data = np.loadtxt(filename)
+    
+    x = data[:, 0]
+    y = data[:, 1]
+    
+    plt.figure(figsize=(10,10))
+    plt.plot(x, y, linestyle='-', linewidth=1)
+    plt.title(r"max($p_y$)")
+    plt.xlabel(r"$p_y$")
+    plt.ylabel(r"max($p_y$)")
+    
+    plt.axhline(0, color='black', linestyle='--')
+    
+    filenameOut = f"out-max-py.png"
+    plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f"Created max(py) scatter plot for a0 = {a0:0.3f}.")
+    
 
 '''def plot_slope(filename):
     n = 2 * waveCount
