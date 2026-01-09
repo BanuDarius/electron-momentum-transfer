@@ -3,7 +3,7 @@
 
 int main(int argc, char **argv) {
 	FILE *in = fopen(argv[1], "rb");
-	FILE *out = fopen("out-file.txt", "w");
+	FILE *out = fopen("out-stats.bin", "wb");
 	FILE *outDeriv = fopen("out-deriv.txt", "a");
 
 	int steps = 4096;
@@ -45,6 +45,12 @@ int main(int argc, char **argv) {
 		else
 			finalData[steps + i] = 0.0;
 	}
+
+	for(int i = 0; i < steps; i++) {
+		fwrite(&finalData[i], sizeof(double), 1, out);
+		fwrite(&finalData[steps + i], sizeof(double), 1, out);
+	}
+
 	int centerIndex = steps / 2 + steps / (8 * waveCount);
 	fprintf(outDeriv, "%e ", a0);
 	for(int i = 0; i < 2 * waveCount; i++) {
@@ -56,8 +62,6 @@ int main(int argc, char **argv) {
 		centerIndex += 2 * steps / (8 * waveCount);
 	}
 	fprintf(outDeriv, "\n");
-	for(int i = 0; i < steps; i++)
-		fprintf(out, "%e %e\n", finalData[i], finalData[steps + i]);
 
 	free(finalData); free(data);
 	fclose(outDeriv); fclose(out); fclose(in);

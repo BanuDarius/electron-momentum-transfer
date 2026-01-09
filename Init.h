@@ -5,7 +5,7 @@ double e = 2.7182818284;
 double pi = 3.1415926535;
 
 #define U_SIZE 8
-#define CORE_NUM 1
+#define CORE_NUM 4
 #define CHUNK_SIZE 100
 #define PONDEROMOTIVE_STEPS 10
 #define DEG_TO_RAD (pi / 180.0)
@@ -29,7 +29,7 @@ struct SharedData {
 	double *ochunk;
 	struct Laser *l;
 	struct Particle *e;
-	int initIndex, finalIndex, steps, id;
+	int initIndex, finalIndex, steps, outputMode, id;
 	void (*fc)(double*, double*, double);
 };
 
@@ -217,10 +217,16 @@ void fP2G(double *u, double *up, const double t) {
 	MultVec4(&up[4], 1.0 / mass);
 }
 
-void SetPosition(struct Particle *p, double r, double h, double z, int i, int num) {
+void SetPosition(struct Particle *p, double r, double h, double z, int i, int num, int outputMode) {
 	double wavelength = 2.0 * pi * c / 0.057;
-	p->u[1] = - wavelength + 2.0 * i * wavelength / num + 50.0;
-	p->u[2] = 0.0;
+	if(outputMode == 0) {
+		p->u[1] = - wavelength + 2.0 * i * wavelength / num + 50.0;
+		p->u[2] = 0.0;
+	}
+	else {
+		p->u[1] = RandVal(h - r, h + r);
+		p->u[2] = RandVal(h - r, h + r);
+	}
 	p->u[3] = RandVal(h - z, h + z);
 }
 
@@ -291,10 +297,10 @@ void SetLaser(struct Laser *l, double E0, double phi, double theta, double xif, 
 	free(nv);
 }
 
-void SetParticles(struct Particle *p, int num, double r, double h, double z, double phi, double theta, double *vi) {
+void SetParticles(struct Particle *p, int num, double r, double h, double z, double phi, double theta, double *vi, int outputMode) {
 	for(int i = 0; i < num; i++) {
 		p[i].u[0] = 0;
-		SetPosition(&p[i], r, h, z, i, num);
+		SetPosition(&p[i], r, h, z, i, num, outputMode);
 		Rotate(&p[i].u[1], phi, theta);
 		double gamma = Gamma(vi);
 		p[i].u[4] = m * c * gamma;
@@ -305,7 +311,7 @@ void SetParticles(struct Particle *p, int num, double r, double h, double z, dou
 }
 
 void SetSharedData(struct SharedData *sdata, struct Particle *e, struct Laser *l, FILE *out, double *ochunk,
-int num, int steps, double dtau, void (*fc)(double*, double*, double)) {
+int num, int steps, double dtau, int outputMode, void (*fc)(double*, double*, double)) {
 	for(int i = 0; i < CORE_NUM; i++) {
 		sdata[i].l = l;
 		sdata[i].e = e;
@@ -315,15 +321,17 @@ int num, int steps, double dtau, void (*fc)(double*, double*, double)) {
 		sdata[i].dtau = dtau;
 		sdata[i].steps = steps;
 		sdata[i].ochunk = ochunk;
+		sdata[i].outputMode = outputMode;
 		sdata[i].finalIndex = FinalIndex(num, i);
 		sdata[i].initIndex = InitialIndex(num, i);
 	}
 }
 
-char *SetFilename(char *s) {
-	char *name = (char *)malloc(30 * sizeof(char));
-	sprintf(name, "out-%s.bin", s);
-	return name;
+void SetMode(void (**computeFunction)(double *, double *, double), int mode) {
+	if(mode == 0)
+		*computeFunction = f;
+	else if(mode == 1)
+		*computeFunction = fP2G;
 }
 
 void CheckErrors(void *out, void *sdata) {
