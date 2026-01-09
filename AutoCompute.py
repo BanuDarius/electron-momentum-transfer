@@ -4,15 +4,10 @@ import PlottingScripts as psc
 
 wavelength = 2 * 3.141592 * 137.036 / 0.057
 
-mode = 1
-outputMode = 1
-num = 16000
+num = 4000
 stepsElectromagnetic = 8192
 stepsPonderomotive = 512
 waveCount = 1
-waveCount = 2
-num = 16000
-
 
 if __name__ == "__main__":
     try:
