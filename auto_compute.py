@@ -15,7 +15,7 @@ if __name__ == "__main__":
         os.remove("out-max-py.txt")
     except OSError:
         pass
-    for i in range(0, 2):
+    for i in range(0, 20):
         a0 = 0.010 + i / 100.0
         filename = "out-data.bin"
         os.system(f"./laser_electron 0 1 {a0:0.3f} {num} {stepsElectromagnetic} {waveCount}")
