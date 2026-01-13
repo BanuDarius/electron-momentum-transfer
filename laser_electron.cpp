@@ -27,6 +27,7 @@ void *Simulate(void *data) {
 	struct Laser *l = sdata->l;
 
 	int id = sdata->id;
+	int num = sdata->num;
 	FILE *out = sdata->out;
 	int steps = sdata->steps;
 	double dtau = sdata->dtau;
@@ -43,7 +44,16 @@ void *Simulate(void *data) {
 		sdata->fc(const_cast<double*>(u.data()), up.data(), t);
 	}; //Complicated data transformation...
 	std::array<double, U_SIZE> newV;
+	
+	bool run = true;
 
+	if(outputMode == 0) {
+		finalIndex = num;
+		if(id != 0)
+			run = false;
+	}
+
+	if(run)
 	for(int k = initIndex; k < finalIndex; k++) {
 		tau = 0;
 		CopyInitial(ochunk, e[k].u, (k - initIndex) % CHUNK_SIZE, id);
@@ -55,8 +65,10 @@ void *Simulate(void *data) {
 			if(outputMode == 0 && id == 0) {
 				double outVec[8];
 				SetVec(outVec, &e[k].u[0], 8);
-				if(outVec[0] > 1.18e6)
-					SetZeroN(outVec, 8);
+				/*double average = ComputeAverage(outVec, l);
+				double time = outVec[0] / c;
+				fwrite(&time, sizeof(double), 1, out);
+				fwrite(&average, sizeof(double), 1, out);*/
 				fwrite(outVec, sizeof(double), 8, out);
 			}
 		}
@@ -93,9 +105,9 @@ int main(int argc, char **argv) {
 	double a0 = atof(argv[3]);
 	double omega = 0.057;
 	double E0 = omega * c * a0;
-	double tauf = 10000, dtau = tauf / steps;
+	double tauf = atof(argv[8]), dtau = tauf / steps;
 	double wavelength = 2.0 * pi * c / omega;
-	double r = atoi(argv[6]) * wavelength, h = 0.0, z = 0.0, xif = 2.0 * pi;
+	double r = atoi(argv[6]) * wavelength, h = 0.0, z = 0.0, xif = atof(argv[7]);
 	double alpha = pi / 2.0, beta = 0.0;
 	pthread_barrier_init(&barrierSync, NULL, CORE_NUM);
 	pthread_barrier_init(&barrierCompute, NULL, CORE_NUM);

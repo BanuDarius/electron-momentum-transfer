@@ -29,7 +29,7 @@ struct SharedData {
 	double *ochunk;
 	struct Laser *l;
 	struct Particle *e;
-	int initIndex, finalIndex, steps, outputMode, id;
+	int initIndex, finalIndex, steps, outputMode, num, id;
 	void (*fc)(double*, double*, double);
 };
 
@@ -131,9 +131,9 @@ double Env(double xi, double xif) {
 	if(xi > -xif && xi < xif)
 		return 1.0;
 	else if(xi >= xif)
-		return exp(-(xi - xif) * (xi - xif) / (2.0 * sigma * sigma));
+		return exp(-(xi - xif) * (xi - xif) / (sigma * sigma));
 	else
-		return exp(-(xi + xif) * (xi + xif) / (2.0 * sigma * sigma));
+		return exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
 }
 
 double EnvPrime(double xi, double xif) {
@@ -141,9 +141,9 @@ double EnvPrime(double xi, double xif) {
 	if(xi > -xif && xi < xif)
 		return 0.0;
 	else if(xi >= xif)
-		return - (xi - xif) / (sigma * sigma) * exp(-(xi - xif) * (xi - xif) / (2.0 * sigma * sigma));
+		return - 2.0 * (xi - xif) / (sigma * sigma) * exp(-(xi - xif) * (xi - xif) / (sigma * sigma));
 	else
-		return - (xi + xif) / (sigma * sigma) * exp(-(xi + xif) * (xi + xif) / (2.0 * sigma * sigma));
+		return - 2.0 * (xi + xif) / (sigma * sigma) * exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
 }
 
 void CalcE(double *E, double *u, struct Laser *l, int i) {
@@ -264,6 +264,27 @@ void Epsilon(double *u, double *w) {
 	free(v);
 }
 
+/*double ComputeAverage(double *u, struct Laser *l) {
+	double Etemp[3], E[3], utemp[4], integral = 0.0;
+	double T = 2.0 * pi / l[0].omega, dt = T / (double) PONDEROMOTIVE_STEPS;
+
+	SetZeroN(E, 3);	
+	SetVec(utemp, u, 4);
+	utemp[0] -= T / 2.0;
+
+	for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
+		SetZeroN(Etemp, 3);
+		for(int j = 0; j < 2; j++) {
+			CalcE(Etemp, u, l, j);
+			AddVec(E, Etemp);
+		}
+		integral += dt * Dot(E, E);
+		utemp[0] += dt * c;
+	}
+	
+	return integral / T;
+}*/
+
 int InitialIndex(int n, unsigned int threadNum) {
 	int index = n * threadNum / CORE_NUM;
 	return index;
@@ -318,6 +339,7 @@ int num, int steps, double dtau, int outputMode, void (*fc)(double*, double*, do
 		sdata[i].id = i;
 		sdata[i].fc = fc;
 		sdata[i].out = out;
+		sdata[i].num = num;
 		sdata[i].dtau = dtau;
 		sdata[i].steps = steps;
 		sdata[i].ochunk = ochunk;

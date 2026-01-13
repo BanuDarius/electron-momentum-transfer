@@ -1,7 +1,18 @@
+import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_2d_colormap(filename, a0, i, wavelength, waveCount):
+def plot_2d_colormap(method, a0, xif, tauf, i, wavelength, waveCount, num, steps):
+    if(method == "electromagnetic"):
+        mode = 0
+    else:
+        mode = 1
+    outputMode = 1 #Always output the final state
+    
+    os.system(f"./laser_electron {mode} {outputMode} {a0:0.3f} {num} {steps} {waveCount} {xif:0.3f} {tauf:0.3f}")
+
+    filename = "out-data.bin"
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 16)
     
     x = data[:, 2] / wavelength
@@ -19,9 +30,61 @@ def plot_2d_colormap(filename, a0, i, wavelength, waveCount):
     plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
     plt.close()
     print(f"Created colormap for a0 = {a0:0.3f}.")
+    if(mode == 0):
+        os.rename(f"out-colormap-{i}.png", f"out-colormap-electromag-{i}.png")
+    else:
+        os.rename(f"out-colormap-{i}.png", f"out-colormap-pond-{i}.png")
 
 
-def plot_errors(filename, a0, i, wavelength):
+def plot_phases(method, a0, xif, tauf, i, wavelength, waveCount, num, steps):
+    if method == "electromagnetic":
+        mode = 0
+    else:
+        mode = 1
+    outputMode = 0 #Always output the full state
+    
+    os.system(f"./laser_electron {mode} {outputMode} {a0:0.3f} {num} {steps} {waveCount} {xif:0.3f} {tauf:0.3f}")
+
+    filename = "out-data.bin"
+    data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
+    cmap = plt.get_cmap('viridis')
+    
+    for idx in range(num):
+        traj = data[idx]
+        
+        x = traj[:, 2] / wavelength
+        y = traj[:, 6]
+        
+        norm_index = idx / max(1, num - 1)
+        color = cmap(norm_index)
+        
+        ax.plot(x, y, color=color, linestyle='-', linewidth=1)
+
+    ax.set_title(f"Phase Space: $a_0 = {a0:0.3f}$ - $N = {num}$")
+    ax.set_xlabel(r"$y$ [$\lambda$]")
+    ax.set_ylabel(r"$p_y$ [$m_e c$]")
+    
+    ax.set_xlim(-1.1 * waveCount, 1.1 * waveCount)
+    
+    filename_out = f"out-phase-space-{i}.png"
+    plt.savefig(filename_out, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Created phase plot for a0 = {a0:0.3f}.")
+
+def analyze_data(method, outputMaxP, a0, waveCount, num):
+    filename= "out-data.bin"
+    outputMaxP = int(outputMaxP == True)
+    os.system(f"./data_analyst {filename} {num} {waveCount} {a0:0.3f} {outputMaxP}")
+    if(method == "electromagnetic"):
+        os.rename("out-stats.bin", "out-stats-1.bin")
+    else:
+        os.rename("out-stats.bin", "out-stats-2.bin")
+
+def plot_errors(a0, i, wavelength, num):
+    filename = "out-error.bin"
+    os.system(f"./error_calculator {a0:0.3f}")
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
     data2 = np.loadtxt("out-max-py.txt").reshape(-1, 2)
     
@@ -29,6 +92,7 @@ def plot_errors(filename, a0, i, wavelength):
     y = data[:, 1]
     
     yMax = data2[i, 1]
+    print(f"For a0 = {a0:0.3f}, yMax = {yMax:0.3f}")
     
     yFinal = y / yMax * 100
     
@@ -44,9 +108,9 @@ def plot_errors(filename, a0, i, wavelength):
     plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
     plt.close()
     print(f"Created error scatter plot for a0 = {a0:0.3f}.")
-    
 
-def plot_max_py(filename, a0, i):
+def plot_max_py(a0, i):
+    filename = "out-max-py.txt"
     data = np.loadtxt(filename)
     
     x = data[:, 0]
@@ -64,6 +128,26 @@ def plot_max_py(filename, a0, i):
     plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
     plt.close()
     print(f"Created max(py) scatter plot for a0 = {a0:0.3f}.")
+    
+def plot_average_errors(a0, i):
+    filename = "out-average-error.bin"
+    data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
+    
+    x = data[:, 0]
+    y = data[:, 1]
+    
+    plt.figure(figsize=(10,10))
+    plt.plot(x, y, linestyle='-', linewidth=1)
+    plt.title(r"Average errors")
+    plt.xlabel(r"$a_0$")
+    plt.ylabel(r"<$\epsilon$> (%)")
+    
+    plt.axhline(0, color='black', linestyle='--')
+    
+    filenameOut = f"out-average-errors.png"
+    plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f"Created average error scatter plot.")
     
 
 '''def plot_slope(filename):

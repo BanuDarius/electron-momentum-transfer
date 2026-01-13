@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
 		else
 			finalData[steps + i] = 0.0;
 	}
-	if(atoi(argv[5]) == 0) {
+	if(atoi(argv[5]) == 1) {
 		double maxP = -INFINITY;
 		for(int i = 0; i < num; i++) {
 			double py = data[num + i];
