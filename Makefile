@@ -1,33 +1,38 @@
 CC = gcc
 CXX = g++
-
 DEPFLAGS = -MMD -MP
-
 CFLAGS = -s -O2 -mavx2 $(DEPFLAGS)
 CXXFLAGS = -s -O3 -mavx2 $(DEPFLAGS)
 LDLIBS = -lm
 
-SRCS_C = $(wildcard *.c)
-SRCS_CPP = $(wildcard *.cpp)
+SRCS_C := $(wildcard src/*.c)
+SRCS_CPP := $(wildcard src/*.cpp)
 
-BINS_C = $(SRCS_C:%.c=%)
-BINS_CPP = $(SRCS_CPP:%.cpp=%)
+BINS_C := $(patsubst src/%.c, bins/%, $(SRCS_C))
+BINS_CPP := $(patsubst src/%.cpp, bins/%, $(SRCS_CPP))
 
-DEPS = $(SRCS_C:%.c=%.d) $(SRCS_CPP:%.cpp=%.d)
+
+DEPS := $(BINS_C:%=%.d) $(BINS_CPP:%=%.d)
 
 .PHONY: all clean
 
-all: $(BINS_C) $(BINS_CPP)
+all: bins_dir $(BINS_C) $(BINS_CPP)
 
-$(BINS_C): %: %.c
-	$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
-	@echo "Compiled $@."
+bins_dir:
+	@mkdir -p bins
+	@mkdir -p output
+	@mkdir -p output-image
+	@mkdir -p output-video
 
-$(BINS_CPP): %: %.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@ $(LDLIBS)
-	@echo "Compiled $@."
+$(BINS_C): bins/%: src/%.c | bins_dir
+	@$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
+	@echo "Compiled C program: $@"
+
+$(BINS_CPP): bins/%: src/%.cpp | bins_dir
+	@$(CXX) $(CXXFLAGS) $< -o $@ $(LDLIBS)
+	@echo "Compiled C++ program: $@"
 
 -include $(DEPS)
 
 clean:
-	rm $(BINS_C) $(BINS_CPP) $(DEPS)
+	rm -r bins
