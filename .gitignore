@@ -1,6 +1,5 @@
-*.mp4
-*.pdf
-*.bin
-*.png
-*.txt
+bins/
+output/
+output-image/
+output-video/
 __pycache__/
