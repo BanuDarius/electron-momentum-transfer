@@ -1,17 +1,3 @@
-double m = 1;
-double q = -1;
-double c = 137.036;
-double e = 2.7182818284;
-double pi = 3.1415926535;
-
-#define U_SIZE 8
-#define CORE_NUM 4
-#define CHUNK_SIZE 100
-#define PONDEROMOTIVE_STEPS 32
-#define DEG_TO_RAD (pi / 180.0)
-
-pthread_barrier_t barrierSync, barrierCompute;
-
 struct Particle {
 	double u[8];
 };
@@ -32,119 +18,6 @@ struct SharedData {
 	int initIndex, finalIndex, steps, outputMode, num, id;
 	void (*fc)(double*, double*, double);
 };
-
-double RandVal(double min, double max) {
-	double s = rand() / (double)RAND_MAX;
-	return min + s * (max - min);
-}
-
-void PrintChunk(FILE *out, double *chunk) {
-	fwrite(chunk, sizeof(double), 2 * U_SIZE * CHUNK_SIZE * CORE_NUM, out);
-}
-
-void CopyInitial(double *ch, double *u, int k, int id) {
-	int index = id * 2 * U_SIZE * CHUNK_SIZE + 2 * U_SIZE * k;
-	for(int i = index; i < index + U_SIZE; i++) {
-		ch[i] = u[i - index];
-	}
-}
-
-void SetChunk(double *ochunk, double *chunk, int init, int fin) {
-	for(int i = init; i < fin; i++) {
-		ochunk[i] = chunk[i-init];
-	}
-}
-
-void SetVec(double *u1, double *u2, int n) {
-	for (int i = 0; i < n; i++)
-		u1[i] = u2[i];
-}
-
-double *NewVec(int n) {
-	double *u = (double *)malloc(n * sizeof(double));
-	return u;
-}
-
-void SetZero(double *u) {
-	for(int i = 0; i < 3; i++)
-		u[i] = 0;
-}
-
-void SetZeroN(double *u, int n) {
-	for(int i = 0; i < n; i++)
-		u[i] = 0;
-}
-
-void MultVec(double *u, double a) {
-	for(int i = 0; i < 3; i++)
-		u[i] *= a;
-}
-
-void MultVec4(double *u, double a) {
-	for(int i = 0; i < 4; i++)
-		u[i] *= a;
-}
-
-void AddVec(double *u, double *v) {
-	for(int i = 0; i < 3; i++)
-		u[i] += v[i];
-}
-
-void AddVec4(double *u, double *v) {
-	for(int i = 0; i < 4; i++)
-		u[i] += v[i];
-}
-
-void SubVec(double *x, double *u, double *v) {
-	for(int i = 0; i < 3; i++)
-		x[i] = u[i] - v[i];
-}
-
-void Cross(double *a, double *b, double *u) {
-	u[0] = a[1] * b[2] - a[2] * b[1];
-	u[1] = a[2] * b[0] - a[0] * b[2];
-	u[2] = a[0] * b[1] - a[1] * b[0];
-}
-
-double Dot(double *a, double *b) {
-	double x = a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-	return x;
-}
-
-double Dot4Rel(double *u, double *v) {
-	double x = u[0] * v[0] - u[1] * v[1] - u[2] * v[2] - u[3] * v[3];
-	return x;
-}
-
-double Magnitude(double *a) {
-	double x = sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
-	return x;
-}
-
-double Gamma(double *v) {
-	double gamma = 1 / sqrt(1 - pow(Magnitude(v), 2) / (c * c));
-	return gamma;
-}
-
-double Env(double xi, double xif) {
-	double sigma = 2.0 * pi;
-	if(xi > -xif && xi < xif)
-		return 1.0;
-	else if(xi >= xif)
-		return exp(-(xi - xif) * (xi - xif) / (sigma * sigma));
-	else
-		return exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
-}
-
-double EnvPrime(double xi, double xif) {
-	double sigma = 2.0 * pi;
-	if(xi > -xif && xi < xif)
-		return 0.0;
-	else if(xi >= xif)
-		return - 2.0 * (xi - xif) / (sigma * sigma) * exp(-(xi - xif) * (xi - xif) / (sigma * sigma));
-	else
-		return - 2.0 * (xi + xif) / (sigma * sigma) * exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
-}
 
 void CalcE(double *E, double *u, struct Laser *l, int i) {
 	double k = l[i].omega / c;
@@ -182,7 +55,7 @@ void ComputeEB(double *E, double *B, double *u) {
 	}
 }
 
-void f(double *u, double *up, const double t) {
+void electromag(double *u, double *up, const double t) {
 	double E[3], B[3];
 	SetZero(E); SetZero(B);
 	ComputeEB(E, B, u);
@@ -198,29 +71,10 @@ void f(double *u, double *up, const double t) {
 	MultVec4(&up[4], q / (m * c));
 }
 
-#include "ponderomotive.h"
-
-void fP2G(double *u, double *up, const double t) {
-	double a = ComputeA(u, l);
-	double mass = m * sqrt(1 + a);
-	double dmdx[4];
-	for(int i = 0; i < 4; i++)
-		dmdx[i] = 0.5 * DerivativeA(u, l, i) * m / sqrt(1 + a);
-	up[0] = u[4];
-	up[1] = u[5];
-	up[2] = u[6];
-	up[3] = u[7];
-	up[4] = - u[4] * u[4] * dmdx[0] / c + c * dmdx[0] - u[4] * u[5] * dmdx[1] - u[4] * u[6] * dmdx[2] - u[4] * u[7] * dmdx[3];
-	up[5] = - u[5] * u[4] * dmdx[0] / c - (c * c) * dmdx[1] - u[5] * u[5] * dmdx[1] - u[5] * u[6] * dmdx[2] - u[5] * u[7] * dmdx[3];
-	up[6] = - u[6] * u[4] * dmdx[0] / c - u[6] * u[5] * dmdx[1] - (c * c) * dmdx[2] - u[6] * u[6] * dmdx[2] - u[6] * u[7] * dmdx[3];
-	up[7] = - u[7] * u[4] * dmdx[0] / c - u[7] * u[5] * dmdx[1] - u[7] * u[6] * dmdx[2] - (c * c) * dmdx[3] - u[7] * u[7] * dmdx[3];
-	MultVec4(&up[4], 1.0 / mass);
-}
-
 void SetPosition(struct Particle *p, double r, double h, double z, int i, int num, int outputMode) {
 	double wavelength = 2.0 * pi * c / 0.057;
 	if(outputMode == 0) {
-		p->u[1] = - wavelength + 2.0 * i * wavelength / num + 50.0;
+		p->u[1] = - r + 2.0 * i * r / num + 50.0;
 		p->u[2] = 0.0;
 	}
 	else {
@@ -244,55 +98,23 @@ void Rotate(double *u, double phi, double theta) {
 
 double *DirectionVec(double phiL, double thetaL) {
 	double *u = NewVec(3);
-	u[0] = 0;
-	u[1] = 0;
-	u[2] = 1;
+	u[0] = 0.0;
+	u[1] = 0.0;
+	u[2] = 1.0;
 	Rotate(u, phiL, thetaL);
 	return u;
 }
 
 void Epsilon(double *u, double *w) {
-	double *v = NewVec(3);
-	v[0] = 1;
-	v[1] = 0;
-	v[2] = 0;
+	double v[3];
+	v[0] = 1.0;
+	v[1] = 0.0;
+	v[2] = 0.0;
 	Cross(u, v, w);
 	double mag = Magnitude(w);
 	double scale = Magnitude(u);
 	for (int i = 0; i < 3; i++)
 		w[i] = scale * w[i] / mag;
-	free(v);
-}
-
-/*double ComputeAverage(double *u, struct Laser *l) {
-	double Etemp[3], E[3], utemp[4], integral = 0.0;
-	double T = 2.0 * pi / l[0].omega, dt = T / (double) PONDEROMOTIVE_STEPS;
-
-	SetZeroN(E, 3);	
-	SetVec(utemp, u, 4);
-	utemp[0] -= T / 2.0;
-
-	for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
-		SetZeroN(Etemp, 3);
-		for(int j = 0; j < 2; j++) {
-			CalcE(Etemp, u, l, j);
-			AddVec(E, Etemp);
-		}
-		integral += dt * Dot(E, E);
-		utemp[0] += dt * c;
-	}
-	
-	return integral / T;
-}*/
-
-int InitialIndex(int n, unsigned int threadNum) {
-	int index = n * threadNum / CORE_NUM;
-	return index;
-}
-
-int FinalIndex(int n, unsigned int threadNum) {
-	int index = n * (threadNum + 1) / CORE_NUM;
-	return index;
 }
 
 void SetInitialVel(double *vi, double m, double phi, double theta) {
@@ -302,10 +124,10 @@ void SetInitialVel(double *vi, double m, double phi, double theta) {
 
 void SetLaser(struct Laser *l, double E0, double phi, double theta, double xif, double omega, double psi) {
 	l->E0 = E0;
-	l->zetax = 0.0;
-	l->zetay = 1.0;
 	l->psi = psi;
 	l->xif = xif;
+	l->zetax = 0.0;
+	l->zetay = 1.0;
 	l->omega = omega;
 	double *nv = DirectionVec(phi, theta);
 	double epsilon1[3];
@@ -347,13 +169,6 @@ int num, int steps, double dtau, int outputMode, void (*fc)(double*, double*, do
 		sdata[i].finalIndex = FinalIndex(num, i);
 		sdata[i].initIndex = InitialIndex(num, i);
 	}
-}
-
-void SetMode(void (**computeFunction)(double *, double *, double), int mode) {
-	if(mode == 0)
-		*computeFunction = f;
-	else if(mode == 1)
-		*computeFunction = fP2G;
 }
 
 void CheckErrors(void *out, void *sdata) {

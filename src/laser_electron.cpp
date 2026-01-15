@@ -19,7 +19,10 @@
 #include <array>
 #include <algorithm>
 
+#include "extra.h"
 #include "init.h"
+#include "ponderomotive.h"
+
 
 void *Simulate(void *data) {
 	struct SharedData *sdata = (struct SharedData*)data;
@@ -62,15 +65,8 @@ void *Simulate(void *data) {
 			stepper.do_step(arrayFC, newV, tau, dtau);
 			std::copy(newV.begin(), newV.end(), e[k].u);
 			tau += dtau;
-			if(outputMode == 0 && id == 0) {
-				double outVec[8];
-				SetVec(outVec, &e[k].u[0], 8);
-				/*double average = ComputeAverage(outVec, l);
-				double time = outVec[0] / c;
-				fwrite(&time, sizeof(double), 1, out);
-				fwrite(&average, sizeof(double), 1, out);*/
-				fwrite(outVec, sizeof(double), 8, out);
-			}
+			if(outputMode == 0 && id == 0)
+				fwrite(&e[k].u[0], sizeof(double), 8, out);
 		}
 		if(outputMode == 1) {
 			for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
@@ -122,8 +118,8 @@ int main(int argc, char **argv) {
 	SetInitialVel(vi, 0.0, 0.0, 0.0);
 	SetMode(&computeFunction, mode);
 	//Mode "0" for electromagnetic, "1" for ponderomotive
-	SetLaser(&l[0], E0, -alpha, beta, xif, omega, -120.0 * pi);
-	SetLaser(&l[1], E0, alpha, -beta, xif, omega, -120.0 * pi);
+	SetLaser(&l[0], E0, -alpha, beta, xif, omega, -60.0 * pi);
+	SetLaser(&l[1], E0, alpha, -beta, xif, omega, -60.0 * pi);
 	SetParticles(e, num, r, h, z, pi / 2.0, pi / 2.0, vi, outputMode);
 	//Output mode "0" for all positions and velocities, "1" for only the final positions and velocities
 	SetSharedData(sdata, e, l, out, ochunk, num, steps, dtau, outputMode, computeFunction);

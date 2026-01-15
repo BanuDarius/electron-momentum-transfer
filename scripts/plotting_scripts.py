@@ -2,6 +2,13 @@ import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent
+BIN_DIR = PROJECT_ROOT / "bins"
+OUTPUT_DIR = PROJECT_ROOT / "output"
+OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
 def plot_2d_colormap(method, a0, xif, tauf, i, wavelength, waveCount, num, steps):
     if(method == "electromagnetic"):
@@ -9,10 +16,10 @@ def plot_2d_colormap(method, a0, xif, tauf, i, wavelength, waveCount, num, steps
     else:
         mode = 1
     outputMode = 1 #Always output the final state
-    
-    os.system(f"./bins/laser_electron {mode} {outputMode} {a0:0.3f} {num} {steps} {waveCount} {xif:0.3f} {tauf:0.3f}")
+    programPath = BIN_DIR/"laser_electron"
+    os.system(f"{programPath} {mode} {outputMode} {a0:0.3f} {num} {steps} {waveCount} {xif:0.3f} {tauf:0.3f}")
 
-    filename = "./output/out-data.bin"
+    filename = f"{OUTPUT_DIR}/out-data.bin"
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 16)
     
     x = data[:, 2] / wavelength
@@ -26,14 +33,14 @@ def plot_2d_colormap(method, a0, xif, tauf, i, wavelength, waveCount, num, steps
     plt.xlabel(r"Y [$\lambda$]")
     plt.ylabel(r"Z [$\lambda$]")
     plt.title(f"a0 = {a0:0.3f}")
-    filenameOut = f"./output-image/out-colormap-{i}.png"
+    filenameOut = f"{OUTPUT_IMAGE_DIR}/out-colormap-{i}.png"
     plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
     plt.close()
     print(f"Created colormap for a0 = {a0:0.3f}.")
     if(mode == 0):
-        os.rename(filenameOut, f"./output-image/out-colormap-electromag-{i}.png")
+        os.rename(filenameOut, f"{OUTPUT_IMAGE_DIR}/out-colormap-electromag-{i}.png")
     else:
-        os.rename(filenameOut, f"./output-image/out-colormap-pond-{i}.png")
+        os.rename(filenameOut, f"{OUTPUT_IMAGE_DIR}/out-colormap-pond-{i}.png")
 
 
 def plot_phases(method, a0, xif, tauf, i, wavelength, waveCount, num, steps):
@@ -42,13 +49,13 @@ def plot_phases(method, a0, xif, tauf, i, wavelength, waveCount, num, steps):
     else:
         mode = 1
     outputMode = 0 #Always output the full state
-    
-    os.system(f"./bins/laser_electron {mode} {outputMode} {a0:0.3f} {num} {steps} {waveCount} {xif:0.3f} {tauf:0.3f}")
+    programPath = BIN_DIR/"laser_electron"
+    os.system(f"{programPath} {mode} {outputMode} {a0:0.3f} {num} {steps} {waveCount} {xif:0.3f} {tauf:0.3f}")
 
-    filename = "./output/out-data.bin"
+    filename = f"{OUTPUT_DIR}/out-data.bin"
     data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
     fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
-    cmap = plt.get_cmap('viridis')
+    time_indices = np.arange(steps)
     
     for idx in range(num):
         traj = data[idx]
@@ -56,72 +63,107 @@ def plot_phases(method, a0, xif, tauf, i, wavelength, waveCount, num, steps):
         x = traj[:, 2] / wavelength
         y = traj[:, 6]
         
-        norm_index = idx / max(1, num - 1)
-        color = cmap(norm_index)
-        
-        ax.plot(x, y, color=color, linestyle='-', linewidth=1)
+        sc = ax.scatter(x, y, c=time_indices, cmap='viridis', s=0.5)
 
-    ax.set_title(f"Phase Space: $a_0 = {a0:0.3f}$ - $N = {num}$")
+    ax.set_title(f"Phase space: $a_0 = {a0:0.3f}$ - $N = {num}$")
     ax.set_xlabel(r"$y$ [$\lambda$]")
     ax.set_ylabel(r"$p_y$")
     
     ax.set_xlim(-1.1 * waveCount, 1.1 * waveCount)
     
-    filenameOut = f"./output-image/out-phase-space-{i}.png"
+    filenameOut = f"{OUTPUT_IMAGE_DIR}/out-phase-space-{i}.png"
     plt.savefig(filenameOut, bbox_inches='tight')
     plt.close()
-    if(method == 0):
-        os.rename(filenameOut, f"./output-image/out-phase-space-electromag-{i}.png")
+    if(mode == 0):
+        os.rename(filenameOut, f"{OUTPUT_IMAGE_DIR}/out-phase-space-electromag-{i}.png")
     else:
-        os.rename(filenameOut, f"./output-image/out-phase-space-pond-{i}.png")
+        os.rename(filenameOut, f"{OUTPUT_IMAGE_DIR}/out-phase-space-pond-{i}.png")
     
     print(f"Created phase plot for a0 = {a0:0.3f}.")
     
-def plot_exit_time(method, a0, i, wavelength, num, steps):
+def plot_phases_oscillator(a0, i, num, wavelength, waveCount):
+    programPath = f"{BIN_DIR}/oscillator"
+    os.system(f"{programPath} {a0:0.3f} {num}")
+
+    filename = f"{OUTPUT_DIR}/out-oscillator.bin"
+    data = np.fromfile(filename, dtype=np.float64).reshape(num, 4096, 3)
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
+    time_indices = np.arange(4096)
+    
+    for idx in range(num):
+        traj = data[idx]
+        
+        x = traj[:, 1] / wavelength
+        y = traj[:, 2]
+        
+        sc = ax.scatter(x, y, c=time_indices, cmap='viridis', s=0.5)
+
+    ax.set_title(f"Phase space (potential): $a_0 = {a0:0.3f}$ - $N = {num}$")
+    ax.set_xlabel(r"$y$ [$\lambda$]")
+    ax.set_ylabel(r"$p_y$")
+    
+    ax.set_xlim(-1.1 * waveCount, 1.1 * waveCount)
+
+    filenameOut = f"{OUTPUT_IMAGE_DIR}/out-phase-space-potential-{i}.png"
+    
+    plt.savefig(filenameOut, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Created potential phase plot for a0 = {a0:0.3f}.")
+
+
+def plot_enter_exit_time(method, a0, i, wavelength, num, steps):
     if method == "electromagnetic":
         mode = 0
     else:
         mode = 1
-    filename = "./output/out-data.bin"
-    os.system(f"./bins/find_exit_time {filename} {num} {steps}")
-    data = np.fromfile("./output/out-exit-time.bin", dtype=np.float64).reshape(-1, 2)
+    filename = f"{OUTPUT_DIR}/out-data.bin"
+    programPath = f"{BIN_DIR}/find_enter_exit_time"
+    enterExitTimePath = f"{OUTPUT_DIR}/out-enter-exit-time.bin"
+    os.system(f"{programPath} {filename} {num} {steps}")
+    data = np.fromfile(enterExitTimePath, dtype=np.float64).reshape(-1, 3)
     
     x = data[:, 0] / wavelength
-    y = data[:, 1] / 137.036
+    y1 = data[:, 1] / 137.036
+    y2 = data[:, 2] / 137.036
     
     plt.figure(figsize=(10,10))
-    plt.plot(x, y, linestyle='-', linewidth=1)
+    plt.plot(x, y1, linestyle='-', linewidth=1)
+    plt.plot(x, y2, linestyle='-', linewidth=1)
     plt.title(f"Exit time for $a_0$ = {a0:0.3f}")
     plt.xlabel(r"$y$ [$\lambda$]")
     plt.ylabel(f"t")
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filenameOut = f"./output-image/out-exit-time-{i}.png"
+    filenameOut = f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-{i}.png"
     plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
     plt.close()
-    print(f"Created exit time scatter plot for a0 = {a0:0.3f}.")
+    print(f"Created enter and exit time scatter plot for a0 = {a0:0.3f}.")
     if(mode == 0):
-        os.rename(filenameOut, f"./output-image/out-exit-time-electromag-{i}.png")
+        os.rename(filenameOut, f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-electromag-{i}.png")
     else:
-        os.rename(filenameOut, f"./output-image/out-exit-time-pond-{i}.png")
+        os.rename(filenameOut, f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-pond-{i}.png")
 
 def analyze_data(method, outputMaxP, outputExitTime, a0, waveCount, num):
-    filename= "./output/out-data.bin"
-    filenameOut = "./output/out-stats.bin"
+    filename= f"{OUTPUT_DIR}/out-data.bin"
+    filenameOut = f"{OUTPUT_DIR}/out-stats.bin"
     outputMaxP = int(outputMaxP == True)
     outputExitTime = int(outputExitTime == True)
-    os.system(f"./bins/data_analyst {filename} {num} {waveCount} {a0:0.3f} {outputMaxP} {outputExitTime}")
+    programPath = f"{BIN_DIR}/data_analyst"
+    os.system(f"{programPath} {filename} {num} {waveCount} {a0:0.3f} {outputMaxP} {outputExitTime}")
     if(method == "electromagnetic"):
-        os.rename(filenameOut, "./output/out-stats-1.bin")
+        os.rename(filenameOut, f"{OUTPUT_DIR}/out-stats-1.bin")
     else:
-        os.rename(filenameOut, "./output/out-stats-2.bin")
+        os.rename(filenameOut, f"{OUTPUT_DIR}/out-stats-2.bin")
 
 def plot_errors(a0, i, wavelength, num):
-    filename = "./output/out-error.bin"
-    os.system(f"./bins/error_calculator {a0:0.3f}")
+    filename = f"{OUTPUT_DIR}/out-error.bin"
+    filenameMaxPy = f"{OUTPUT_DIR}/out-max-py.bin"
+    programPath = f"{BIN_DIR}/error_calculator"
+    os.system(f"{programPath} {a0:0.3f}")
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
-    data2 = np.loadtxt("./output/out-max-py.txt").reshape(-1, 2)
+    data2 = np.fromfile(filenameMaxPy, dtype=np.float64).reshape(-1, 2)
     
     x = data[:, 0] / wavelength
     y = data[:, 1]
@@ -139,14 +181,14 @@ def plot_errors(a0, i, wavelength, num):
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filenameOut = f"./output-image/out-errors-{i}.png"
+    filenameOut = f"{OUTPUT_IMAGE_DIR}/out-errors-{i}.png"
     plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
     plt.close()
     print(f"Created error scatter plot for a0 = {a0:0.3f}.")
 
 def plot_max_py(a0, i):
-    filename = "./output/out-max-py.txt"
-    data = np.loadtxt(filename)
+    filename = f"{OUTPUT_DIR}/out-max-py.bin"
+    data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
     
     x = data[:, 0]
     y = data[:, 1]
@@ -159,13 +201,13 @@ def plot_max_py(a0, i):
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filenameOut = f"./output-image/out-max-py.png"
+    filenameOut = f"{OUTPUT_IMAGE_DIR}/out-max-py.png"
     plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
     plt.close()
     print(f"Created max(py) scatter plot for a0 = {a0:0.3f}.")
     
 def plot_average_errors(a0, i):
-    filename = "./output/out-average-error.bin"
+    filename = f"{OUTPUT_DIR}/out-average-error.bin"
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
     
     x = data[:, 0]
@@ -179,7 +221,7 @@ def plot_average_errors(a0, i):
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filenameOut = f"./output-image/out-average-errors.png"
+    filenameOut = f"{OUTPUT_IMAGE_DIR}/out-average-errors.png"
     plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
     plt.close()
     print(f"Created average error scatter plot.")

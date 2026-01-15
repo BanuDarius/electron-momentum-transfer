@@ -89,3 +89,27 @@ double DerivativeA(double *u, struct Laser *l, int index) {
 	dmuda *= IntegrateDMUDA(u, l, index);
 	return dmuda;
 }
+
+void ponderomotive(double *u, double *up, const double t) {
+	double a = ComputeA(u, l);
+	double mass = m * sqrt(1 + a);
+	double dmdx[4];
+	for(int i = 0; i < 4; i++)
+		dmdx[i] = 0.5 * DerivativeA(u, l, i) * m / sqrt(1 + a);
+	up[0] = u[4];
+	up[1] = u[5];
+	up[2] = u[6];
+	up[3] = u[7];
+	up[4] = - u[4] * u[4] * dmdx[0] / c + c * dmdx[0] - u[4] * u[5] * dmdx[1] - u[4] * u[6] * dmdx[2] - u[4] * u[7] * dmdx[3];
+	up[5] = - u[5] * u[4] * dmdx[0] / c - (c * c) * dmdx[1] - u[5] * u[5] * dmdx[1] - u[5] * u[6] * dmdx[2] - u[5] * u[7] * dmdx[3];
+	up[6] = - u[6] * u[4] * dmdx[0] / c - u[6] * u[5] * dmdx[1] - (c * c) * dmdx[2] - u[6] * u[6] * dmdx[2] - u[6] * u[7] * dmdx[3];
+	up[7] = - u[7] * u[4] * dmdx[0] / c - u[7] * u[5] * dmdx[1] - u[7] * u[6] * dmdx[2] - (c * c) * dmdx[3] - u[7] * u[7] * dmdx[3];
+	MultVec4(&up[4], 1.0 / mass);
+}
+
+void SetMode(void (**computeFunction)(double *, double *, double), int mode) {
+	if(mode == 0)
+		*computeFunction = electromag;
+	else if(mode == 1)
+		*computeFunction = ponderomotive;
+}

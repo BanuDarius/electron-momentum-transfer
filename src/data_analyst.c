@@ -5,8 +5,8 @@
 int main(int argc, char **argv) {
 	FILE *in = fopen(argv[1], "rb");
 	FILE *out = fopen("./output/out-stats.bin", "wb");
-	FILE *outDeriv = fopen("./output/out-deriv.txt", "a");
-	FILE *outMaxP = fopen("./output/out-max-py.txt", "a");
+	FILE *outDeriv = fopen("./output/out-deriv.bin", "ab");
+	FILE *outMaxP = fopen("./output/out-max-py.bin", "ab");
 
 	int steps = 4096;
 	int num = atoi(argv[2]), outputMaxP = atoi(argv[5]);
@@ -56,7 +56,8 @@ int main(int argc, char **argv) {
 			if(fabs(py) > maxP)
 				maxP = fabs(py);
 		}
-		fprintf(outMaxP, "%e %e\n", a0, maxP);
+		double v[2] = {a0, maxP};
+		fwrite(v, sizeof(double), 2, outMaxP);
 	}
 
 	for(int i = 0; i < steps; i++) {
