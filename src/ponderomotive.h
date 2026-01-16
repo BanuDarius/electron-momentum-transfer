@@ -1,101 +1,101 @@
-void PotentialDerivA(double *a, double *u, struct Laser *l, int index, int n) {
+void potential_deriv_a(double *a, double *u, struct laser *l, int index, int n) {
 	double potentialA0 = l[n].E0 * m / (l[n].omega * fabs(q));
-	double epsilon4[4], kVec4[4];
+	double epsilon4[4], k_vec4[4];
 
-	kVec4[0] = 1.0;
+	k_vec4[0] = 1.0;
 	epsilon4[0] = 0.0;
-	SetVec(&kVec4[1], l[n].n, 3);
-	MultVec4(kVec4, l[n].omega / c);
+	set_vec(&k_vec4[1], l[n].n, 3);
+	mult_vec4(k_vec4, l[n].omega / c);
 
-	double phi = Dot4Rel(kVec4, u) + l[n].psi;
+	double phi = dot4(k_vec4, u) + l[n].psi;
 	a[0] = 0.0;
 	double sign = (index > 0) ? -1.0 : +1.0;
 	for(int i = 0; i < 3; i++) {
 		double t1 = l[n].epsilon1[i] * l[n].zetax * (-sin(phi)) + l[n].epsilon2[i] * l[n].zetay * cos(phi);
 		double t2 = l[n].epsilon1[i] * l[n].zetax * (-cos(phi)) + l[n].epsilon2[i] * l[n].zetay * (-sin(phi));
-		a[i+1] = sign * potentialA0 * kVec4[index] * (Env(phi, l[n].xif) * t2 + EnvPrime(phi, l[n].xif) * t1);
+		a[i+1] = sign * potentialA0 * k_vec4[index] * (env(phi, l[n].xif) * t2 + env_prime(phi, l[n].xif) * t1);
 	}
 }
 
-void PotentialA(double *a, double *u, struct Laser *l, int n) {
+void potential_a(double *a, double *u, struct laser *l, int n) {
 	double potentialA0 = l[n].E0 * m / (l[n].omega * fabs(q));
-	double epsilon4[4], kVec4[4];
+	double epsilon4[4], k_vec4[4];
 
-	kVec4[0] = 1.0;
+	k_vec4[0] = 1.0;
 	epsilon4[0] = 0.0;
-	SetVec(&kVec4[1], l[n].n, 3);
-	MultVec4(kVec4, l[n].omega / c);
+	set_vec(&k_vec4[1], l[n].n, 3);
+	mult_vec4(k_vec4, l[n].omega / c);
 
-	double phi = Dot4Rel(kVec4, u) + l[n].psi;
-	double A0mult = Env(phi, l[n].xif) * potentialA0;
+	double phi = dot4(k_vec4, u) + l[n].psi;
+	double A0mult = env(phi, l[n].xif) * potentialA0;
 	a[0] = 0.0;
 	for(int i = 0; i < 3; i++)
 		a[i+1] = (l[n].epsilon1[i] * l[n].zetax * (-sin(phi)) + l[n].epsilon2[i] * l[n].zetay * cos(phi));
-	MultVec(&a[1], A0mult);
+	mult_vec(&a[1], A0mult);
 }
 
-double Integrate(double *u, struct Laser *l) {
+double integrate(double *u, struct laser *l) {
 	double integral = 0.0;
 	double a1[4], a1temp[4], utemp[4];
 	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) PONDEROMOTIVE_STEPS;
 	
-	SetVec(utemp, u, 4);
+	set_vec(utemp, u, 4);
 	utemp[0] -= lambda / 2.0;
 
 	for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
-		SetZeroN(a1, 4);
+		set_zero_n(a1, 4);
 		for(int j = 0; j < 2; j++) {
-			PotentialA(a1temp, utemp, l, j);
-			AddVec4(a1, a1temp);
+			potential_a(a1temp, utemp, l, j);
+			add_vec4(a1, a1temp);
 		}
-		integral += dh * Dot4Rel(a1, a1);
+		integral += dh * dot4(a1, a1);
 		utemp[0] += dh;
 	}
 	return integral;
 }
 
-double IntegrateDMUDA(double *u, struct Laser *l, int index) {
+double integrate_dmuda(double *u, struct laser *l, int index) {
 	double integral = 0.0;
 	double a1[4], a2[4], a1temp[4], a2temp[4], utemp[4];
 	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) PONDEROMOTIVE_STEPS;
 
-	SetVec(utemp, u, 4);
+	set_vec(utemp, u, 4);
 	utemp[0] -= lambda / 2.0;
 
 	for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
-		SetZeroN(a1, 4); SetZeroN(a2, 4);
+		set_zero_n(a1, 4); set_zero_n(a2, 4);
 		for(int j = 0; j < 2; j++) {
-			PotentialA(a1temp, utemp, l, j);
-			PotentialDerivA(a2temp, utemp, l, index, j);
-			AddVec4(a1, a1temp);
-			AddVec4(a2, a2temp);
+			potential_a(a1temp, utemp, l, j);
+			potential_deriv_a(a2temp, utemp, l, index, j);
+			add_vec4(a1, a1temp);
+			add_vec4(a2, a2temp);
 		}
-		integral += dh * Dot4Rel(a1, a2);
+		integral += dh * dot4(a1, a2);
 		utemp[0] += dh;
 	}
 	return integral;
 }
 
-double ComputeA(double *u, struct Laser *l) {
+double compute_a(double *u, struct laser *l) {
 	double lambda = 2.0 * pi * c / l[0].omega;
 	double a = - (q * q) / (m * m * c * c) * (1.0 / lambda);
-	a *= Integrate(u, l);
+	a *= integrate(u, l);
 	return a;
 }
 
-double DerivativeA(double *u, struct Laser *l, int index) {
+double derivative_a(double *u, struct laser *l, int index) {
 	double lambda = 2.0 * pi * c / l[0].omega;
 	double dmuda = - 2.0 * (q * q) / (m * m * c * c ) * (1.0 / lambda);
-	dmuda *= IntegrateDMUDA(u, l, index);
+	dmuda *= integrate_dmuda(u, l, index);
 	return dmuda;
 }
 
 void ponderomotive(double *u, double *up, const double t) {
-	double a = ComputeA(u, l);
+	double a = compute_a(u, l);
 	double mass = m * sqrt(1 + a);
 	double dmdx[4];
 	for(int i = 0; i < 4; i++)
-		dmdx[i] = 0.5 * DerivativeA(u, l, i) * m / sqrt(1 + a);
+		dmdx[i] = 0.5 * derivative_a(u, l, i) * m / sqrt(1 + a);
 	up[0] = u[4];
 	up[1] = u[5];
 	up[2] = u[6];
@@ -104,12 +104,12 @@ void ponderomotive(double *u, double *up, const double t) {
 	up[5] = - u[5] * u[4] * dmdx[0] / c - (c * c) * dmdx[1] - u[5] * u[5] * dmdx[1] - u[5] * u[6] * dmdx[2] - u[5] * u[7] * dmdx[3];
 	up[6] = - u[6] * u[4] * dmdx[0] / c - u[6] * u[5] * dmdx[1] - (c * c) * dmdx[2] - u[6] * u[6] * dmdx[2] - u[6] * u[7] * dmdx[3];
 	up[7] = - u[7] * u[4] * dmdx[0] / c - u[7] * u[5] * dmdx[1] - u[7] * u[6] * dmdx[2] - (c * c) * dmdx[3] - u[7] * u[7] * dmdx[3];
-	MultVec4(&up[4], 1.0 / mass);
+	mult_vec4(&up[4], 1.0 / mass);
 }
 
-void SetMode(void (**computeFunction)(double *, double *, double), int mode) {
+void set_mode(void (**compute_function)(double *, double *, double), int mode) {
 	if(mode == 0)
-		*computeFunction = electromag;
+		*compute_function = electromag;
 	else if(mode == 1)
-		*computeFunction = ponderomotive;
+		*compute_function = ponderomotive;
 }

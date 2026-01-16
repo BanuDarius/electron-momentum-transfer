@@ -1,64 +1,64 @@
-struct Particle {
+struct particle {
 	double u[8];
 };
 
-struct Laser {
+struct laser {
 	double E0, omega, xif, zetax, zetay, psi;
 	double epsilon1[3], epsilon2[3], n[3];
 };
 
-struct Laser *l;
+struct laser *l;
 
-struct SharedData {
+struct shared_data {
 	FILE *out;
 	double dtau;
 	double *ochunk;
-	struct Laser *l;
-	struct Particle *e;
-	int initIndex, finalIndex, steps, outputMode, num, id;
+	struct laser *l;
+	struct particle *e;
+	int initial_index, final_index, steps, output_mode, num, id;
 	void (*fc)(double*, double*, double);
 };
 
-void CalcE(double *E, double *u, struct Laser *l, int i) {
+void compute_e(double *E, double *u, struct laser *l, int i) {
 	double k = l[i].omega / c;
 	double t = u[0] / c;
 	double xif = l[i].xif;
-	double alpha = l[i].omega * t - k * Dot(l[i].n, &u[1]);
-	double Ec1 = Env(alpha + l[i].psi, xif);
-	double Ec2 = EnvPrime(alpha + l[i].psi, xif);
+	double alpha = l[i].omega * t - k * dot(l[i].n, &u[1]);
+	double Ec1 = env(alpha + l[i].psi, xif);
+	double Ec2 = env_prime(alpha + l[i].psi, xif);
 	double E1[3], E2[3];
 	for(int j = 0; j < 3; j++)
 		E1[j] = l[i].epsilon1[j] * l[i].zetax * cos(alpha) + l[i].epsilon2[j] * l[i].zetay * sin(alpha);
 	for(int j = 0; j < 3; j++)
 		E2[j] = l[i].epsilon1[j] * l[i].zetax * sin(alpha) + l[i].epsilon2[j] * l[i].zetay * (-cos(alpha));
-	MultVec(E1, Ec1);
-	MultVec(E2, Ec2);
-	SetVec(E, E1, 3);
-	AddVec(E, E2);
-	MultVec(E, l[i].E0);
+	mult_vec(E1, Ec1);
+	mult_vec(E2, Ec2);
+	set_vec(E, E1, 3);
+	add_vec(E, E2);
+	mult_vec(E, l[i].E0);
 }
 
-void CalcB(double *B, double *E, double *u, struct Laser *l, int i) {
-	Cross(l[i].n, E, B);
-	MultVec(B, 1/c);
+void compute_b(double *B, double *E, double *u, struct laser *l, int i) {
+	cross(l[i].n, E, B);
+	mult_vec(B, 1/c);
 }
 
-void ComputeEB(double *E, double *B, double *u) {
+void compute_eb(double *E, double *B, double *u) {
 	double Et[3], Bt[3];
 	for(int i = 0; i < 2; i++) {
-		SetZero(Et);
-		SetZero(Bt);
-		CalcE(Et, u, l, i);
-		CalcB(Bt, Et, u, l, i);
-		AddVec(E, Et);
-		AddVec(B, Bt);
+		set_zero(Et);
+		set_zero(Bt);
+		compute_e(Et, u, l, i);
+		compute_b(Bt, Et, u, l, i);
+		add_vec(E, Et);
+		add_vec(B, Bt);
 	}
 }
 
 void electromag(double *u, double *up, const double t) {
 	double E[3], B[3];
-	SetZero(E); SetZero(B);
-	ComputeEB(E, B, u);
+	set_zero(E); set_zero(B);
+	compute_eb(E, B, u);
 
 	up[0] = u[4];
 	up[1] = u[5];
@@ -68,23 +68,23 @@ void electromag(double *u, double *up, const double t) {
 	up[5] = E[0] * u[4] + B[2] * c * u[6] - B[1] * c * u[7];
 	up[6] = E[1] * u[4] - B[2] * c * u[5] + B[0] * c * u[7];
 	up[7] = E[2] * u[4] + B[1] * c * u[5] - B[0] * c * u[6];
-	MultVec4(&up[4], q / (m * c));
+	mult_vec4(&up[4], q / (m * c));
 }
 
-void SetPosition(struct Particle *p, double r, double h, double z, int i, int num, int outputMode) {
+void set_position(struct particle *p, double r, double h, double z, int i, int num, int output_mode) {
 	double wavelength = 2.0 * pi * c / 0.057;
-	if(outputMode == 0) {
+	if(output_mode == 0) {
 		p->u[1] = - r + 2.0 * i * r / num + 50.0;
 		p->u[2] = 0.0;
 	}
 	else {
-		p->u[1] = RandVal(h - r, h + r);
-		p->u[2] = RandVal(h - r, h + r);
+		p->u[1] = rand_val(h - r, h + r);
+		p->u[2] = rand_val(h - r, h + r);
 	}
-	p->u[3] = RandVal(h - z, h + z);
+	p->u[3] = rand_val(h - z, h + z);
 }
 
-void Rotate(double *u, double phi, double theta) {
+void rotate(double *u, double phi, double theta) {
 	double x, y, z;
 	y = u[1];
 	z = u[2];
@@ -96,56 +96,56 @@ void Rotate(double *u, double phi, double theta) {
 	u[1] = x * sin(theta) + y * cos(theta);
 }
 
-double *DirectionVec(double phiL, double thetaL) {
-	double *u = NewVec(3);
+double *direction_vec(double phiL, double thetaL) {
+	double *u = new_vec(3);
 	u[0] = 0.0;
 	u[1] = 0.0;
 	u[2] = 1.0;
-	Rotate(u, phiL, thetaL);
+	rotate(u, phiL, thetaL);
 	return u;
 }
 
-void Epsilon(double *u, double *w) {
+void epsilon(double *u, double *w) {
 	double v[3];
 	v[0] = 1.0;
 	v[1] = 0.0;
 	v[2] = 0.0;
-	Cross(u, v, w);
-	double mag = Magnitude(w);
-	double scale = Magnitude(u);
+	cross(u, v, w);
+	double mag = magnitude(w);
+	double scale = magnitude(u);
 	for (int i = 0; i < 3; i++)
 		w[i] = scale * w[i] / mag;
 }
 
-void SetInitialVel(double *vi, double m, double phi, double theta) {
-	SetVec(vi, DirectionVec(phi, theta), 3);
-	MultVec(vi, m);
+void set_initial_vel(double *vi, double m, double phi, double theta) {
+	set_vec(vi, direction_vec(phi, theta), 3);
+	mult_vec(vi, m);
 }
 
-void SetLaser(struct Laser *l, double E0, double phi, double theta, double xif, double omega, double psi) {
+void set_laser(struct laser *l, double E0, double phi, double theta, double xif, double omega, double psi) {
 	l->E0 = E0;
 	l->psi = psi;
 	l->xif = xif;
 	l->zetax = 0.0;
 	l->zetay = 1.0;
 	l->omega = omega;
-	double *nv = DirectionVec(phi, theta);
+	double *nv = direction_vec(phi, theta);
 	double epsilon1[3];
 	double epsilon2[3];
-	Epsilon(nv, epsilon1);
-	Cross(nv, epsilon1, epsilon2);
-	SetVec(l->n, nv, 3);
-	SetVec(l->epsilon1, epsilon1, 3);
-	SetVec(l->epsilon2, epsilon2, 3);
+	epsilon(nv, epsilon1);
+	cross(nv, epsilon1, epsilon2);
+	set_vec(l->n, nv, 3);
+	set_vec(l->epsilon1, epsilon1, 3);
+	set_vec(l->epsilon2, epsilon2, 3);
 	free(nv);
 }
 
-void SetParticles(struct Particle *p, int num, double r, double h, double z, double phi, double theta, double *vi, int outputMode) {
+void set_particles(struct particle *p, int num, double r, double h, double z, double phi, double theta, double *vi, int output_mode) {
 	for(int i = 0; i < num; i++) {
 		p[i].u[0] = 0;
-		SetPosition(&p[i], r, h, z, i, num, outputMode);
-		Rotate(&p[i].u[1], phi, theta);
-		double gamma = Gamma(vi);
+		set_position(&p[i], r, h, z, i, num, output_mode);
+		rotate(&p[i].u[1], phi, theta);
+		double gamma = compute_gamma(vi);
 		p[i].u[4] = m * c * gamma;
 		p[i].u[5] = m * vi[0] * gamma;
 		p[i].u[6] = m * vi[1] * gamma;
@@ -153,8 +153,8 @@ void SetParticles(struct Particle *p, int num, double r, double h, double z, dou
 	}
 }
 
-void SetSharedData(struct SharedData *sdata, struct Particle *e, struct Laser *l, FILE *out, double *ochunk,
-int num, int steps, double dtau, int outputMode, void (*fc)(double*, double*, double)) {
+void set_shared_data(struct shared_data *sdata, struct particle *e, struct laser *l, FILE *out, double *ochunk,
+int num, int steps, double dtau, int output_mode, void (*fc)(double*, double*, double)) {
 	for(int i = 0; i < CORE_NUM; i++) {
 		sdata[i].l = l;
 		sdata[i].e = e;
@@ -165,19 +165,19 @@ int num, int steps, double dtau, int outputMode, void (*fc)(double*, double*, do
 		sdata[i].dtau = dtau;
 		sdata[i].steps = steps;
 		sdata[i].ochunk = ochunk;
-		sdata[i].outputMode = outputMode;
-		sdata[i].finalIndex = FinalIndex(num, i);
-		sdata[i].initIndex = InitialIndex(num, i);
+		sdata[i].output_mode = output_mode;
+		sdata[i].final_index = final_index(num, i);
+		sdata[i].initial_index = initial_index(num, i);
 	}
 }
 
-void CheckErrors(void *out, void *sdata) {
+void check_errors(void *out, void *sdata) {
 	if(sdata == NULL) {
-		perror("Shared data cannot be created");
+		perror("Shared data cannot be created.");
 		abort();
 	}
 	if(out == NULL) {
-		perror("Cannot open file");
+		perror("Cannot open file.");
 		abort();
 	}
 }
