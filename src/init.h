@@ -12,9 +12,9 @@ struct laser *l;
 struct shared_data {
 	FILE *out;
 	double dtau;
-	double *ochunk;
 	struct laser *l;
 	struct particle *e;
+	double *out_chunk;
 	int initial_index, final_index, steps, output_mode, num, id;
 	void (*fc)(double*, double*, double);
 };
@@ -45,7 +45,7 @@ void compute_b(double *B, double *E, double *u, struct laser *l, int i) {
 
 void compute_eb(double *E, double *B, double *u) {
 	double Et[3], Bt[3];
-	for(int i = 0; i < 2; i++) {
+	for(int i = 0; i < NUM_LASERS; i++) {
 		set_zero(Et);
 		set_zero(Bt);
 		compute_e(Et, u, l, i);
@@ -153,7 +153,7 @@ void set_particles(struct particle *p, int num, double r, double h, double z, do
 	}
 }
 
-void set_shared_data(struct shared_data *sdata, struct particle *e, struct laser *l, FILE *out, double *ochunk,
+void set_shared_data(struct shared_data *sdata, struct particle *e, struct laser *l, FILE *out, double *out_chunk,
 int num, int steps, double dtau, int output_mode, void (*fc)(double*, double*, double)) {
 	for(int i = 0; i < CORE_NUM; i++) {
 		sdata[i].l = l;
@@ -164,7 +164,7 @@ int num, int steps, double dtau, int output_mode, void (*fc)(double*, double*, d
 		sdata[i].num = num;
 		sdata[i].dtau = dtau;
 		sdata[i].steps = steps;
-		sdata[i].ochunk = ochunk;
+		sdata[i].out_chunk = out_chunk;
 		sdata[i].output_mode = output_mode;
 		sdata[i].final_index = final_index(num, i);
 		sdata[i].initial_index = initial_index(num, i);

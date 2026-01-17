@@ -23,7 +23,6 @@
 #include "init.h"
 #include "ponderomotive.h"
 
-
 void *simulate(void *data) {
 	struct shared_data *sdata = (struct shared_data*)data;
 	struct particle *e = sdata->e;
@@ -34,7 +33,7 @@ void *simulate(void *data) {
 	FILE *out = sdata->out;
 	int steps = sdata->steps;
 	double dtau = sdata->dtau;
-	double *ochunk = sdata->ochunk;
+	double *out_chunk = sdata->out_chunk;
 	int initial_index = sdata->initial_index;
 	int final_index = sdata->final_index;
 	int output_mode = sdata->output_mode;
@@ -59,26 +58,28 @@ void *simulate(void *data) {
 	if(run)
 	for(int k = initial_index; k < final_index; k++) {
 		tau = 0;
-		copy_initial(ochunk, e[k].u, (k - initial_index) % CHUNK_SIZE, id);
+		copy_initial(out_chunk, e[k].u, (k - initial_index) % CHUNK_SIZE, id);
 		for(int i = 0; i < steps; i++) {
 			std::copy(e[k].u, e[k].u + U_SIZE, newV.begin());
 			stepper.do_step(arrayFC, newV, tau, dtau);
 			std::copy(newV.begin(), newV.end(), e[k].u);
 			tau += dtau;
-			if(output_mode == 0 && id == 0)
+			if(output_mode == 0 && i % 2 == 0) {
 				fwrite(&e[k].u[0], sizeof(double), 8, out);
+				if((k + 1) % CHUNK_SIZE == 0 && i == 0) printf("Particles processed: %i/%i.\n", k + 1, final_index);
+			}
 		}
 		if(output_mode == 1) {
 			for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
-				ochunk[id * 2 * U_SIZE * CHUNK_SIZE + chunk_current + j] = e[k].u[j - U_SIZE];
+				out_chunk[id * 2 * U_SIZE * CHUNK_SIZE + chunk_current + j] = e[k].u[j - U_SIZE];
 			}
 			chunk_current += 2 * U_SIZE;
 			if((k + 1) % CHUNK_SIZE == 0 && k - initial_index != 0) {
 				pthread_barrier_wait(&barrier_compute);
 				if(id == 0) {
-					printf("particles processed: %i/%i.\n", CORE_NUM * (k - initial_index + 1), CORE_NUM * final_index);
-					print_chunk(out, ochunk);
-					set_zero_n(ochunk, 2 * U_SIZE * CHUNK_SIZE * CORE_NUM);
+					printf("Particles processed: %i/%i.\n", CORE_NUM * (k - initial_index + 1), CORE_NUM * final_index);
+					print_chunk(out, out_chunk);
+					set_zero_n(out_chunk, 2 * U_SIZE * CHUNK_SIZE * CORE_NUM);
 				}
 				chunk_current = 0;
 				pthread_barrier_wait(&barrier_sync);
@@ -110,7 +111,7 @@ int main(int argc, char **argv) {
 
 	l = (struct laser*)malloc(2 * sizeof(struct laser));
 	struct particle *e = (struct particle*)malloc(num * sizeof(struct particle));
-	double *ochunk = new_vec(2 * U_SIZE * CHUNK_SIZE * CORE_NUM);
+	double *out_chunk = new_vec(2 * U_SIZE * CHUNK_SIZE * CORE_NUM);
 	struct shared_data *sdata = (struct shared_data*)malloc(CORE_NUM * sizeof(struct shared_data));
 	void (*compute_function)(double*, double*, double);
 
@@ -122,7 +123,7 @@ int main(int argc, char **argv) {
 	set_laser(&l[1], E0, alpha, -beta, xif, omega, -60.0 * pi);
 	set_particles(e, num, r, h, z, pi / 2.0, pi / 2.0, vi, output_mode);
 	//Output mode "0" for all positions and velocities, "1" for only the final positions and velocities
-	set_shared_data(sdata, e, l, out, ochunk, num, steps, dtau, output_mode, compute_function);
+	set_shared_data(sdata, e, l, out, out_chunk, num, steps, dtau, output_mode, compute_function);
 
 	printf("Start simulation.\n");
 	for(int i = 0; i < CORE_NUM; i++)

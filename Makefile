@@ -14,9 +14,9 @@ BINS_CPP := $(patsubst src/%.cpp, bins/%, $(SRCS_CPP))
 
 DEPS := $(BINS_C:%=%.d) $(BINS_CPP:%=%.d)
 
-.PHONY: all clean
+.PHONY: all clean clean_outputs
 
-all: bins_dir $(BINS_C) $(BINS_CPP)
+all: bins_dir $(BINS_C) $(BINS_CPP) finish_all
 
 bins_dir:
 	@mkdir -p bins
@@ -26,13 +26,19 @@ bins_dir:
 
 $(BINS_C): bins/%: src/%.c | bins_dir
 	@$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
-	@echo "Compiled C program: $@"
+	@echo "Compiled C program: $@."
 
 $(BINS_CPP): bins/%: src/%.cpp | bins_dir
 	@$(CXX) $(CXXFLAGS) $< -o $@ $(LDLIBS)
-	@echo "Compiled C++ program: $@"
+	@echo "Compiled C++ program: $@."
+
+finish_all:
+	@echo "Completed compilation."
 
 -include $(DEPS)
 
 clean:
 	rm -r bins
+
+clean_outputs:
+	rm -r output output-image output-video

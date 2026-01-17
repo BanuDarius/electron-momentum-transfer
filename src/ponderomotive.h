@@ -44,7 +44,7 @@ double integrate(double *u, struct laser *l) {
 
 	for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
 		set_zero_n(a1, 4);
-		for(int j = 0; j < 2; j++) {
+		for(int j = 0; j < NUM_LASERS; j++) {
 			potential_a(a1temp, utemp, l, j);
 			add_vec4(a1, a1temp);
 		}
@@ -64,7 +64,7 @@ double integrate_dmuda(double *u, struct laser *l, int index) {
 
 	for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
 		set_zero_n(a1, 4); set_zero_n(a2, 4);
-		for(int j = 0; j < 2; j++) {
+		for(int j = 0; j < NUM_LASERS; j++) {
 			potential_a(a1temp, utemp, l, j);
 			potential_deriv_a(a2temp, utemp, l, index, j);
 			add_vec4(a1, a1temp);

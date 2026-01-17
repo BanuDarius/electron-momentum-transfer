@@ -3,12 +3,12 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
-	int steps = 4096;
-	FILE *in_a = fopen("./output/out-stats-1.bin", "rb"), *in_b = fopen("./output/out-stats-2.bin", "rb");
+	int num = atoi(argv[1]);
+	FILE *in_a = fopen("./output/out-final-py-electromag.bin", "rb"), *in_b = fopen("./output/out-final-py-pond.bin", "rb");
 	FILE *out = fopen("./output/out-error.bin", "wb"), *out_average_error = fopen("./output/out-average-error.bin", "ab");
-	double sum = 0.0, a0 = atof(argv[1]);
+	double sum = 0.0, a0 = atof(argv[2]);
 
-	for(int i = 0; i < steps; i++) {
+	for(int i = 0; i < num; i++) {
 		double data[4];
 		fread(&data[0], sizeof(double), 2, in_a);
 		fread(&data[2], sizeof(double), 2, in_b);
@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
 		sum += error;
 	}
 
-	double average = sum / ((double) steps);
+	double average = sum / ((double) num);
 	fwrite(&a0, sizeof(double), 1, out_average_error);
 	fwrite(&average, sizeof(double), 1, out_average_error);
 

@@ -6,6 +6,7 @@ double pi = 3.1415926535;
 
 #define U_SIZE 8
 #define CORE_NUM 4
+#define NUM_LASERS 2
 #define CHUNK_SIZE 100
 #define PONDEROMOTIVE_STEPS 32
 #define DEG_TO_RAD (pi / 180.0)
@@ -28,9 +29,9 @@ void copy_initial(double *ch, double *u, int k, int id) {
 	}
 }
 
-void set_chunk(double *ochunk, double *chunk, int init, int fin) {
+void set_chunk(double *out_chunk, double *chunk, int init, int fin) {
 	for(int i = init; i < fin; i++) {
-		ochunk[i] = chunk[i-init];
+		out_chunk[i] = chunk[i-init];
 	}
 }
 
