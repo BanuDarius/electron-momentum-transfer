@@ -40,5 +40,5 @@ finish_all:
 clean:
 	rm -r bins
 
-clean_outputs:
+clean_output:
 	rm -r output output-image output-video

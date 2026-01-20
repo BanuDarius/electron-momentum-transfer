@@ -36,33 +36,86 @@ void potential_a(double *a, double *u, struct laser *l, int n) {
 
 double integrate(double *u, struct laser *l) {
 	double integral = 0.0;
-	double a1[4], a1temp[4], utemp[4];
+	double a1_left[4], a1_right[4], a1_mid[4], a1_temp[4], u_temp[4];
 	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) PONDEROMOTIVE_STEPS;
 	
-	set_vec(utemp, u, 4);
-	utemp[0] -= lambda / 2.0;
+	set_vec(u_temp, u, 4);
+	u_temp[0] -= lambda / 2.0;
 
 	for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
-		set_zero_n(a1, 4);
+		set_zero_n(a1_left, 4);
+		set_zero_n(a1_mid, 4);
+		set_zero_n(a1_right, 4);
+		
 		for(int j = 0; j < NUM_LASERS; j++) {
-			potential_a(a1temp, utemp, l, j);
-			add_vec4(a1, a1temp);
+			potential_a(a1_temp, u_temp, l, j);
+			add_vec4(a1_left, a1_temp);
+			u_temp[0] += dh / 2.0;
+			
+			potential_a(a1_temp, u_temp, l, j);
+			add_vec4(a1_mid, a1_temp);
+			u_temp[0] += dh / 2.0;
+			
+			potential_a(a1_temp, u_temp, l, j);
+			add_vec4(a1_right, a1_temp);
+			
+			u_temp[0] -= dh;
 		}
-		integral += dh * dot4(a1, a1);
-		utemp[0] += dh;
+		
+		integral += dh / 6.0 * (dot4(a1_left, a1_left) + 4.0 * dot4(a1_mid, a1_mid) + dot4(a1_right, a1_right));
+		u_temp[0] += dh;
 	}
 	return integral;
+	/*for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
+	set_zero_n(a1_temp, 4);
+	for(int j = 0; j < NUM_LASERS; j++) {
+		potential_a(a1temp, utemp, l, j);
+		add_vec4(a1, a1temp);
+	}
+	integral += dh * dot4(a1, a1);
+	utemp[0] += dh;
+	}*/
 }
 
 double integrate_dmuda(double *u, struct laser *l, int index) {
 	double integral = 0.0;
-	double a1[4], a2[4], a1temp[4], a2temp[4], utemp[4];
+	double a1_left[4], a1_right[4], a1_mid[4], a2_left[4], a2_right[4], a2_mid[4], a1_temp[4], a2_temp[4], u_temp[4];
 	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) PONDEROMOTIVE_STEPS;
 
-	set_vec(utemp, u, 4);
-	utemp[0] -= lambda / 2.0;
+	set_vec(u_temp, u, 4);
+	u_temp[0] -= lambda / 2.0;
 
 	for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
+		set_zero_n(a1_left, 4); set_zero_n(a1_right, 4);
+		set_zero_n(a1_mid, 4); set_zero_n(a2_mid, 4);
+		set_zero_n(a2_left, 4); set_zero_n(a2_right, 4);
+		
+		for(int j = 0; j < NUM_LASERS; j++) {
+			potential_a(a1_temp, u_temp, l, j);
+			potential_deriv_a(a2_temp, u_temp, l, index, j);
+			add_vec4(a1_left, a1_temp);
+			add_vec4(a2_left, a2_temp);
+			u_temp[0] += dh / 2.0;
+			
+			potential_a(a1_temp, u_temp, l, j);
+			potential_deriv_a(a2_temp, u_temp, l, index, j);
+			add_vec4(a1_mid, a1_temp);
+			add_vec4(a2_mid, a2_temp);
+			u_temp[0] += dh / 2.0;
+			
+			potential_a(a1_temp, u_temp, l, j);
+			potential_deriv_a(a2_temp, u_temp, l, index, j);
+			add_vec4(a1_right, a1_temp);
+			add_vec4(a2_right, a2_temp);
+			
+			u_temp[0] -= dh;
+		}
+		
+		integral += dh / 6.0 * (dot4(a1_left, a2_left) + 4.0 * dot4(a1_mid, a2_mid) + dot4(a1_right, a2_right));
+		u_temp[0] += dh;
+	}
+	return integral;
+	/*for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
 		set_zero_n(a1, 4); set_zero_n(a2, 4);
 		for(int j = 0; j < NUM_LASERS; j++) {
 			potential_a(a1temp, utemp, l, j);
@@ -72,8 +125,7 @@ double integrate_dmuda(double *u, struct laser *l, int index) {
 		}
 		integral += dh * dot4(a1, a2);
 		utemp[0] += dh;
-	}
-	return integral;
+	}*/
 }
 
 double compute_a(double *u, struct laser *l) {

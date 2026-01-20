@@ -10,13 +10,13 @@ framerate = 3
 a0_array = []
 
 num_full = 32000
-num_phase = 256
-sweep_steps = 8
+num_phase = 1024
+sweep_steps = 20
 wave_count = 1
 steps_electromag = 4096
-steps_pond = 128
+steps_pond = 512
 tauf = 8000
-xif = 4.0 * 3.141592
+xif = 8.0 * 3.141592
 
 steps_electromag_final = int(steps_electromag / 2)
 steps_pond_final = int(steps_pond / 2)
@@ -24,7 +24,7 @@ steps_pond_final = int(steps_pond / 2)
 if __name__ == "__main__":
     programs.clean_output_folder()
     for i in range(0, sweep_steps):
-        a0 = 0.005 + i / 2000
+        a0 = 0.005 + i / 100
         a0_array.append(a0)
         
         #programs.run_simulation("electromagnetic", final_states, a0, xif, tauf, wave_count, num_full, steps_electromag)
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         
         programs.find_max_py("electromagnetic", a0, num_phase, steps_electromag_final)
         
-        plots.plot_phases("electromagnetic", a0, wave_count, num_phase, steps_electromag_final, i)
+        #plots.plot_phases("electromagnetic", a0, wave_count, num_phase, steps_electromag_final, i)
         
         # ----------------------------------- #
 
@@ -53,11 +53,10 @@ if __name__ == "__main__":
         
         plots.plot_enter_exit_time("ponderomotive", a0, num_phase, steps_pond_final, i)
 
-        plots.plot_phases("ponderomotive", a0, wave_count, num_phase, steps_pond_final, i)
+        #plots.plot_phases("ponderomotive", a0, wave_count, num_phase, steps_pond_final, i)
         
         # ---------------------------------- #
         programs.calculate_errors(a0, num_phase)
-        
         plots.plot_errors(a0, num_phase, i)
         
         print(f"Ended parameter sweep step: {i}/{sweep_steps}.")

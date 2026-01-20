@@ -8,7 +8,7 @@ double pi = 3.1415926535;
 #define CORE_NUM 4
 #define NUM_LASERS 2
 #define CHUNK_SIZE 100
-#define PONDEROMOTIVE_STEPS 32
+#define PONDEROMOTIVE_STEPS 4
 #define DEG_TO_RAD (pi / 180.0)
 
 pthread_barrier_t barrier_sync, barrier_compute;

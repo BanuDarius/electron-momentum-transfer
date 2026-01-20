@@ -97,7 +97,7 @@ def plot_2d_heatmap_all(method, a0_array, sweep_steps, num, wave_count):
         py = data[idx, :, 1]
         a0_now = np.full(num, a0_current, dtype=np.float64)
         
-        sc = ax.scatter(pos, a0_now, c=py, cmap='RdBu_r', s=5)
+        sc = ax.scatter(pos, a0_now, c=py, cmap='RdBu_r', s=5, marker='s')
 
     plt.xlim(-wave_count, wave_count)
     plt.ylim(min(a0_array), max(a0_array))
