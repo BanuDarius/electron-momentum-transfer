@@ -12,14 +12,14 @@ OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
 # ----------------------------------------------------------------------- #
 
-def run_simulation(method, output_mode, a0, xif, tauf, wave_count, num, steps):
+def run_simulation(method, output_mode, a0, xif, tauf, wave_count, num, steps, substeps):
     programPath = BIN_DIR/"laser_electron"
     if method == "electromagnetic":
         mode = 0
     else:
         mode = 1
     output_mode = int(output_mode == True)
-    os.system(f"{programPath} {mode} {output_mode} {a0:0.3f} {num} {steps} {wave_count} {xif:0.3f} {tauf:0.3f}")
+    os.system(f"{programPath} {mode} {output_mode} {a0:0.3f} {num} {steps} {wave_count} {xif:0.3f} {tauf:0.3f} {substeps}")
 
 # ----------------------------------------------------------------------- #
 
@@ -40,7 +40,7 @@ def find_max_py(method, a0, num, steps):
         filenameIn = f"{OUTPUT_DIR}/out-final-py-pond.bin"
     
     programPath = f"{BIN_DIR}/find_max_py"
-
+    
     os.system(f"{programPath} {filenameIn} {num} {steps} {a0:0.3f} {filenameOut}")
 
 # ----------------------------------------------------------------------- #
@@ -54,7 +54,7 @@ def find_final_py(method, num, steps):
         filenameOutAll = f"{OUTPUT_DIR}/out-final-py-all-pond.bin"
     filename = f"{OUTPUT_DIR}/out-data.bin"
     programPath = f"{BIN_DIR}/find_final_py"
-
+    
     os.system(f"{programPath} {filename} {num} {steps} {filenameOut} {filenameOutAll}")
 
 # ----------------------------------------------------------------------- #
@@ -73,7 +73,7 @@ def clean_output_folder():
         os.remove(f"{OUTPUT_DIR}/{filenames[i]}")
 
 # ----------------------------------------------------------------------- #
-     
+
 def clean_image_folder():
     filenames = [f for f in os.listdir(OUTPUT_IMAGE_DIR) if not f.startswith('_')]
     for i in range(len(filenames)):

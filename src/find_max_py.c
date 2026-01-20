@@ -7,12 +7,12 @@ int main(int argc, char **argv) {
 	//FILE *out = fopen("./output/out-stats.bin", "wb");
 	//FILE *out_deriv = fopen("./output/out-deriv.bin", "ab");
 	FILE *out_max_py= fopen(argv[5], "ab");
-
+	
 	int num = atoi(argv[2]), steps = atoi(argv[3]);
 	double a0 = atof(argv[4]);
 	double data[num];
 	double t[2];
-
+	
 	for(int i = 0; i < num; i++) {
 		fread(t, sizeof(double), 2, in);
 		data[i] = t[1];
@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 	}
 	double v[2] = {a0, max_py};
 	fwrite(v, sizeof(double), 2, out_max_py);
-
+	
 	/*int centerIndex = size / 2 + size / (8 * wave_count);
 	fprintf(outDeriv, "%e ", a0);
 	for(int i = 0; i < 2 * wave_count; i++) {
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 		centerIndex += 2 * size / (8 * wave_count);
 	}
 	fprintf(outDeriv, "\n");*/
-
+	
 	fclose(out_max_py); fclose(in);
 	printf("Ended calculating max(py).\n");
 	return 0;

@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
 	FILE *in_a = fopen("./output/out-final-py-electromag.bin", "rb"), *in_b = fopen("./output/out-final-py-pond.bin", "rb");
 	FILE *out = fopen("./output/out-error.bin", "wb"), *out_average_error = fopen("./output/out-average-error.bin", "ab");
 	double sum = 0.0, a0 = atof(argv[2]);
-
+	
 	for(int i = 0; i < num; i++) {
 		double data[4];
 		fread(&data[0], sizeof(double), 2, in_a);
@@ -17,11 +17,11 @@ int main(int argc, char **argv) {
 		fwrite(&error, sizeof(double), 1, out);
 		sum += error;
 	}
-
+	
 	double average = sum / ((double) num);
 	fwrite(&a0, sizeof(double), 1, out_average_error);
 	fwrite(&average, sizeof(double), 1, out_average_error);
-
+	
 	printf("Ended error calculation.\n");
 	fclose(out_average_error);
 	fclose(in_a); fclose(in_b); fclose(out);

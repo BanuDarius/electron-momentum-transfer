@@ -20,13 +20,13 @@ def plot_2d_colormap(method, a0, wave_count, i):
     else:
         filenameOut = f"{OUTPUT_IMAGE_DIR}/out-colormap-pond-{i}.png"
     filename = f"{OUTPUT_DIR}/out-data.bin"
-
+    
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 16)
     
     x = data[:, 2] / wavelength
     y = data[:, 3] / wavelength
     c = data[:, 14]
-
+    
     plt.figure(figsize=(10,10))
     plt.scatter(x, y, c=c, s=3, cmap='RdBu_r')
     plt.xlim(-wave_count, wave_count)
@@ -64,7 +64,7 @@ def plot_phases(method, a0, wave_count, num, steps, i):
         y = traj[:, 6]
         
         sc = ax.scatter(x, y, c=time_indices, cmap='viridis', s=0.5)
-
+        
     ax.set_title(f"Phase space: $a_0 = {a0:0.3f}$ - $N = {num}$")
     ax.set_xlabel(r"$y$ [$\lambda$]")
     ax.set_ylabel(r"$p_y$")
@@ -73,7 +73,7 @@ def plot_phases(method, a0, wave_count, num, steps, i):
     
     plt.savefig(filenameOut, bbox_inches='tight')
     plt.close()
-
+    
     
     print(f"Created phase plot for a0 = {a0:0.3f}.")
     
@@ -85,8 +85,8 @@ def plot_2d_heatmap_all(method, a0_array, sweep_steps, num, wave_count):
         filenameOut = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-electromag.png"
     else:
         filenameIn = f"{OUTPUT_DIR}/out-final-py-all-pond.bin"
-        filenameOut = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-pond.png.png"
-
+        filenameOut = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-pond.png"
+        
     data = np.fromfile(filenameIn, dtype=np.float64).reshape(sweep_steps, num, 2)
     fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
     
@@ -97,8 +97,8 @@ def plot_2d_heatmap_all(method, a0_array, sweep_steps, num, wave_count):
         py = data[idx, :, 1]
         a0_now = np.full(num, a0_current, dtype=np.float64)
         
-        sc = ax.scatter(pos, a0_now, c=py, cmap='RdBu_r', s=5, marker='s')
-
+        sc = ax.scatter(pos, a0_now, c=py, cmap='RdBu_r', s=1, marker='s')
+        
     plt.xlim(-wave_count, wave_count)
     plt.ylim(min(a0_array), max(a0_array))
     plt.xlabel(r"Y [$\lambda$]")
@@ -107,7 +107,7 @@ def plot_2d_heatmap_all(method, a0_array, sweep_steps, num, wave_count):
     plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
     plt.close()
 
-    print(f"Created 2D heatmap of full parameter sweep.")
+    print(f"Created 2D heatmap of full {method} parameter sweep.")
 
 # ----------------------------------------------------------------------- #
 
@@ -133,7 +133,7 @@ def plot_phases_oscillator(a0, i, num, wavelength, wave_count):
     ax.set_ylabel(r"$p_y$")
     
     ax.set_xlim(-1.1 * wave_count, 1.1 * wave_count)
-
+    
     filenameOut = f"{OUTPUT_IMAGE_DIR}/out-phase-space-potential-{i}.png"
     
     plt.savefig(filenameOut, bbox_inches='tight')
