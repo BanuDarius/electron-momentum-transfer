@@ -16,9 +16,9 @@ wavelength = 2 * 3.141592 * 137.036 / 0.057
 
 def plot_2d_colormap(method, a0, wave_count, i):
     if(method == "electromagnetic"):
-        filenameOut = f"{OUTPUT_IMAGE_DIR}/out-colormap-electromag-{i}.png"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-electromag-{i}.png"
     else:
-        filenameOut = f"{OUTPUT_IMAGE_DIR}/out-colormap-pond-{i}.png"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-pond-{i}.png"
     filename = f"{OUTPUT_DIR}/out-data.bin"
     
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 16)
@@ -34,8 +34,8 @@ def plot_2d_colormap(method, a0, wave_count, i):
     plt.xlabel(r"Y [$\lambda$]")
     plt.ylabel(r"Z [$\lambda$]")
     plt.title(f"a0 = {a0:0.3f}")
-    filenameOut = f"{OUTPUT_IMAGE_DIR}/out-colormap-{i}.png"
-    plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
+    filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-{i}.png"
+    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
         
     print(f"Created colormap for a0 = {a0:0.3f}.")
@@ -44,9 +44,9 @@ def plot_2d_colormap(method, a0, wave_count, i):
 
 def plot_phases(method, a0, wave_count, num, steps, i):
     if(method == "electromagnetic"):
-        filenameOut = f"{OUTPUT_IMAGE_DIR}/out-phase-space-electromag-{i}.png"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-electromag-{i}.png"
     else:
-        filenameOut = f"{OUTPUT_IMAGE_DIR}/out-phase-space-pond-{i}.png"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-pond-{i}.png"
     filename = f"{OUTPUT_DIR}/out-data.bin"
     filenameExit = f"{OUTPUT_DIR}/out-enter-exit-time.bin"
     
@@ -71,7 +71,7 @@ def plot_phases(method, a0, wave_count, num, steps, i):
     
     ax.set_xlim(-1.1 * wave_count, 1.1 * wave_count)
     
-    plt.savefig(filenameOut, bbox_inches='tight')
+    plt.savefig(filename_out, bbox_inches='tight')
     plt.close()
     
     
@@ -81,17 +81,20 @@ def plot_phases(method, a0, wave_count, num, steps, i):
 
 def plot_2d_heatmap_all(method, a0_array, sweep_steps, num, wave_count):
     if(method == "electromagnetic"):
-        filenameIn = f"{OUTPUT_DIR}/out-final-py-all-electromag.bin"
-        filenameOut = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-electromag.png"
+        filename_in = f"{OUTPUT_DIR}/out-final-py-all-electromag.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-electromag.png"
+        filename_in_max_py = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
     else:
-        filenameIn = f"{OUTPUT_DIR}/out-final-py-all-pond.bin"
-        filenameOut = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-pond.png"
+        filename_in = f"{OUTPUT_DIR}/out-final-py-all-pond.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-pond.png"
+        filename_in_max_py = f"{OUTPUT_DIR}/out-max-py-pond.bin"
         
-    data = np.fromfile(filenameIn, dtype=np.float64).reshape(sweep_steps, num, 2)
+    data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
+    data_max_py = np.fromfile(filename_in_max_py, dtype=np.float64).reshape(sweep_steps, 2)
     fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
     
     for idx in range(sweep_steps):
-        a0_current = a0_array[idx]
+        a0_current = data_max_py[idx, 0]
         
         pos = data[idx, :, 0] / wavelength
         py = data[idx, :, 1]
@@ -104,7 +107,7 @@ def plot_2d_heatmap_all(method, a0_array, sweep_steps, num, wave_count):
     plt.xlabel(r"Y [$\lambda$]")
     plt.ylabel(r"$a_0$")
     plt.title(f"Full parameter sweep heatmap")
-    plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
+    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
 
     print(f"Created 2D heatmap of full {method} parameter sweep.")
@@ -134,9 +137,9 @@ def plot_phases_oscillator(a0, i, num, wavelength, wave_count):
     
     ax.set_xlim(-1.1 * wave_count, 1.1 * wave_count)
     
-    filenameOut = f"{OUTPUT_IMAGE_DIR}/out-phase-space-potential-{i}.png"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-potential-{i}.png"
     
-    plt.savefig(filenameOut, bbox_inches='tight')
+    plt.savefig(filename_out, bbox_inches='tight')
     plt.close()
     
     print(f"Created potential phase plot for a0 = {a0:0.3f}.")
@@ -146,12 +149,12 @@ def plot_phases_oscillator(a0, i, num, wavelength, wave_count):
 def plot_enter_exit_time(method, a0, num, steps, i):
     if method == "electromagnetic":
         mode = 0
-        enterExitTimePath = f"{OUTPUT_DIR}/out-enter-exit-time-electromag.bin"
+        filename_enter_exit_time = f"{OUTPUT_DIR}/out-enter-exit-time-electromag.bin"
     else:
         mode = 1
-        enterExitTimePath = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
+        filename_enter_exit_time = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
 
-    data = np.fromfile(enterExitTimePath, dtype=np.float64).reshape(-1, 4)
+    data = np.fromfile(filename_enter_exit_time, dtype=np.float64).reshape(-1, 4)
     
     x = data[:, 0] / wavelength
     y1 = data[:, 1] / 137.036
@@ -166,14 +169,14 @@ def plot_enter_exit_time(method, a0, num, steps, i):
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filenameOut = f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-{i}.png"
-    plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
+    filename_out = f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-{i}.png"
+    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
     
     if(mode == 0):
-        os.rename(filenameOut, f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-electromag-{i}.png")
+        os.rename(filename_out, f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-electromag-{i}.png")
     else:
-        os.rename(filenameOut, f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-pond-{i}.png")
+        os.rename(filename_out, f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-pond-{i}.png")
 
     print(f"Created enter exit time plot for a0 = {a0:0.3f}.")
 
@@ -181,10 +184,10 @@ def plot_enter_exit_time(method, a0, num, steps, i):
 
 def plot_errors(a0, num, i):
     filename = f"{OUTPUT_DIR}/out-error.bin"
-    filenameMaxPy = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
+    filename_max_py = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
 
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
-    data2 = np.fromfile(filenameMaxPy, dtype=np.float64).reshape(-1, 2)
+    data2 = np.fromfile(filename_max_py, dtype=np.float64).reshape(-1, 2)
     
     x = data[:, 0] / wavelength
     y = data[:, 1]
@@ -202,8 +205,8 @@ def plot_errors(a0, num, i):
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filenameOut = f"{OUTPUT_IMAGE_DIR}/out-errors-{i}.png"
-    plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
+    filename_out = f"{OUTPUT_IMAGE_DIR}/out-errors-{i}.png"
+    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
     
     print(f"Created error scatter plot for a0 = {a0:0.3f}.")
@@ -259,8 +262,8 @@ def plot_max_py(method, a0, i):
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filenameOut = f"{OUTPUT_IMAGE_DIR}/_out-max-py.png"
-    plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-py.png"
+    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
     
     print(f"Created max(py) scatter plot for a0 = {a0:0.3f}.")
@@ -282,8 +285,8 @@ def plot_average_errors(a0, i):
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filenameOut = f"{OUTPUT_IMAGE_DIR}/_out-average-errors.png"
-    plt.savefig(filenameOut, dpi=150, bbox_inches='tight')
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-average-errors.png"
+    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
     
     print(f"Created average error scatter plot.")
