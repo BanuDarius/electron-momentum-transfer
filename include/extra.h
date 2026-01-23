@@ -2,7 +2,6 @@
 #define EXTRA_H
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <pthread.h>
 
 #define U_SIZE 8

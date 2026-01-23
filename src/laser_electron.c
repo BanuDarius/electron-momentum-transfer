@@ -1,11 +1,9 @@
-#include <math.h>
 #include <time.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-#include <complex.h>
 
 #include "extra.h"
 #include "init.h"
@@ -79,8 +77,7 @@ int main(int argc, char **argv) {
 	srand(128);
 	clock_t ti = clock();
 	pthread_t thread[CORE_NUM];
-	char name[32] = "./output/out-data.bin";
-	FILE *out = fopen(name, "wb");
+	FILE *out = fopen(argv[11], "wb");
 	
 	double vi[3];
 	int num = atoi(argv[4]), steps = atoi(argv[5]);

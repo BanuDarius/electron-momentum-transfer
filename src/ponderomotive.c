@@ -1,8 +1,8 @@
 #include <math.h>
 
-#include "ponderomotive.h"
 #include "extra.h"
 #include "init.h"
+#include "ponderomotive.h"
 
 void potential_deriv_a(double *a, double *u, struct laser *l, int index, int n) {
 	double potentialA0 = l[n].E0 * m / (l[n].omega * fabs(q));

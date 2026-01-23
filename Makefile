@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -s -O2 -mavx2 -Iinclude -MMD -MP
+CFLAGS = -s -O3 -mavx2 -Iinclude -MMD -MP
 LDLIBS = -lm -lpthread
 
 SRC_DIR = src

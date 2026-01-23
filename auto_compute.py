@@ -10,12 +10,12 @@ substeps_electromag = 8
 substeps_pond = 2
 framerate = 3
 
+wave_count = 1.0
 num_full = 16000
-num_phase = 512
+num_phase = 1024
 sweep_steps = 512
-wave_count = 1
-steps_electromag = 8192
 steps_pond = 128
+steps_electromag = 8192
 tauf = 8000.0
 xif = 4.0 * 3.141592
 sigma = 4.0 * 3.141592
