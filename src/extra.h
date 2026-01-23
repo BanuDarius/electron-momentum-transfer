@@ -102,12 +102,11 @@ double magnitude(double *a) {
 }
 
 double compute_gamma(double *v) {
-	double gamma = 1 / sqrt(1 - pow(magnitude(v), 2) / (c * c));
+	double gamma = 1.0 / sqrt(1.0 - pow(magnitude(v), 2.0) / (c * c));
 	return gamma;
 }
 
-double env(double xi, double xif) {
-	double sigma = 2.0 * pi;
+double env(double xi, double xif, double sigma) {
 	if(xi > -xif && xi < xif)
 		return 1.0;
 	else if(xi >= xif)
@@ -116,8 +115,7 @@ double env(double xi, double xif) {
 		return exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
 }
 
-double env_prime(double xi, double xif) {
-	double sigma = 2.0 * pi;
+double env_prime(double xi, double xif, double sigma) {
 	if(xi > -xif && xi < xif)
 		return 0.0;
 	else if(xi >= xif)

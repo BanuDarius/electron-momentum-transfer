@@ -146,9 +146,10 @@ def plot_phases_oscillator(a0, i, num, wavelength, wave_count):
 def plot_enter_exit_time(method, a0, num, steps, i):
     if method == "electromagnetic":
         mode = 0
+        enterExitTimePath = f"{OUTPUT_DIR}/out-enter-exit-time-electromag.bin"
     else:
         mode = 1
-    enterExitTimePath = f"{OUTPUT_DIR}/out-enter-exit-time.bin"
+        enterExitTimePath = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
 
     data = np.fromfile(enterExitTimePath, dtype=np.float64).reshape(-1, 4)
     
@@ -189,7 +190,7 @@ def plot_errors(a0, num, i):
     y = data[:, 1]
     
     yMax = data2[i, 1]
-    print(f"For a0 = {a0:0.3f}, yMax = {yMax:0.3f}")
+    print(f"For a0 = {a0:0.3f}, max(py) = {yMax:0.3f}")
     
     yFinal = y / yMax * 100
     
@@ -209,11 +210,42 @@ def plot_errors(a0, num, i):
 
 # ----------------------------------------------------------------------- #
 
+def plot_all_errors(sweep_steps, num, wave_count):
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-errors.png"
+    filename_in = f"{OUTPUT_DIR}/out-error-all.bin"
+    filename_in_max_py = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
+    
+    data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
+    data_max_py = np.fromfile(filename_in_max_py, dtype=np.float64).reshape(sweep_steps, 2)
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
+    
+    for idx in range(sweep_steps):
+        a0_current = data_max_py[idx, 0]
+        
+        pos = data[idx, :, 0] / wavelength
+        error = data[idx, :, 1] / data_max_py[idx, 1]
+        a0_now = np.full(num, a0_current, dtype=np.float64)
+        
+        sc = ax.scatter(pos, a0_now, c=error, cmap='RdBu_r', s=1, marker='s')
+        
+    plt.xlim(-wave_count, wave_count)
+    plt.ylim(np.min(data_max_py[:, 0]), np.max(data_max_py[:, 0]))
+    plt.xlabel(r"Y [$\lambda$]")
+    plt.ylabel(r"$a_0$")
+    plt.title(f"Full error heatmap")
+    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
+    plt.close()
+
+    print(f"Created 2D heatmap of errors.")
+
+# ----------------------------------------------------------------------- #
+
 def plot_max_py(method, a0, i):
     if(method == "electromagnetic"):
         filename = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
     else:
         filename = f"{OUTPUT_DIR}/out-max-py-pond.bin"
+    
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
     
     x = data[:, 0]

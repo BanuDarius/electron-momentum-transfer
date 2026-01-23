@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
 	double a0 = atof(argv[3]);
 	double omega = 0.057;
 	double E0 = omega * c * a0;
-	double tauf = atof(argv[8]), dtau = tauf / steps;
+	double tauf = atof(argv[8]), sigma = atof(argv[10]), dtau = tauf / steps;
 	double wavelength = 2.0 * pi * c / omega;
 	double r = atoi(argv[6]) * wavelength, h = 0.0, z = 0.0, xif = atof(argv[7]);
 	double alpha = pi / 2.0, beta = 0.0;
@@ -126,8 +126,8 @@ int main(int argc, char **argv) {
 	set_initial_vel(vi, 0.0, 0.0, 0.0);
 	set_mode(&compute_function, mode);
 	//Mode "0" for electromagnetic, "1" for ponderomotive
-	set_laser(&l[0], E0, -alpha, beta, xif, omega, -60.0 * pi);
-	set_laser(&l[1], E0, alpha, -beta, xif, omega, -60.0 * pi);
+	set_laser(&l[0], E0, -alpha, beta, xif, omega, sigma, -60.0 * pi);
+	set_laser(&l[1], E0, alpha, -beta, xif, omega, sigma, -60.0 * pi);
 	set_particles(e, num, r, h, z, pi / 2.0, pi / 2.0, vi, output_mode);
 	//Output mode "0" for all positions and velocities, "1" for only the final positions and velocities
 	set_shared_data(sdata, e, l, out, out_chunk, num, steps, dtau, output_mode, substeps, compute_function);

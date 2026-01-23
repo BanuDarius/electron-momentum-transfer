@@ -12,22 +12,26 @@ OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
 # ----------------------------------------------------------------------- #
 
-def run_simulation(method, output_mode, a0, xif, tauf, wave_count, num, steps, substeps):
+def run_simulation(method, output_mode, a0, xif, tauf, sigma, wave_count, num, steps, substeps):
     programPath = BIN_DIR/"laser_electron"
     if method == "electromagnetic":
         mode = 0
     else:
         mode = 1
     output_mode = int(output_mode == True)
-    os.system(f"{programPath} {mode} {output_mode} {a0:0.3f} {num} {steps} {wave_count} {xif:0.3f} {tauf:0.3f} {substeps}")
+    os.system(f"{programPath} {mode} {output_mode} {a0:0.3f} {num} {steps} {wave_count} {xif:0.3f} {tauf:0.3f} {substeps} {sigma:0.3f}")
 
 # ----------------------------------------------------------------------- #
 
-def find_enter_exit_time(num, steps):
+def find_enter_exit_time(method, num, steps):
+    if(method == "electromagnetic"):
+        filenameOut = f"{OUTPUT_DIR}/out-enter-exit-time-electromag.bin"
+    else:
+        filenameOut = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
     programEnterExit = BIN_DIR/"find_enter_exit_time"
     filename = f"{OUTPUT_DIR}/out-data.bin"
 
-    os.system(f"{programEnterExit} {filename} {num} {steps}")
+    os.system(f"{programEnterExit} {filename} {num} {steps} {filenameOut}")
 
 # ----------------------------------------------------------------------- #
 

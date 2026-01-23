@@ -9,7 +9,6 @@ int main(int argc, char **argv) {
 	int num = atoi(argv[2]), steps = atoi(argv[3]);
 	double t[8];
 	
-	
 	for(int i = 0; i < num; i++) {
 		for(int j = 0; j < steps; j++) {
 			fread(t, sizeof(double), 8, in);

@@ -3,7 +3,7 @@ struct particle {
 };
 
 struct laser {
-	double E0, omega, xif, zetax, zetay, psi;
+	double E0, sigma, omega, xif, zetax, zetay, psi;
 	double epsilon1[3], epsilon2[3], n[3];
 };
 
@@ -11,10 +11,10 @@ struct laser *l;
 
 struct shared_data {
 	FILE *out;
-	double dtau;
 	struct laser *l;
 	struct particle *e;
 	double *out_chunk;
+	double dtau;
 	int initial_index, final_index, substeps, steps, output_mode, num, id;
 	void (*fc)(double*, double*, double);
 };
@@ -22,10 +22,10 @@ struct shared_data {
 void compute_e(double *E, double *u, struct laser *l, int i) {
 	double k = l[i].omega / c;
 	double t = u[0] / c;
-	double xif = l[i].xif;
+	double xif = l[i].xif, sigma = l[i].sigma;
 	double alpha = l[i].omega * t - k * dot(l[i].n, &u[1]);
-	double Ec1 = env(alpha + l[i].psi, xif);
-	double Ec2 = env_prime(alpha + l[i].psi, xif);
+	double Ec1 = env(alpha + l[i].psi, xif, sigma);
+	double Ec2 = env_prime(alpha + l[i].psi, xif, sigma);
 	double E1[3], E2[3];
 	for(int j = 0; j < 3; j++)
 		E1[j] = l[i].epsilon1[j] * l[i].zetax * cos(alpha) + l[i].epsilon2[j] * l[i].zetay * sin(alpha);
@@ -43,7 +43,7 @@ void compute_b(double *B, double *E, double *u, struct laser *l, int i) {
 	mult_vec(B, 1/c);
 }
 
-void compute_eb(double *E, double *B, double *u) {
+void compute_e_b(double *E, double *B, double *u) {
 	double Et[3], Bt[3];
 	for(int i = 0; i < NUM_LASERS; i++) {
 		set_zero(Et);
@@ -58,7 +58,7 @@ void compute_eb(double *E, double *B, double *u) {
 void electromag(double *u, double *up, const double t) {
 	double E[3], B[3];
 	set_zero(E); set_zero(B);
-	compute_eb(E, B, u);
+	compute_e_b(E, B, u);
 	
 	up[0] = u[4];
 	up[1] = u[5];
@@ -96,12 +96,12 @@ void rotate(double *u, double phi, double theta) {
 	u[1] = x * sin(theta) + y * cos(theta);
 }
 
-double *direction_vec(double phiL, double thetaL) {
+double *direction_vec(double phi_l, double theta_l) {
 	double *u = new_vec(3);
 	u[0] = 0.0;
 	u[1] = 0.0;
 	u[2] = 1.0;
-	rotate(u, phiL, thetaL);
+	rotate(u, phi_l, theta_l);
 	return u;
 }
 
@@ -122,13 +122,14 @@ void set_initial_vel(double *vi, double m, double phi, double theta) {
 	mult_vec(vi, m);
 }
 
-void set_laser(struct laser *l, double E0, double phi, double theta, double xif, double omega, double psi) {
+void set_laser(struct laser *l, double E0, double phi, double theta, double xif, double omega, double sigma, double psi) {
 	l->E0 = E0;
 	l->psi = psi;
 	l->xif = xif;
 	l->zetax = 0.0;
 	l->zetay = 1.0;
 	l->omega = omega;
+	l->sigma = sigma;
 	double *nv = direction_vec(phi, theta);
 	double epsilon1[3];
 	double epsilon2[3];

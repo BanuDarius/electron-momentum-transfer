@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv) {
 	FILE *in = fopen(argv[1], "rb");
-	FILE *out = fopen("./output/out-enter-exit-time.bin", "wb");
+	FILE *out = fopen(argv[4], "wb");
 	int num = atoi(argv[2]), steps = atoi(argv[3]);
 	
 	double velocity_data[steps], time_data[steps], initial_position;
