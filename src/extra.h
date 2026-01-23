@@ -23,7 +23,7 @@ void print_chunk(FILE *out, double *chunk) {
 }
 
 void copy_initial(double *ch, double *u, int k, int id) {
-	int index = id * 2 * U_SIZE * CHUNK_SIZE + 2 * U_SIZE * k;
+	int index = 2 * id * U_SIZE * CHUNK_SIZE + 2 * U_SIZE * k;
 	for(int i = index; i < index + U_SIZE; i++) {
 		ch[i] = u[i - index];
 	}
