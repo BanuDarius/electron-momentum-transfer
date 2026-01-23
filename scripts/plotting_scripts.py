@@ -6,7 +6,7 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
-BIN_DIR = PROJECT_ROOT / "bins"
+BIN_DIR = PROJECT_ROOT / "bin"
 OUTPUT_DIR = PROJECT_ROOT / "output"
 OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
@@ -79,7 +79,7 @@ def plot_phases(method, a0, wave_count, num, steps, i):
     
 # ----------------------------------------------------------------------- #
 
-def plot_2d_heatmap_all(method, a0_array, sweep_steps, num, wave_count):
+def plot_2d_heatmap_all(method, sweep_steps, num, wave_count):
     if(method == "electromagnetic"):
         filename_in = f"{OUTPUT_DIR}/out-final-py-all-electromag.bin"
         filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-electromag.png"
@@ -103,7 +103,7 @@ def plot_2d_heatmap_all(method, a0_array, sweep_steps, num, wave_count):
         sc = ax.scatter(pos, a0_now, c=py, cmap='RdBu_r', s=1, marker='s')
         
     plt.xlim(-wave_count, wave_count)
-    plt.ylim(min(a0_array), max(a0_array))
+    plt.ylim(min(data_max_py[:, 0]), max(data_max_py[:, 0]))
     plt.xlabel(r"Y [$\lambda$]")
     plt.ylabel(r"$a_0$")
     plt.title(f"Full parameter sweep heatmap")

@@ -1,15 +1,13 @@
+#include <math.h>
+#include <string.h>
+
+#include "extra.h"
+
 double m = 1;
 double q = -1;
 double c = 137.036;
 double e = 2.7182818284;
 double pi = 3.1415926535;
-
-#define U_SIZE 8
-#define CORE_NUM 4
-#define NUM_LASERS 2
-#define CHUNK_SIZE 100
-#define PONDEROMOTIVE_STEPS 4
-#define DEG_TO_RAD (pi / 180.0)
 
 pthread_barrier_t barrier_sync, barrier_compute;
 
@@ -124,7 +122,7 @@ double env_prime(double xi, double xif, double sigma) {
 		return - 2.0 * (xi + xif) / (sigma * sigma) * exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
 }
 
-void rk4_step(double *u, double dt, void f(double *u, double *up) ) {
+void rk4_step(double *u, double dt, void f(double *u, double *up)) {
 	double u0[U_SIZE], u_temp[U_SIZE];
 	double k1[U_SIZE]; double k2[U_SIZE];
 	double k3[U_SIZE]; double k4[U_SIZE];

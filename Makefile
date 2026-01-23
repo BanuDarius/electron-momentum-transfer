@@ -1,37 +1,49 @@
 CC = gcc
-DEPFLAGS = -MMD -MP
-CFLAGS = -s -O2 -mavx2 $(DEPFLAGS)
-LDLIBS = -lm
+CFLAGS = -s -O2 -mavx2 -Iinclude -MMD -MP
+LDLIBS = -lm -lpthread
 
-SRCS := $(wildcard src/*.c)
+SRC_DIR = src
+INC_DIR = include
+OBJ_DIR = build
+BIN_DIR = bin
 
-BINS := $(patsubst src/%.c, bins/%, $(SRCS))
+MODULE_SRCS = $(SRC_DIR)/extra.c $(SRC_DIR)/init.c $(SRC_DIR)/ponderomotive.c
+MODULE_OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(MODULE_SRCS))
 
-DEPS := $(BINS:%=%.d)
+MAIN_SRCS = $(SRC_DIR)/laser_electron.c $(SRC_DIR)/error_calculator.c $(SRC_DIR)/find_enter_exit_time.c $(SRC_DIR)/find_final_py.c $(SRC_DIR)/find_max_py.c $(SRC_DIR)/oscillator.c
 
-.PHONY: all clean clean-output
+MAIN_BIN = $(patsubst $(SRC_DIR)/%.c, $(BIN_DIR)/%, $(MAIN_SRCS))
 
-all: bins_dir $(BINS) finish_all
+all: directories $(MAIN_BIN)
+	@echo "Compilation complete."
 
-bins_dir:
-	@mkdir -p bins
-	@mkdir -p output
-	@mkdir -p output-image
-	@mkdir -p output-video
+$(BIN_DIR)/laser_electron: $(OBJ_DIR)/laser_electron.o $(MODULE_OBJS)
+	@$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
+	@echo "Linked $@."
 
-$(BINS): bins/%: src/%.c | bins_dir
+$(BIN_DIR)/oscillator: $(OBJ_DIR)/oscillator.o
+	@$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
+	@echo "Linked $@."
+
+$(BIN_DIR)/%: $(OBJ_DIR)/%.o
 	@$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
-	@echo "Compiled program: $@."
+	@echo "Linked $@."
 
-finish_all:
-	@echo "Completed compilation."
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@$(CC) $(CFLAGS) -c $< -o $@
+	@echo "Compiled $@."
 
--include $(DEPS)
+directories:
+	@mkdir -p $(OBJ_DIR) $(BIN_DIR) output output-image output-video
 
 clean:
-	@rm -r bins
+	@rm -rf $(OBJ_DIR) $(BIN_DIR)
 	@echo "Removed binary files."
 
 clean-output:
-	@rm -r output output-image output-video
-	@echo "Removed output files."
+	@rm -rf output output-image output-video
+	@echo "Removed output directories."
+
+-include $(OBJ_DIR)/*.d
+
+.SECONDARY:

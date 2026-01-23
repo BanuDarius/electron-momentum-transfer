@@ -1,23 +1,9 @@
-struct particle {
-	double u[8];
-};
+#include <math.h>
 
-struct laser {
-	double E0, sigma, omega, xif, zetax, zetay, psi;
-	double epsilon1[3], epsilon2[3], n[3];
-};
+#include "init.h"
+#include "extra.h"
 
 struct laser *l;
-
-struct shared_data {
-	FILE *out;
-	struct laser *l;
-	struct particle *e;
-	double *out_chunk;
-	double dtau;
-	int initial_index, final_index, substeps, steps, output_mode, num, id;
-	void (*fc)(double*, double*);
-};
 
 void compute_e(double *E, double *u, struct laser *l, int i) {
 	double k = l[i].omega / c;

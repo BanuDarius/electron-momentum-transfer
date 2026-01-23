@@ -17,8 +17,8 @@ wave_count = 1
 steps_electromag = 8192
 steps_pond = 128
 tauf = 8000.0
-xif = 0.0 * 3.141592
-sigma = 16.0 * 3.141592
+xif = 4.0 * 3.141592
+sigma = 4.0 * 3.141592
 
 steps_electromag_final = int(steps_electromag / substeps_electromag)
 steps_pond_final = int(steps_pond / substeps_pond)
@@ -40,15 +40,15 @@ if __name__ == "__main__":
         
         #programs.find_enter_exit_time("electromagnetic", num_phase, steps_electromag_final)
         
-        plots.plot_enter_exit_time("electromagnetic", a0, num_phase, steps_electromag_final, i)
+        #plots.plot_enter_exit_time("electromagnetic", a0, num_phase, steps_electromag_final, i)
         
         #plots.plot_phases("electromagnetic", a0, wave_count, num_phase, steps_electromag_final, i)
         
         # ----------------------------------- #
         
-        programs.run_simulation("ponderomotive", all_states, a0, xif, tauf, sigma, wave_count, num_phase, steps_pond, substeps_pond)
+        #programs.run_simulation("ponderomotive", all_states, a0, xif, tauf, sigma, wave_count, num_phase, steps_pond, substeps_pond)
         
-        programs.find_final_py("ponderomotive", num_phase, steps_pond_final)
+        #programs.find_final_py("ponderomotive", num_phase, steps_pond_final)
         
         #programs.find_enter_exit_time("ponderomotive", num_phase, steps_pond_final)
         
@@ -57,19 +57,19 @@ if __name__ == "__main__":
         #plots.plot_phases("ponderomotive", a0, wave_count, num_phase, steps_pond_final, i)
         
         # ---------------------------------- #
-        programs.calculate_errors(a0, num_phase)
+        #programs.calculate_errors(a0, num_phase)
         
-        plots.plot_errors(a0, num_phase, i)
+        #plots.plot_errors(a0, num_phase, i)
         
         print(f"Ended parameter sweep step: {i}/{sweep_steps}.")
         
         #plotting.plot_phases_oscillator(a0, i, num_phase, wavelength, wave_count)
         
-    plots.plot_max_py("electromagnetic", a0, i)
+    #plots.plot_max_py("electromagnetic", a0, i)
     
-    plots.plot_average_errors(a0, i)
+    #plots.plot_average_errors(a0, i)
     
-    plots.plot_all_errors(sweep_steps, num_phase, wave_count)
+    #plots.plot_all_errors(sweep_steps, num_phase, wave_count)
     
     plots.plot_2d_heatmap_all("electromagnetic", sweep_steps, num_phase, wave_count)
     

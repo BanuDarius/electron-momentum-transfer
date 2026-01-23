@@ -1,4 +1,5 @@
 bins/
+build/
 output/
 output-image/
 output-video/
