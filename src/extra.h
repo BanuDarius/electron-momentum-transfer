@@ -41,7 +41,7 @@ void set_vec(double *u1, double *u2, int n) {
 }
 
 double *new_vec(int n) {
-	double *u = (double *)malloc(n * sizeof(double));
+	double *u = malloc(n * sizeof(double));
 	return u;
 }
 
@@ -122,6 +122,29 @@ double env_prime(double xi, double xif, double sigma) {
 		return - 2.0 * (xi - xif) / (sigma * sigma) * exp(-(xi - xif) * (xi - xif) / (sigma * sigma));
 	else
 		return - 2.0 * (xi + xif) / (sigma * sigma) * exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
+}
+
+void rk4_step(double *u, double dt, void f(double *u, double *up) ) {
+	double u0[U_SIZE], u_temp[U_SIZE];
+	double k1[U_SIZE]; double k2[U_SIZE];
+	double k3[U_SIZE]; double k4[U_SIZE];
+	memcpy(u0, u, U_SIZE * sizeof(double));
+	
+	f(u0, k1);
+	for (int i = 0; i < U_SIZE; i++)
+		u_temp[i] = u0[i] + 0.5 * k1[i] * dt;
+	
+	f(u_temp, k2);
+	for (int i = 0; i < U_SIZE; i++)
+		u_temp[i] = u0[i] + 0.5 * k2[i] * dt;
+	
+	f(u_temp, k3);
+	for (int i = 0; i < U_SIZE; i++)
+		u_temp[i] = u0[i] + k3[i] * dt;
+	
+	f(u_temp, k4);
+	for (int i = 0; i < U_SIZE; i++)
+		u[i] = u0[i] + (dt / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
 }
 
 int initial_index(int n, unsigned int thread_num) {

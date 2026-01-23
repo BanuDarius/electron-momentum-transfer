@@ -142,12 +142,14 @@ double derivative_a(double *u, struct laser *l, int index) {
 	return dmuda;
 }
 
-void ponderomotive(double *u, double *up, const double t) {
+void ponderomotive(double *u, double *up) {
 	double a = compute_a(u, l);
-	double mass = m * sqrt(1 + a);
+	double mass = m * sqrt(1.0 + a);
 	double dmdx[4];
+	
 	for(int i = 0; i < 4; i++)
-		dmdx[i] = 0.5 * derivative_a(u, l, i) * m / sqrt(1 + a);
+		dmdx[i] = 0.5 * derivative_a(u, l, i) * m / sqrt(1.0 + a);
+	
 	up[0] = u[4];
 	up[1] = u[5];
 	up[2] = u[6];
@@ -159,7 +161,7 @@ void ponderomotive(double *u, double *up, const double t) {
 	mult_vec4(&up[4], 1.0 / mass);
 }
 
-void set_mode(void (**compute_function)(double *, double *, double), int mode) {
+void set_mode(void (**compute_function)(double *, double *), int mode) {
 	if(mode == 0)
 		*compute_function = electromag;
 	else if(mode == 1)

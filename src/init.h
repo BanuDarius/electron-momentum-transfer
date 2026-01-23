@@ -16,7 +16,7 @@ struct shared_data {
 	double *out_chunk;
 	double dtau;
 	int initial_index, final_index, substeps, steps, output_mode, num, id;
-	void (*fc)(double*, double*, double);
+	void (*fc)(double*, double*);
 };
 
 void compute_e(double *E, double *u, struct laser *l, int i) {
@@ -55,7 +55,7 @@ void compute_e_b(double *E, double *B, double *u) {
 	}
 }
 
-void electromag(double *u, double *up, const double t) {
+void electromag(double *u, double *up) {
 	double E[3], B[3];
 	set_zero(E); set_zero(B);
 	compute_e_b(E, B, u);
@@ -155,7 +155,7 @@ void set_particles(struct particle *p, int num, double r, double h, double z, do
 }
 
 void set_shared_data(struct shared_data *sdata, struct particle *e, struct laser *l, FILE *out, double *out_chunk,
-	int num, int steps, double dtau, int output_mode, int substeps, void (*fc)(double*, double*, double)) {
+	int num, int steps, double dtau, int output_mode, int substeps, void (*fc)(double*, double*)) {
 	for(int i = 0; i < CORE_NUM; i++) {
 		sdata[i].l = l;
 		sdata[i].e = e;
@@ -175,9 +175,9 @@ void set_shared_data(struct shared_data *sdata, struct particle *e, struct laser
 
 double *create_out_chunk(int output_mode, int num, int steps, int substeps) {
 	if(output_mode == 0)
-		return (double *)malloc(U_SIZE * steps * num / substeps * sizeof(double));
+		return malloc(U_SIZE * steps * num / substeps * sizeof(double));
 	else
-		return (double *)malloc(2 * U_SIZE * CHUNK_SIZE * CORE_NUM * sizeof(double));
+		return malloc(2 * U_SIZE * CHUNK_SIZE * CORE_NUM * sizeof(double));
 }
 
 void check_errors(void *out, void *sdata) {

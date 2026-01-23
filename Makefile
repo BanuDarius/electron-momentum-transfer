@@ -1,22 +1,17 @@
 CC = gcc
-CXX = g++
 DEPFLAGS = -MMD -MP
 CFLAGS = -s -O2 -mavx2 $(DEPFLAGS)
-CXXFLAGS = -s -O3 -mavx2 $(DEPFLAGS)
 LDLIBS = -lm
 
-SRCS_C := $(wildcard src/*.c)
-SRCS_CPP := $(wildcard src/*.cpp)
+SRCS := $(wildcard src/*.c)
 
-BINS_C := $(patsubst src/%.c, bins/%, $(SRCS_C))
-BINS_CPP := $(patsubst src/%.cpp, bins/%, $(SRCS_CPP))
+BINS := $(patsubst src/%.c, bins/%, $(SRCS))
 
+DEPS := $(BINS:%=%.d)
 
-DEPS := $(BINS_C:%=%.d) $(BINS_CPP:%=%.d)
+.PHONY: all clean clean-output
 
-.PHONY: all clean clean_outputs
-
-all: bins_dir $(BINS_C) $(BINS_CPP) finish_all
+all: bins_dir $(BINS) finish_all
 
 bins_dir:
 	@mkdir -p bins
@@ -24,13 +19,9 @@ bins_dir:
 	@mkdir -p output-image
 	@mkdir -p output-video
 
-$(BINS_C): bins/%: src/%.c | bins_dir
+$(BINS): bins/%: src/%.c | bins_dir
 	@$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
-	@echo "Compiled C program: $@."
-
-$(BINS_CPP): bins/%: src/%.cpp | bins_dir
-	@$(CXX) $(CXXFLAGS) $< -o $@ $(LDLIBS)
-	@echo "Compiled C++ program: $@."
+	@echo "Compiled program: $@."
 
 finish_all:
 	@echo "Completed compilation."
@@ -38,7 +29,9 @@ finish_all:
 -include $(DEPS)
 
 clean:
-	rm -r bins
+	@rm -r bins
+	@echo "Removed binary files."
 
 clean-output:
-	rm -r output output-image output-video
+	@rm -r output output-image output-video
+	@echo "Removed output files."

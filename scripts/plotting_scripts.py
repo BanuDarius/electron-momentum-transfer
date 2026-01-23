@@ -160,7 +160,7 @@ def plot_enter_exit_time(method, a0, num, steps, i):
     plt.figure(figsize=(10,10))
     plt.plot(x, y1, linestyle='-', linewidth=1)
     plt.plot(x, y2, linestyle='-', linewidth=1)
-    plt.title(f"Exit time for $a_0$ = {a0:0.3f}")
+    plt.title(f"Enter and exit time for $a_0$ = {a0:0.3f}")
     plt.xlabel(r"$y$ [$\lambda$]")
     plt.ylabel(f"t")
     

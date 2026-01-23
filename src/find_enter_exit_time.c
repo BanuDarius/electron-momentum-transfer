@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 		double firstVelocity = velocity_data[0];
 		for(int j = 0; j < steps; j++) {
 			double current_velocity = velocity_data[j];
-			if(fabs(current_velocity - firstVelocity) > 1e-15) {
+			if(fabs(current_velocity - firstVelocity) > 1e-16) {
 				fwrite(&time_data[j], sizeof(double), 1, out);
 				break;
 			}
@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 		double lastVelocity = velocity_data[steps - 1];
 		for(int j = steps - 1; j > 0; j--) {
 			double current_velocity = velocity_data[j];
-			if(fabs(current_velocity - lastVelocity) > 1e-15) {
+			if(fabs(current_velocity - lastVelocity) > 1e-16) {
 				fwrite(&time_data[j], sizeof(double), 1, out);
 				double lastStep = (double) j;
 				fwrite(&lastStep, sizeof(double), 1, out);
