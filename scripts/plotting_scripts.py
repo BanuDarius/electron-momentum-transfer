@@ -79,7 +79,7 @@ def plot_phases(method, a0, wave_count, num, steps, i):
     
 # ----------------------------------------------------------------------- #
 
-def plot_2d_heatmap_all(method, sweep_steps, num, wave_count):
+def plot_2d_heatmap_all(method, sweep_steps, num, wave_count, square_size):
     if(method == "electromagnetic"):
         filename_in = f"{OUTPUT_DIR}/out-final-py-all-electromag.bin"
         filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-electromag.png"
@@ -100,7 +100,7 @@ def plot_2d_heatmap_all(method, sweep_steps, num, wave_count):
         py = data[idx, :, 1]
         a0_now = np.full(num, a0_current, dtype=np.float64)
         
-        sc = ax.scatter(pos, a0_now, c=py, cmap='RdBu_r', s=1, marker='s')
+        sc = ax.scatter(pos, a0_now, c=py, cmap='RdBu_r', s=square_size, marker='s')
         
     plt.xlim(-wave_count, wave_count)
     plt.ylim(min(data_max_py[:, 0]), max(data_max_py[:, 0]))

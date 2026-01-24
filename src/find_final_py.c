@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
 	
 	for(int i = 0; i < num; i++) {
 		for(int j = 0; j < steps; j++) {
-			fread(t, sizeof(double), 8, in);
+			int x = fread(t, sizeof(double), 8, in);
 			if(j == 0) {
 				double pos = t[2];
 				fwrite(&pos, sizeof(double), 1, out_final_py);

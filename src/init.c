@@ -4,8 +4,6 @@
 #include "init.h"
 #include "extra.h"
 
-struct laser *l;
-
 void compute_e(double *E, double *u, struct laser *l, int i) {
 	double k = l[i].omega / c;
 	double t = u[0] / c;
@@ -30,7 +28,7 @@ void compute_b(double *B, double *E, double *u, struct laser *l, int i) {
 	mult_vec(B, 1/c);
 }
 
-void compute_e_b(double *E, double *B, double *u) {
+void compute_e_b(double *E, double *B, double *u, struct laser *l) {
 	double Et[3], Bt[3];
 	for(int i = 0; i < NUM_LASERS; i++) {
 		set_zero(Et);
@@ -42,10 +40,10 @@ void compute_e_b(double *E, double *B, double *u) {
 	}
 }
 
-void electromag(double *u, double *up) {
+void electromag(double *u, double *up, struct laser *l) {
 	double E[3], B[3];
 	set_zero(E); set_zero(B);
-	compute_e_b(E, B, u);
+	compute_e_b(E, B, u, l);
 	
 	up[0] = u[4];
 	up[1] = u[5];
@@ -142,7 +140,7 @@ void set_particles(struct particle *p, int num, double r, double h, double z, do
 }
 
 void set_shared_data(struct shared_data *sdata, struct particle *e, struct laser *l, FILE *out, double *out_chunk,
-	int num, int steps, double dtau, int output_mode, int substeps, void (*fc)(double*, double*)) {
+	int num, int steps, double dtau, int output_mode, int substeps, void (*fc)(double *, double *, struct laser *)) {
 	for(int i = 0; i < CORE_NUM; i++) {
 		sdata[i].l = l;
 		sdata[i].e = e;

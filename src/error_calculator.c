@@ -11,8 +11,8 @@ int main(int argc, char **argv) {
 	
 	for(int i = 0; i < num; i++) {
 		double data[4];
-		fread(&data[0], sizeof(double), 2, in_a);
-		fread(&data[2], sizeof(double), 2, in_b);
+		int x = fread(&data[0], sizeof(double), 2, in_a);
+		int y = fread(&data[2], sizeof(double), 2, in_b);
 		double error = fabs(data[3] - data[1]);
 		fwrite(&data[0], sizeof(double), 1, out);
 		fwrite(&data[0], sizeof(double), 1, out_error_all);

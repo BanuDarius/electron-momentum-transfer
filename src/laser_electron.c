@@ -5,8 +5,8 @@
 #include <string.h>
 #include <pthread.h>
 
-#include "extra.h"
 #include "init.h"
+#include "extra.h"
 #include "ponderomotive.h"
 
 void *simulate(void *data) {
@@ -24,7 +24,7 @@ void *simulate(void *data) {
 	int final_index = sdata->final_index;
 	int output_mode = sdata->output_mode;
 	int initial_index = sdata->initial_index;
-	void (*compute_function)(double*, double*) = sdata->fc;
+	void (*compute_function)(double *, double *, struct laser *) = sdata->fc;
 	
 	unsigned int chunk_current = 0;
 	
@@ -33,7 +33,7 @@ void *simulate(void *data) {
 		if(output_mode == 1)
 			copy_initial(out_chunk, e[k].u, (k - initial_index) % CHUNK_SIZE, id);
 		for(int i = 0; i < steps; i++) {
-			rk4_step(&e[k].u[0], dtau, compute_function);
+			rk4_step(&e[k].u[0], dtau, l, compute_function);
 			
 			if(output_mode == 0 && i % substeps == 0) {
 				int idx = id * U_SIZE * steps * num / (substeps * CORE_NUM) + (k - initial_index) * U_SIZE * steps / substeps + i * U_SIZE / substeps;
@@ -79,24 +79,22 @@ int main(int argc, char **argv) {
 	pthread_t thread[CORE_NUM];
 	FILE *out = fopen(argv[11], "wb");
 	
-	double vi[3];
-	int num = atoi(argv[4]), steps = atoi(argv[5]);
-	int mode = atoi(argv[1]), output_mode = atoi(argv[2]), substeps = atoi(argv[9]);
-	double a0 = atof(argv[3]);
-	double omega = 0.057;
-	double E0 = omega * c * a0;
-	double tauf = atof(argv[8]), sigma = atof(argv[10]), dtau = tauf / steps;
-	double wavelength = 2.0 * pi * c / omega;
-	double r = atoi(argv[6]) * wavelength, h = 0.0, z = 0.0, xif = atof(argv[7]);
-	double alpha = pi / 2.0, beta = 0.0;
 	pthread_barrier_init(&barrier_sync, NULL, CORE_NUM);
 	pthread_barrier_init(&barrier_compute, NULL, CORE_NUM);
 	
-	l = malloc(2 * sizeof(struct laser));
+	double vi[3];
+	int num = atoi(argv[4]), steps = atoi(argv[5]);
+	int mode = atoi(argv[1]), output_mode = atoi(argv[2]), substeps = atoi(argv[9]);
+	double a0 = atof(argv[3]), omega = 0.057, wavelength = 2.0 * pi * c / omega;
+	double E0 = omega * c * a0, tauf = atof(argv[8]), sigma = atof(argv[10]), dtau = tauf / steps;
+	double r = atoi(argv[6]) * wavelength, h = 0.0, z = 0.0, xif = atof(argv[7]);
+	double alpha = pi / 2.0, beta = 0.0;
+	
+	struct laser *l = malloc(NUM_LASERS * sizeof(struct laser));
 	struct particle *e = malloc(num * sizeof(struct particle));
 	double *out_chunk = create_out_chunk(output_mode, num, steps, substeps);
 	struct shared_data *sdata = malloc(CORE_NUM * sizeof(struct shared_data));
-	void (*compute_function)(double*, double*);
+	void (*compute_function)(double *, double *, struct laser *);
 	
 	check_errors(out, sdata);
 	set_initial_vel(vi, 0.0, 0.0, 0.0);
@@ -108,7 +106,7 @@ int main(int argc, char **argv) {
 	//Output mode "0" for all positions and velocities, "1" for only the final positions and velocities
 	set_shared_data(sdata, e, l, out, out_chunk, num, steps, dtau, output_mode, substeps, compute_function);
 	
-	printf("Start simulation.\n");
+	printf("Started simulation.\n");
 	for(int i = 0; i < CORE_NUM; i++)
 		pthread_create(&thread[i], NULL, simulate, (void*)&sdata[i]);
 	for(int i = 0; i < CORE_NUM; i++)
@@ -116,7 +114,7 @@ int main(int argc, char **argv) {
 	
 	fclose(out);
 	free(out_chunk); free(e);
-	printf("Simulation ended.\n");
+	printf("Ended simulation.\n");
 	printf("Time taken: %0.3fs.\n", (double)(clock() - ti) / (CLOCKS_PER_SEC * CORE_NUM));
 	pthread_barrier_destroy(&barrier_compute);
 	pthread_barrier_destroy(&barrier_sync);

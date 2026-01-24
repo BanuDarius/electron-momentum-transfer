@@ -15,6 +15,8 @@ extern double m, q, c, pi;
 
 extern pthread_barrier_t barrier_sync, barrier_compute;
 
+struct laser;
+
 double rand_val(double min, double max);
 void print_chunk(FILE *out, double *chunk);
 void copy_initial(double *ch, double *u, int k, int id);
@@ -35,7 +37,7 @@ double magnitude(double *a);
 double compute_gamma(double *v);
 double env(double xi, double xif, double sigma);
 double env_prime(double xi, double xif, double sigma);
-void rk4_step(double *u, double dt, void f(double *u, double *up));
+void rk4_step(double *u, double dt, struct laser *l, void compute_function(double *, double *, struct laser *));
 int initial_index(int n, unsigned int thread_num);
 int final_index(int n, unsigned int thread_num);
 

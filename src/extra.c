@@ -7,7 +7,6 @@
 double m = 1;
 double q = -1;
 double c = 137.036;
-double e = 2.7182818284;
 double pi = 3.1415926535;
 
 pthread_barrier_t barrier_sync, barrier_compute;
@@ -101,7 +100,8 @@ double magnitude(double *a) {
 }
 
 double compute_gamma(double *v) {
-	double gamma = 1.0 / sqrt(1.0 - pow(magnitude(v), 2.0) / (c * c));
+	double mag = magnitude(v);
+	double gamma = 1.0 / sqrt(1.0 - (mag * mag) / (c * c));
 	return gamma;
 }
 
@@ -123,25 +123,25 @@ double env_prime(double xi, double xif, double sigma) {
 		return - 2.0 * (xi + xif) / (sigma * sigma) * exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
 }
 
-void rk4_step(double *u, double dt, void f(double *u, double *up)) {
+void rk4_step(double *u, double dt, struct laser *l, void compute_function(double *, double *, struct laser *)) {
 	double u0[U_SIZE], u_temp[U_SIZE];
 	double k1[U_SIZE]; double k2[U_SIZE];
 	double k3[U_SIZE]; double k4[U_SIZE];
 	memcpy(u0, u, U_SIZE * sizeof(double));
 	
-	f(u0, k1);
+	compute_function(u0, k1, l);
 	for (int i = 0; i < U_SIZE; i++)
 		u_temp[i] = u0[i] + 0.5 * k1[i] * dt;
 	
-	f(u_temp, k2);
+	compute_function(u_temp, k2, l);
 	for (int i = 0; i < U_SIZE; i++)
 		u_temp[i] = u0[i] + 0.5 * k2[i] * dt;
 	
-	f(u_temp, k3);
+	compute_function(u_temp, k3, l);
 	for (int i = 0; i < U_SIZE; i++)
 		u_temp[i] = u0[i] + k3[i] * dt;
 	
-	f(u_temp, k4);
+	compute_function(u_temp, k4, l);
 	for (int i = 0; i < U_SIZE; i++)
 		u[i] = u0[i] + (dt / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
 }

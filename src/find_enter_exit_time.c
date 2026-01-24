@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 	for(int i = 0; i < num; i++) {
 		for(int j = 0; j < steps; j++) {
 			double t[8];
-			fread(t, sizeof(double), 8, in);
+			int x = fread(t, sizeof(double), 8, in);
 			if(j == 0)
 				initial_position= t[2];
 			time_data[j] = t[0];

@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
 	double t[2];
 	
 	for(int i = 0; i < num; i++) {
-		fread(t, sizeof(double), 2, in);
+		int x = fread(t, sizeof(double), 2, in);
 		data[i] = t[1];
 	}
 	
