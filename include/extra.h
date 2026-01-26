@@ -2,7 +2,8 @@
 #define EXTRA_H
 
 #include <stdio.h>
-#include <pthread.h>
+
+#include "init.h"
 
 #define U_SIZE 8
 #define CORE_NUM 4
@@ -12,10 +13,6 @@
 #define DEG_TO_RAD (pi / 180.0)
 
 extern double m, q, c, pi;
-
-extern pthread_barrier_t barrier_sync, barrier_compute;
-
-struct laser;
 
 double rand_val(double min, double max);
 void print_chunk(FILE *out, double *chunk);

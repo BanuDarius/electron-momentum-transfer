@@ -161,8 +161,8 @@ def plot_enter_exit_time(method, a0, num, steps, i):
     y2 = data[:, 2] / 137.036
     
     plt.figure(figsize=(10,10))
-    plt.plot(x, y1, linestyle='-', linewidth=1)
-    plt.plot(x, y2, linestyle='-', linewidth=1)
+    plt.plot(x, y1, linestyle='-', c='blue', linewidth=1)
+    plt.plot(x, y2, linestyle='-', c='red', linewidth=1)
     plt.title(f"Enter and exit time for $a_0$ = {a0:0.3f}")
     plt.xlabel(r"$y$ [$\lambda$]")
     plt.ylabel(f"t")
@@ -198,7 +198,7 @@ def plot_errors(a0, num, i):
     yFinal = y / yMax * 100
     
     plt.figure(figsize=(10,10))
-    plt.plot(x, yFinal, linestyle='-', linewidth=1)
+    plt.plot(x, yFinal, c='black',linestyle='-', linewidth=1)
     plt.title(f"Errors for a0 = {a0:0.3f}")
     plt.xlabel(r"Y [$\lambda$]")
     plt.ylabel(f"Error (%)")
@@ -255,7 +255,7 @@ def plot_max_py(method, a0, i):
     y = data[:, 1]
     
     plt.figure(figsize=(10,10))
-    plt.plot(x, y, linestyle='-', linewidth=1)
+    plt.plot(x, y, c='black', linestyle='-', linewidth=1)
     plt.title(r"max($p_y$)")
     plt.xlabel(r"$a_0$")
     plt.ylabel(r"max($p_y$)")
@@ -278,7 +278,7 @@ def plot_average_errors(a0, i):
     y = data[:, 1]
     
     plt.figure(figsize=(10,10))
-    plt.plot(x, y, linestyle='-', linewidth=1)
+    plt.plot(x, y, c='black', linestyle='-', linewidth=1)
     plt.title(r"Average errors")
     plt.xlabel(r"$a_0$")
     plt.ylabel(r"<$\epsilon$> (%)")

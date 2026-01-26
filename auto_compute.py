@@ -1,7 +1,7 @@
 import os
 import scripts.programs as programs
 import scripts.create_video as video
-import scripts.plotting_scripts as plots
+import scripts.plotting as plots
 
 pi = 3.14159265359
 all_states = False
@@ -9,15 +9,15 @@ final_states = True
 wavelength = 2.0 * pi * 137.036 / 0.057
 substeps_electromag = 8
 substeps_pond = 2
-square_size = 2
+square_size = 1
 framerate = 3
 
 # --------------------------- #
 
-wave_count = 3.0
+wave_count = 1.0
 num_full = 16000
 num_phase = 512
-sweep_steps = 256
+sweep_steps = 512
 steps_pond = 128
 steps_electromag = 8192
 tauf = 8000.0
@@ -32,7 +32,7 @@ steps_pond_final = int(steps_pond / substeps_pond)
 if __name__ == "__main__":
     programs.clean_output_folder()
     for i in range(0, sweep_steps):
-        a0 = 0.005 + i / 512.0
+        a0 = 0.005 + i / 1024.0
         
         #programs.run_simulation("electromagnetic", final_states, a0, xif, tauf, sigma, wave_count, num_full, steps_electromag, substeps_electromag)
         
@@ -58,9 +58,9 @@ if __name__ == "__main__":
         
         #programs.find_final_py("ponderomotive", num_phase, steps_pond_final)
         
-        #programs.find_enter_exit_time("ponderomotive", num_phase, steps_pond_final)
-        
         #programs.find_max_py("ponderomotive", a0, num_phase, steps_electromag_final)
+        
+        #programs.find_enter_exit_time("ponderomotive", num_phase, steps_pond_final)
         
         #plots.plot_enter_exit_time("ponderomotive", a0, num_phase, steps_pond_final, i)
         

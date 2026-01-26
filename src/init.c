@@ -139,8 +139,8 @@ void set_particles(struct particle *p, int num, double r, double h, double z, do
 	}
 }
 
-void set_shared_data(struct shared_data *sdata, struct particle *e, struct laser *l, FILE *out, double *out_chunk,
-	int num, int steps, double dtau, int output_mode, int substeps, void (*fc)(double *, double *, struct laser *)) {
+void set_shared_data(struct shared_data *sdata, pthread_barrier_t *barrier_compute, pthread_barrier_t *barrier_sync, struct particle *e, struct laser *l,
+	FILE *out, double *out_chunk, int num, int steps, double dtau, int output_mode, int substeps, void (*fc)(double *, double *, struct laser *)) {
 	for(int i = 0; i < CORE_NUM; i++) {
 		sdata[i].l = l;
 		sdata[i].e = e;
@@ -153,6 +153,8 @@ void set_shared_data(struct shared_data *sdata, struct particle *e, struct laser
 		sdata[i].substeps = substeps;
 		sdata[i].out_chunk = out_chunk;
 		sdata[i].output_mode = output_mode;
+		sdata[i].barrier_sync = barrier_sync;
+		sdata[i].barrier_compute = barrier_compute;
 		sdata[i].final_index = final_index(num, i);
 		sdata[i].initial_index = initial_index(num, i);
 	}

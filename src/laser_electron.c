@@ -26,9 +26,12 @@ void *simulate(void *data) {
 	int initial_index = sdata->initial_index;
 	void (*compute_function)(double *, double *, struct laser *) = sdata->fc;
 	
+	pthread_barrier_t *barrier_compute = sdata->barrier_compute;
+	pthread_barrier_t *barrier_sync = sdata->barrier_sync;
+	
 	unsigned int chunk_current = 0;
 	
-	pthread_barrier_wait(&barrier_compute);
+	pthread_barrier_wait(barrier_compute);
 	for(int k = initial_index; k < final_index; k++) {
 		if(output_mode == 1)
 			copy_initial(out_chunk, e[k].u, (k - initial_index) % CHUNK_SIZE, id);
@@ -51,7 +54,7 @@ void *simulate(void *data) {
 			}
 			chunk_current += 2 * U_SIZE;
 			if((k + 1) % CHUNK_SIZE == 0 && k - initial_index != 0) {
-				pthread_barrier_wait(&barrier_compute);
+				pthread_barrier_wait(barrier_compute);
 				if(id == 0) {
 					int current = CORE_NUM * (k - initial_index + 1);
 					int total = CORE_NUM * final_index;
@@ -60,15 +63,15 @@ void *simulate(void *data) {
 					set_zero_n(out_chunk, 2 * U_SIZE * CHUNK_SIZE * CORE_NUM);
 				}
 				chunk_current = 0;
-				pthread_barrier_wait(&barrier_sync);
+				pthread_barrier_wait(barrier_sync);
 			}
 		}
 	}
 	if(output_mode == 0) {
-		pthread_barrier_wait(&barrier_compute);
+		pthread_barrier_wait(barrier_compute);
 		if(id == 0)
 			fwrite(out_chunk, sizeof(double), U_SIZE * steps * num / substeps, out);
-		pthread_barrier_wait(&barrier_sync);
+		pthread_barrier_wait(barrier_sync);
 	}
 	return NULL;
 }
@@ -79,6 +82,7 @@ int main(int argc, char **argv) {
 	pthread_t thread[CORE_NUM];
 	FILE *out = fopen(argv[11], "wb");
 	
+	pthread_barrier_t barrier_compute, barrier_sync;
 	pthread_barrier_init(&barrier_sync, NULL, CORE_NUM);
 	pthread_barrier_init(&barrier_compute, NULL, CORE_NUM);
 	
@@ -96,6 +100,8 @@ int main(int argc, char **argv) {
 	struct shared_data *sdata = malloc(CORE_NUM * sizeof(struct shared_data));
 	void (*compute_function)(double *, double *, struct laser *);
 	
+	if(!l || !e || !out_chunk) { perror("Memory allocation error."); abort(); }
+	
 	check_errors(out, sdata);
 	set_initial_vel(vi, 0.0, 0.0, 0.0);
 	set_mode(&compute_function, mode);
@@ -104,20 +110,21 @@ int main(int argc, char **argv) {
 	set_laser(&l[1], E0, alpha, -beta, xif, omega, sigma, -60.0 * pi);
 	set_particles(e, num, r, h, z, pi / 2.0, pi / 2.0, vi, output_mode);
 	//Output mode "0" for all positions and velocities, "1" for only the final positions and velocities
-	set_shared_data(sdata, e, l, out, out_chunk, num, steps, dtau, output_mode, substeps, compute_function);
+	set_shared_data(sdata, &barrier_compute, &barrier_sync, e, l, out, out_chunk, num, steps, dtau, output_mode, substeps, compute_function);
 	
-	printf("Started simulation.\n");
+	printf("Simulation started.\n");
 	for(int i = 0; i < CORE_NUM; i++)
 		pthread_create(&thread[i], NULL, simulate, (void*)&sdata[i]);
 	for(int i = 0; i < CORE_NUM; i++)
 		pthread_join(thread[i], NULL);
 	
-	fclose(out);
-	free(out_chunk); free(e);
-	printf("Ended simulation.\n");
+	
+	printf("Simulation ended.\n");
 	printf("Time taken: %0.3fs.\n", (double)(clock() - ti) / (CLOCKS_PER_SEC * CORE_NUM));
 	pthread_barrier_destroy(&barrier_compute);
 	pthread_barrier_destroy(&barrier_sync);
+	free(out_chunk); free(e);
+	fclose(out);
 	return 0;
 }
 
