@@ -14,7 +14,7 @@ framerate = 3
 
 # --------------------------- #
 
-wave_count = 1.0
+wave_count = 3.0
 num_full = 16000
 num_phase = 512
 sweep_steps = 256
@@ -54,20 +54,20 @@ if __name__ == "__main__":
         
         # ----------------------------------- #
         
-        programs.run_simulation("ponderomotive", all_states, a0, xif, tauf, sigma, wave_count, num_phase, steps_pond, substeps_pond)
+        #programs.run_simulation("ponderomotive", all_states, a0, xif, tauf, sigma, wave_count, num_phase, steps_pond, substeps_pond)
         
-        programs.find_final_py("ponderomotive", num_phase, steps_pond_final)
+        #programs.find_final_py("ponderomotive", num_phase, steps_pond_final)
         
-        programs.find_enter_exit_time("ponderomotive", num_phase, steps_pond_final)
+        #programs.find_enter_exit_time("ponderomotive", num_phase, steps_pond_final)
         
-        programs.find_max_py("ponderomotive", a0, num_phase, steps_electromag_final)
+        #programs.find_max_py("ponderomotive", a0, num_phase, steps_electromag_final)
         
         #plots.plot_enter_exit_time("ponderomotive", a0, num_phase, steps_pond_final, i)
         
         #plots.plot_phases("ponderomotive", a0, wave_count, num_phase, steps_pond_final, i)
         
         # ---------------------------------- #
-        programs.calculate_errors(a0, num_phase)
+        #programs.calculate_errors(a0, num_phase)
         
         #plots.plot_errors(a0, num_phase, i)
         
@@ -77,13 +77,13 @@ if __name__ == "__main__":
         
     plots.plot_max_py("electromagnetic", a0, i)
     
-    plots.plot_average_errors(a0, i)
+    #plots.plot_average_errors(a0, i)
     
-    plots.plot_all_errors(sweep_steps, num_phase, wave_count)
+    #plots.plot_all_errors(sweep_steps, num_phase, wave_count)
     
     plots.plot_2d_heatmap_all("electromagnetic", sweep_steps, num_phase, wave_count, square_size)
     
-    plots.plot_2d_heatmap_all("ponderomotive", sweep_steps, num_phase, wave_count, square_size)
+    #plots.plot_2d_heatmap_all("ponderomotive", sweep_steps, num_phase, wave_count, square_size)
 
     '''video.create_2d_colormap_video("electromagnetic", framerate)
     video.create_2d_colormap_video("ponderomotive", framerate)
