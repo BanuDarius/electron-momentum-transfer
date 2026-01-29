@@ -4,6 +4,6 @@ Parallelized with POSIX threads.
 
 ## Examples
 
-https://github.com/user-attachments/assets/1535b362-bc3e-450c-ba59-d7517e42125d
+<img width="1291" height="1282" alt="_out-2d-heatmap-electromag" src="https://github.com/user-attachments/assets/5a83cfe0-7f0d-44a7-8613-32db64fe2640" />
 
-https://github.com/user-attachments/assets/06e6861b-48ff-45ea-b6d0-f5003de2d465
+<img width="1291" height="1282" alt="_out-2d-heatmap-errors" src="https://github.com/user-attachments/assets/056f9ae4-b246-44fd-bcac-492adfd2ecc9" />
