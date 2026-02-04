@@ -9,10 +9,8 @@ double q = -1;
 double c = 137.036;
 double pi = 3.1415926535;
 
-pthread_barrier_t barrier_sync, barrier_compute;
-
 double rand_val(double min, double max) {
-	double s = rand() / (double)RAND_MAX;
+	double s = rand() / (double) RAND_MAX;
 	return min + s * (max - min);
 }
 
@@ -146,12 +144,12 @@ void rk4_step(double *u, double dt, struct laser *l, void compute_function(doubl
 		u[i] = u0[i] + (dt / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
 }
 
-int initial_index(int n, unsigned int thread_num) {
+int initial_index(int n, int thread_num) {
 	int index = n * thread_num / CORE_NUM;
 	return index;
 }
 
-int final_index(int n, unsigned int thread_num) {
+int final_index(int n, int thread_num) {
 	int index = n * (thread_num + 1) / CORE_NUM;
 	return index;
 }

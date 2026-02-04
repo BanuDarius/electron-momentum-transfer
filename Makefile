@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -s -O3 -mavx2 -Iinclude -MMD -MP
-LDLIBS = -lm -lpthread
+CFLAGS = -s -O3 -mavx2 -Iinclude -fopenmp -MMD -MP
+LDLIBS = -lm -fopenmp
 
 SRC_DIR = src
 INC_DIR = include

@@ -35,7 +35,7 @@ double compute_gamma(double *v);
 double env(double xi, double xif, double sigma);
 double env_prime(double xi, double xif, double sigma);
 void rk4_step(double *u, double dt, struct laser *l, void compute_function(double *, double *, struct laser *));
-int initial_index(int n, unsigned int thread_num);
-int final_index(int n, unsigned int thread_num);
+int initial_index(int n, int thread_num);
+int final_index(int n, int thread_num);
 
 #endif
