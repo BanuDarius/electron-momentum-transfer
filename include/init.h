@@ -23,6 +23,7 @@ void epsilon(double *u, double *w);
 void set_initial_vel(double *vi, double m, double phi, double theta);
 void set_laser(struct laser *l, double E0, double phi, double theta, double xif, double omega, double sigma, double psi);
 void set_particles(struct particle *p, int num, double r, double h, double z, double phi, double theta, double *vi, int output_mode);
-double *create_out_chunk(int output_mode, int num, int steps, int substeps);
+double *create_out_chunk(int output_mode, int num, int steps, int substeps, int core_num);
+void set_mode(void (**compute_function)(double *, double *, struct laser *l), int mode);
 
 #endif

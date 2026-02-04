@@ -12,7 +12,7 @@ OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
 # ----------------------------------------------------------------------- #
 
-def run_simulation(method, output_mode, a0, xif, tauf, sigma, wave_count, num, steps, substeps):
+def run_simulation(method, output_mode, a0, xif, tauf, sigma, wave_count, num, steps, substeps, core_num):
     program_path = f"{BIN_DIR}/laser_electron"
     filename_out = f"{OUTPUT_DIR}/out-data.bin"
     if method == "electromagnetic":
@@ -20,7 +20,7 @@ def run_simulation(method, output_mode, a0, xif, tauf, sigma, wave_count, num, s
     else:
         mode = 1
     output_mode = int(output_mode == True)
-    os.system(f"{program_path} {mode} {output_mode} {a0:0.3f} {num} {steps} {wave_count} {xif:0.3f} {tauf:0.3f} {substeps} {sigma:0.3f} {filename_out}")
+    os.system(f"{program_path} {mode} {output_mode} {a0:0.3f} {num} {steps} {wave_count} {xif:0.3f} {tauf:0.3f} {substeps} {sigma:0.3f} {core_num} {filename_out}")
 
 # ----------------------------------------------------------------------- #
 

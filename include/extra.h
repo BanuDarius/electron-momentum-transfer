@@ -6,16 +6,18 @@
 #include "init.h"
 
 #define U_SIZE 8
-#define CORE_NUM 4
 #define NUM_LASERS 2
 #define CHUNK_SIZE 100
 #define PONDEROMOTIVE_STEPS 4
 #define DEG_TO_RAD (pi / 180.0)
 
-extern double m, q, c, pi;
+static const double m = 1.0;
+static const double q = -1.0;
+static const double c = 137.036;
+static const double pi = 3.1415926535;
 
 double rand_val(double min, double max);
-void print_chunk(FILE *out, double *chunk);
+void print_chunk(FILE *out, double *chunk, int core_num);
 void copy_initial(double *ch, double *u, int k, int id);
 void set_chunk(double *out_chunk, double *chunk, int init, int fin);
 void set_vec(double *u1, double *u2, int n);
@@ -35,7 +37,7 @@ double compute_gamma(double *v);
 double env(double xi, double xif, double sigma);
 double env_prime(double xi, double xif, double sigma);
 void rk4_step(double *u, double dt, struct laser *l, void compute_function(double *, double *, struct laser *));
-int initial_index(int n, int thread_num);
-int final_index(int n, int thread_num);
+int initial_index(int n, int thread_num, int core_num);
+int final_index(int n, int thread_num, int core_num);
 
 #endif

@@ -166,10 +166,3 @@ void ponderomotive(double *u, double *up, struct laser *l) {
 	up[7] = - u[7] * u[4] * dmdx[0] / c - u[7] * u[5] * dmdx[1] - u[7] * u[6] * dmdx[2] - (c * c) * dmdx[3] - u[7] * u[7] * dmdx[3];
 	mult_vec4(&up[4], 1.0 / mass);
 }
-
-void set_mode(void (**compute_function)(double *, double *, struct laser *), int mode) {
-	if(mode == 0)
-		*compute_function = electromag;
-	else if(mode == 1)
-		*compute_function = ponderomotive;
-}

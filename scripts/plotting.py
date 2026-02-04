@@ -42,30 +42,42 @@ def plot_2d_colormap(method, a0, wave_count, i):
 
 # ----------------------------------------------------------------------- #
 
-def plot_phases(method, a0, wave_count, num, steps, i):
+def plot_phases(method, full_trajectory, a0, wave_count, num, steps, i, divider):
     if(method == "electromagnetic"):
         filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-electromag-{i}.png"
+        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-electromag.bin"
     else:
         filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-pond-{i}.png"
+        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
     filename = f"{OUTPUT_DIR}/out-data.bin"
-    filenameExit = f"{OUTPUT_DIR}/out-enter-exit-time.bin"
     
     data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
-    dataExit = np.fromfile(filenameExit, dtype=np.float64).reshape(num, 4)
+    data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
     fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
     
-    for idx in range(num):
-        lastStep = int(dataExit[idx, 3])
+    colmap = plt.get_cmap('Spectral')
+    
+    subsection = int(num/divider)
+    
+    data = data[:subsection]
+    data_exit = data_exit[:subsection]
+    
+    for idx in range(subsection):
+        if(full_trajectory):
+            last_step = steps
+        else:
+            last_step = int(data_exit[idx, 3])
         traj = data[idx]
-        traj = traj[:lastStep]
-        time_indices = np.arange(lastStep)
+        traj = traj[:last_step]
+        color = idx / subsection
+        color_cmap = colmap(color)
         
         x = traj[:, 2] / wavelength
         y = traj[:, 6]
         
-        sc = ax.scatter(x, y, c=time_indices, cmap='viridis', s=0.5)
+        sc = ax.plot(x, y, c=color_cmap, linewidth=0.5)
         
-    ax.set_title(f"Phase space: $a_0 = {a0:0.3f}$ - $N = {num}$")
+    ax.set_title(f"Phase space: $a_0 = {a0:0.3f}$ - $N = {subsection}$")
     ax.set_xlabel(r"$y$ [$\lambda$]")
     ax.set_ylabel(r"$p_y$")
     
@@ -76,6 +88,55 @@ def plot_phases(method, a0, wave_count, num, steps, i):
     
     
     print(f"Created phase plot for a0 = {a0:0.3f}.")
+    
+# ----------------------------------------------------------------------- #
+
+def plot_time_momentum(method, full_trajectory, a0, num, steps, i, divider):
+    if(method == "electromagnetic"):
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-electromag-{i}.png"
+        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-electromag.bin"
+    else:
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-pond-{i}.png"
+        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
+    
+    filename = f"{OUTPUT_DIR}/out-data.bin"
+    
+    data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
+    data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
+    
+    colmap = plt.get_cmap('Spectral')
+    
+    subsection = int(num/divider)
+    
+    data = data[:subsection]
+    data_exit = data_exit[:subsection]
+    
+    for idx in range(subsection):
+        if(full_trajectory):
+            last_step = steps
+        else:
+            last_step = int(data_exit[idx, 3])
+        traj = data[idx]
+        traj = traj[:last_step]
+        color = idx / subsection
+        color_cmap = colmap(color)
+        
+        x = traj[:, 0] / 137.036
+        y = traj[:, 6]
+        
+        sc = ax.plot(x, y, c=color_cmap, linewidth=0.5)
+        
+    ax.set_title(f"Time - momentum plot for: $a_0 = {a0:0.3f}$ - $N = {subsection}$")
+    ax.set_xlabel(r"$t$")
+    ax.set_ylabel(r"$p_y$")
+    
+    
+    plt.savefig(filename_out, bbox_inches='tight')
+    plt.close()
+    
+    
+    print(f"Created time-momentum plot for a0 = {a0:0.3f}.")
     
 # ----------------------------------------------------------------------- #
 
@@ -266,7 +327,7 @@ def plot_max_py(method, a0, i):
     plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
     
-    print(f"Created max(py) scatter plot for a0 = {a0:0.3f}.")
+    print(f"Created max(py) scatter plot.")
     
 # ----------------------------------------------------------------------- #    
 

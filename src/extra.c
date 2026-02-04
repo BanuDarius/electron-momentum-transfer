@@ -4,18 +4,13 @@
 
 #include "extra.h"
 
-double m = 1;
-double q = -1;
-double c = 137.036;
-double pi = 3.1415926535;
-
 double rand_val(double min, double max) {
 	double s = rand() / (double) RAND_MAX;
 	return min + s * (max - min);
 }
 
-void print_chunk(FILE *out, double *chunk) {
-	fwrite(chunk, sizeof(double), 2 * U_SIZE * CHUNK_SIZE * CORE_NUM, out);
+void print_chunk(FILE *out, double *chunk, int core_num) {
+	fwrite(chunk, sizeof(double), 2 * U_SIZE * CHUNK_SIZE * core_num, out);
 }
 
 void copy_initial(double *ch, double *u, int k, int id) {
@@ -144,12 +139,12 @@ void rk4_step(double *u, double dt, struct laser *l, void compute_function(doubl
 		u[i] = u0[i] + (dt / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
 }
 
-int initial_index(int n, int thread_num) {
-	int index = n * thread_num / CORE_NUM;
+int initial_index(int n, int thread_num, int core_num) {
+	int index = n * thread_num / core_num;
 	return index;
 }
 
-int final_index(int n, int thread_num) {
-	int index = n * (thread_num + 1) / CORE_NUM;
+int final_index(int n, int thread_num, int core_num) {
+	int index = n * (thread_num + 1) / core_num;
 	return index;
 }

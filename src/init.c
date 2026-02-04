@@ -3,6 +3,7 @@
 
 #include "init.h"
 #include "extra.h"
+#include "ponderomotive.h"
 
 void compute_e(double *E, double *u, struct laser *l, int i) {
 	double k = l[i].omega / c;
@@ -139,9 +140,16 @@ void set_particles(struct particle *p, int num, double r, double h, double z, do
 	}
 }
 
-double *create_out_chunk(int output_mode, int num, int steps, int substeps) {
+double *create_out_chunk(int output_mode, int num, int steps, int substeps, int core_num) {
 	if(output_mode == 0)
 		return malloc(U_SIZE * steps * num / substeps * sizeof(double));
 	else
-		return malloc(2 * U_SIZE * CHUNK_SIZE * CORE_NUM * sizeof(double));
+		return malloc(2 * U_SIZE * CHUNK_SIZE * core_num * sizeof(double));
+}
+
+void set_mode(void (**compute_function)(double *, double *, struct laser *), int mode) {
+	if(mode == 0)
+		*compute_function = electromag;
+	else if(mode == 1)
+		*compute_function = ponderomotive;
 }
