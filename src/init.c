@@ -153,3 +153,25 @@ void set_mode(void (**compute_function)(double *, double *, struct laser *), int
 	else if(mode == 1)
 		*compute_function = ponderomotive;
 }
+
+void set_parameters(struct parameters *param, char **argv) {
+	param->omega = 0.057;
+	param->mode = atoi(argv[1]);
+	param->output_mode = atoi(argv[2]);
+	param->a0 = atof(argv[3]);
+	param->num = atoi(argv[4]);
+	param->steps = atoi(argv[5]);
+	param->xif = atof(argv[7]);
+	param->tauf = atof(argv[8]);
+	param->substeps = atoi(argv[9]);
+	param->sigma = atof(argv[10]);
+	param->core_num = atoi(argv[11]);
+	
+	param->wavelength = 2.0 * pi * c / param->omega;
+	param->r = atoi(argv[6]) * param->wavelength;
+	param->E0 = param->omega * c * param->a0;
+	param->dtau = param->tauf / param->steps;
+	
+	param->h = 0.0;
+	param->z = 0.0;
+}
