@@ -22,12 +22,12 @@ core_num = 4
 wave_count = 1.0
 num_full = 16000
 num_phase = 512
-sweep_steps = 256
+sweep_steps = 512
 steps_pond = 256
 steps_electromag = 4096
 tauf = 10000.0
-xif = 32.0 * pi
-sigma = 8.0 * pi
+xif = 4.0 * pi
+sigma = 4.0 * pi
 
 # ----------------------------------- #
 

@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
 	printf("Simulation ended.\n");
 	
 	printf("Time taken: %0.3fs.\n", (double)(clock() - ti) / (CLOCKS_PER_SEC * param->core_num));
-	free(out_chunk); free(compute_function); free(param); free(p);
+	free(out_chunk); free(param); free(p);
 	fclose(out);
 	return 0;
 }
