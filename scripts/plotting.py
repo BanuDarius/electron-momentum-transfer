@@ -304,11 +304,13 @@ def plot_all_errors(sweep_steps, num, wave_count):
 
 # ----------------------------------------------------------------------- #
 
-def plot_max_py(method, a0, i):
+def plot_max_py(method):
     if(method == "electromagnetic"):
         filename = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-py-electromag.png"
     else:
         filename = f"{OUTPUT_DIR}/out-max-py-pond.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-py-pond.png"
     
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
     
@@ -323,15 +325,14 @@ def plot_max_py(method, a0, i):
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-py.png"
     plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
     
-    print(f"Created max(py) scatter plot.")
+    print(f"Created max(py) scatter plot for {method} mode.")
     
 # ----------------------------------------------------------------------- #    
 
-def plot_average_errors(a0, i):
+def plot_average_errors():
     filename = f"{OUTPUT_DIR}/out-average-error.bin"
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
     

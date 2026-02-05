@@ -1,57 +1,74 @@
-import os
 import scripts.programs as programs
 import scripts.create_video as video
 import scripts.plotting as plots
 
 pi = 3.14159265359
 wavelength = 2.0 * pi * 137.036 / 0.057
-first_quarter = 4
+
+core_num = 4
+framerate = 3
+square_size = 2
 first_eighth = 8
+first_quarter = 4
 all_states = False
 final_states = True
 full_trajectory = True
 trajectory_until_exit = False
 substeps_electromag = 8
 substeps_pond = 1
-square_size = 1
-framerate = 3
-core_num = 4
 
 # ----------------------------------- #
 
 wave_count = 1.0
 num_full = 16000
-num_phase = 512
-sweep_steps = 512
-steps_pond = 256
+num_phase = 256
+sweep_steps = 256
 steps_electromag = 4096
+steps_pond = 256
 tauf = 10000.0
 xif = 4.0 * pi
-sigma = 4.0 * pi
+sigma = 16.0 * pi
 
 # ----------------------------------- #
 
-steps_electromag_final = int(steps_electromag / substeps_electromag)
-steps_pond_final = int(steps_pond / substeps_pond)
+class SimParameters:
+    def __init__(self, a0, num, xif, tauf, sigma, steps, substeps, core_num, wave_count, output_mode):
+        self.a0 = a0
+        self.num = num
+        self.xif = xif
+        self.tauf = tauf
+        self.sigma = sigma
+        self.steps = steps
+        self.substeps = substeps
+        self.core_num = core_num
+        self.wave_count = wave_count
+        self.output_mode = output_mode
+
+# ----------------------------------- #
 
 if __name__ == "__main__":
     programs.clean_output_folder()
     for i in range(0, sweep_steps):
-        a0 = 0.03 + i / 500
         
-        #programs.run_simulation("electromagnetic", final_states, a0, xif, tauf, sigma, wave_count, num_full, steps_electromag, substeps_electromag, core_num)
+        a0 = 0.03 + i / 200
         
-        #plots.plot_2d_colormap("electromagnetic", a0, wave_count, i)
+        sim_parameters = SimParameters(a0, num_full, xif, tauf, sigma, steps_electromag, substeps_electromag, core_num, wave_count, final_states)
+        
+        programs.run_simulation("electromagnetic", sim_parameters)
+        
+        plots.plot_2d_colormap("electromagnetic", a0, wave_count, i)
         
         # ----------------------------------- #
         
-        programs.run_simulation("electromagnetic", all_states, a0, xif, tauf, sigma, wave_count, num_phase, steps_electromag, substeps_electromag, core_num)
+        sim_parameters = SimParameters(a0, num_phase, xif, tauf, sigma, steps_electromag, substeps_electromag, core_num, wave_count, all_states)
         
-        programs.find_final_py("electromagnetic", num_phase, steps_electromag_final)
+        programs.run_simulation("electromagnetic", sim_parameters)
         
-        programs.find_max_py("electromagnetic", a0, num_phase, steps_electromag_final)
+        programs.find_final_py("electromagnetic", sim_parameters)
         
-        programs.find_enter_exit_time("electromagnetic", num_phase, steps_electromag_final)
+        programs.find_max_py("electromagnetic", sim_parameters)
+        
+        programs.find_enter_exit_time("electromagnetic", sim_parameters)
         
         #plots.plot_time_momentum("electromagnetic", full_trajectory, a0, num_phase, steps_electromag_final, i, first_eighth)
         
@@ -61,13 +78,15 @@ if __name__ == "__main__":
         
         # ----------------------------------- #
         
-        programs.run_simulation("ponderomotive", all_states, a0, xif, tauf, sigma, wave_count, num_phase, steps_pond, substeps_pond, core_num)
+        sim_parameters = SimParameters(a0, num_phase, xif, tauf, sigma, steps_pond, substeps_pond, core_num, wave_count, all_states)
         
-        programs.find_final_py("ponderomotive", num_phase, steps_pond_final)
+        programs.run_simulation("ponderomotive", sim_parameters)
         
-        programs.find_max_py("ponderomotive", a0, num_phase, steps_electromag_final)
+        programs.find_final_py("ponderomotive", sim_parameters)
         
-        programs.find_enter_exit_time("ponderomotive", num_phase, steps_pond_final)
+        programs.find_max_py("ponderomotive", sim_parameters)
+        
+        programs.find_enter_exit_time("ponderomotive", sim_parameters)
         
         #plots.plot_time_momentum("ponderomotive", full_trajectory, a0, num_phase, steps_pond_final, i, first_eighth)
         
@@ -76,7 +95,7 @@ if __name__ == "__main__":
         #plots.plot_phases("ponderomotive", a0, wave_count, num_phase, steps_pond_final, i)
         
         # ---------------------------------- #
-        programs.calculate_errors(a0, num_phase)
+        programs.calculate_errors(sim_parameters)
         
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
         
@@ -84,9 +103,11 @@ if __name__ == "__main__":
         
         #plotting.plot_phases_oscillator(a0, i, num_phase, wavelength, wave_count)
         
-    plots.plot_max_py("electromagnetic", a0, i)
+    plots.plot_max_py("electromagnetic")
     
-    plots.plot_average_errors(a0, i)
+    plots.plot_max_py("ponderomotive")
+    
+    plots.plot_average_errors()
     
     plots.plot_all_errors(sweep_steps, num_phase, wave_count)
     

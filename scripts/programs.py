@@ -12,31 +12,46 @@ OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
 # ----------------------------------------------------------------------- #
 
-def run_simulation(method, output_mode, a0, xif, tauf, sigma, wave_count, num, steps, substeps, core_num):
+def run_simulation(method, sim_parameters):
     program_path = f"{BIN_DIR}/laser_electron"
     filename_out = f"{OUTPUT_DIR}/out-data.bin"
+    
+    a0 = sim_parameters.a0
+    num = sim_parameters.num
+    xif = sim_parameters.xif
+    tauf = sim_parameters.tauf
+    steps = sim_parameters.steps
+    sigma = sim_parameters.sigma
+    substeps = sim_parameters.substeps
+    core_num = sim_parameters.core_num
+    wave_count = sim_parameters.wave_count
+    output_mode = int(sim_parameters.output_mode == True)
+    
     if method == "electromagnetic":
         mode = 0
     else:
         mode = 1
-    output_mode = int(output_mode == True)
-    os.system(f"{program_path} {mode} {output_mode} {a0:0.3f} {num} {steps} {wave_count} {xif:0.3f} {tauf:0.3f} {substeps} {sigma:0.3f} {core_num} {filename_out}")
+    
+    os.system(f"{program_path} {mode} {output_mode} {a0:0.3f} {num} {steps} {wave_count:0.3f} {xif:0.3f} {tauf:0.3f} {substeps} {sigma:0.3f} {core_num} {filename_out}")
 
 # ----------------------------------------------------------------------- #
 
-def find_enter_exit_time(method, num, steps):
+def find_enter_exit_time(method, sim_parameters):
     if(method == "electromagnetic"):
         filename_out = f"{OUTPUT_DIR}/out-enter-exit-time-electromag.bin"
     else:
         filename_out = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
     program_enter_exit = BIN_DIR/"find_enter_exit_time"
     filename = f"{OUTPUT_DIR}/out-data.bin"
+    
+    num = sim_parameters.num
+    steps_final = sim_parameters.steps / sim_parameters.substeps
 
-    os.system(f"{program_enter_exit} {filename} {num} {steps} {filename_out}")
+    os.system(f"{program_enter_exit} {filename} {num} {steps_final} {filename_out}")
 
 # ----------------------------------------------------------------------- #
 
-def find_max_py(method, a0, num, steps):
+def find_max_py(method, sim_parameters):
     if(method == "electromagnetic"):
         filename_out = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
         filename_in = f"{OUTPUT_DIR}/out-final-py-electromag.bin"
@@ -46,11 +61,15 @@ def find_max_py(method, a0, num, steps):
     
     program_path = f"{BIN_DIR}/find_max_py"
     
-    os.system(f"{program_path} {filename_in} {num} {steps} {a0:0.3f} {filename_out}")
+    a0 = sim_parameters.a0
+    num = sim_parameters.num
+    steps_final = sim_parameters.steps / sim_parameters.substeps
+    
+    os.system(f"{program_path} {filename_in} {num} {steps_final} {a0:0.3f} {filename_out}")
 
 # ----------------------------------------------------------------------- #
 
-def find_final_py(method, num, steps):
+def find_final_py(method, sim_parameters):
     if(method == "electromagnetic"):
         filename_out = f"{OUTPUT_DIR}/out-final-py-electromag.bin"
         filename_out_all = f"{OUTPUT_DIR}/out-final-py-all-electromag.bin"
@@ -60,13 +79,19 @@ def find_final_py(method, num, steps):
     filename = f"{OUTPUT_DIR}/out-data.bin"
     program_path = f"{BIN_DIR}/find_final_py"
     
-    os.system(f"{program_path} {filename} {num} {steps} {filename_out} {filename_out_all}")
+    num = sim_parameters.num
+    steps_final = sim_parameters.steps / sim_parameters.substeps
+    
+    os.system(f"{program_path} {filename} {num} {steps_final} {filename_out} {filename_out_all}")
 
 # ----------------------------------------------------------------------- #
 
-def calculate_errors(a0, num):
+def calculate_errors(sim_parameters):
     filename = f"{OUTPUT_DIR}/out-data.bin"
     program_path = f"{BIN_DIR}/error_calculator"
+    
+    a0 = sim_parameters.a0
+    num = sim_parameters.num
     
     os.system(f"{program_path} {num} {a0:0.3f}")
 
