@@ -5,9 +5,7 @@ import scripts.plotting as plots
 pi = 3.14159265359
 wavelength = 2.0 * pi * 137.036 / 0.057
 
-core_num = 8
 framerate = 3
-square_size = 2
 first_eighth = 8
 first_quarter = 4
 all_states = False
@@ -19,12 +17,14 @@ substeps_pond = 1
 
 # ----------------------------------- #
 
-sweep_steps = 256
+core_num = 8
+square_size = 1
+sweep_steps = 512
 wave_count = 1.0
 num_full = 64000
-num_phase = 256
+num_phase = 512
 steps_electromag = 4096
-steps_pond = 512
+steps_pond = 256
 tauf = 10000.0
 xif = 8.0 * pi
 sigma = 16.0 * pi
@@ -32,17 +32,22 @@ sigma = 16.0 * pi
 # ----------------------------------- #
 
 class SimParameters:
-    def __init__(self, a0, num, xif, tauf, sigma, steps, substeps, core_num, wave_count, output_mode):
+    def __init__(self, i, a0, num, xif, tauf, sigma, steps, divider,substeps, core_num, wave_count, output_mode, square_size, sweep_steps, full_trajectory):
+        self.i = i
         self.a0 = a0
         self.num = num
         self.xif = xif
         self.tauf = tauf
         self.sigma = sigma
         self.steps = steps
+        self.divider = divider
         self.substeps = substeps
         self.core_num = core_num
         self.wave_count = wave_count
         self.output_mode = output_mode
+        self.square_size = square_size
+        self.sweep_steps = sweep_steps
+        self.full_trajectory = full_trajectory
 
 # ----------------------------------- #
 
@@ -50,17 +55,19 @@ if __name__ == "__main__":
     programs.clean_output_folder()
     for i in range(0, sweep_steps):
         
-        a0 = 0.03 + i / 512
+        a0 = 0.02 + i / 600
         
-        #sim_parameters = SimParameters(a0, num_full, xif, tauf, sigma, steps_electromag, substeps_electromag, core_num, wave_count, final_states)
+        '''sim_parameters = SimParameters(i, a0, num_full, xif, tauf, sigma, steps_electromag, first_eighth,
+            substeps_electromag, core_num, wave_count, final_states, square_size, sweep_steps, full_trajectory)
         
-        #programs.run_simulation("electromagnetic", sim_parameters)
+        programs.run_simulation("electromagnetic", sim_parameters)
         
-        #plots.plot_2d_colormap("electromagnetic", a0, wave_count, i, square_size)
+        plots.plot_2d_colormap("electromagnetic", sim_parameters)'''
         
         # ----------------------------------- #
         
-        sim_parameters = SimParameters(a0, num_phase, xif, tauf, sigma, steps_electromag, substeps_electromag, core_num, wave_count, all_states)
+        sim_parameters = SimParameters(i, a0, num_phase, xif, tauf, sigma, steps_electromag, first_eighth,
+            substeps_electromag, core_num, wave_count, all_states, square_size, sweep_steps, full_trajectory)
         
         programs.run_simulation("electromagnetic", sim_parameters)
         
@@ -70,15 +77,16 @@ if __name__ == "__main__":
         
         programs.find_enter_exit_time("electromagnetic", sim_parameters)
         
-        #plots.plot_time_momentum("electromagnetic", full_trajectory, a0, num_phase, steps_electromag_final, i, first_eighth)
+        #plots.plot_time_momentum("electromagnetic", sim_parameters)
         
-        #plots.plot_enter_exit_time("electromagnetic", a0, num_phase, steps_electromag_final, i)
+        #plots.plot_enter_exit_time("electromagnetic", sim_parameters)
         
-        #plots.plot_phases("electromagnetic", full_trajectory, a0, wave_count, num_phase, steps_electromag_final, i)
+        #plots.plot_phases("electromagnetic", sim_parameters)
         
         # ----------------------------------- #
         
-        sim_parameters = SimParameters(a0, num_phase, xif, tauf, sigma, steps_pond, substeps_pond, core_num, wave_count, all_states)
+        sim_parameters = SimParameters(i, a0, num_phase, xif, tauf, sigma, steps_pond, first_eighth,
+            substeps_pond, core_num, wave_count, all_states, square_size, sweep_steps, trajectory_until_exit)
         
         programs.run_simulation("ponderomotive", sim_parameters)
         
@@ -88,13 +96,13 @@ if __name__ == "__main__":
         
         programs.find_enter_exit_time("ponderomotive", sim_parameters)
         
-        #plots.plot_time_momentum("ponderomotive", full_trajectory, a0, num_phase, steps_pond_final, i, first_eighth)
+        #plots.plot_time_momentum("ponderomotive", sim_parameters)
         
-        #plots.plot_enter_exit_time("ponderomotive", a0, num_phase, steps_pond_final, i)
+        #plots.plot_enter_exit_time("ponderomotive", sim_parameters)
         
-        #plots.plot_phases("ponderomotive", a0, wave_count, num_phase, steps_pond_final, i)
+        #plots.plot_phases("ponderomotive", sim_parameters)
         
-        # ---------------------------------- #
+        # ----------------------------------- #
         programs.calculate_errors(sim_parameters)
         
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
@@ -109,11 +117,11 @@ if __name__ == "__main__":
     
     plots.plot_average_errors()
     
-    plots.plot_all_errors(sweep_steps, num_phase, wave_count, square_size)
+    plots.plot_all_errors(sim_parameters)
     
-    plots.plot_2d_heatmap_all("electromagnetic", sweep_steps, num_phase, wave_count, square_size)
+    plots.plot_2d_heatmap_all("electromagnetic", sim_parameters)
     
-    plots.plot_2d_heatmap_all("ponderomotive", sweep_steps, num_phase, wave_count, square_size)
+    plots.plot_2d_heatmap_all("ponderomotive", sim_parameters)
 
     '''video.create_2d_colormap_video("electromagnetic", framerate)
     video.create_2d_colormap_video("ponderomotive", framerate)

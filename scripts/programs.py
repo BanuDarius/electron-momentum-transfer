@@ -45,7 +45,7 @@ def find_enter_exit_time(method, sim_parameters):
     filename = f"{OUTPUT_DIR}/out-data.bin"
     
     num = sim_parameters.num
-    steps_final = sim_parameters.steps / sim_parameters.substeps
+    steps_final = sim_parameters.steps // sim_parameters.substeps
 
     os.system(f"{program_enter_exit} {filename} {num} {steps_final} {filename_out}")
 
@@ -63,7 +63,7 @@ def find_max_py(method, sim_parameters):
     
     a0 = sim_parameters.a0
     num = sim_parameters.num
-    steps_final = sim_parameters.steps / sim_parameters.substeps
+    steps_final = sim_parameters.steps // sim_parameters.substeps
     
     os.system(f"{program_path} {filename_in} {num} {steps_final} {a0:0.3f} {filename_out}")
 
@@ -80,7 +80,7 @@ def find_final_py(method, sim_parameters):
     program_path = f"{BIN_DIR}/find_final_py"
     
     num = sim_parameters.num
-    steps_final = sim_parameters.steps / sim_parameters.substeps
+    steps_final = sim_parameters.steps // sim_parameters.substeps
     
     os.system(f"{program_path} {filename} {num} {steps_final} {filename_out} {filename_out_all}")
 
