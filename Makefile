@@ -44,6 +44,10 @@ clean-output:
 	@rm -rf output output-image output-video
 	@echo "Removed output directories."
 
+clean-all:
+	@rm -rf $(OBJ_DIR) $(BIN_DIR) output output-image output-video
+	@echo "Removed all output files."
+
 -include $(OBJ_DIR)/*.d
 
 .SECONDARY:

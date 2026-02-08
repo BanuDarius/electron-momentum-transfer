@@ -76,6 +76,7 @@ int main(int argc, char **argv) {
 	srand(128);
 	clock_t ti = clock();
 	FILE *out = fopen(argv[12], "wb");
+	if(!out) { perror("Cannot open output file."); return 1; }
 	
 	double vi[3], alpha = pi / 2.0, beta = 0.0;
 	struct parameters *param = malloc(sizeof(struct parameters));
@@ -86,7 +87,7 @@ int main(int argc, char **argv) {
 	double *out_chunk = create_out_chunk(param->output_mode, param->num, param->steps, param->substeps, param->core_num);
 	void (*compute_function)(double *, double *, struct laser *);
 	
-	if(!l || !p || !out_chunk) { perror("Memory allocation error."); abort(); }
+	if(!l || !p || !out_chunk) { perror("Memory allocation error."); return 1; }
 	
 	set_initial_vel(vi, 0.0, 0.0, 0.0);
 	set_mode(&compute_function, param->mode);

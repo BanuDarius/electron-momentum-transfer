@@ -14,7 +14,7 @@ wavelength = 2 * 3.141592 * 137.036 / 0.057
 
 # ----------------------------------------------------------------------- #
 
-def plot_2d_colormap(method, a0, wave_count, i):
+def plot_2d_colormap(method, a0, wave_count, i, square_size):
     if(method == "electromagnetic"):
         filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-electromag-{i}.png"
     else:
@@ -28,13 +28,13 @@ def plot_2d_colormap(method, a0, wave_count, i):
     c = data[:, 14]
     
     plt.figure(figsize=(10,10))
-    plt.scatter(x, y, c=c, s=3, cmap='RdBu_r')
+    plt.scatter(x, y, c=c, marker='s', s=square_size, cmap='RdBu_r')
     plt.xlim(-wave_count, wave_count)
     plt.ylim(-wave_count, wave_count)
     plt.xlabel(r"Y [$\lambda$]")
     plt.ylabel(r"Z [$\lambda$]")
     plt.title(f"a0 = {a0:0.3f}")
-    filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-{i}.png"
+    plt.colorbar()
     plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
         
@@ -274,7 +274,7 @@ def plot_errors(a0, num, i):
 
 # ----------------------------------------------------------------------- #
 
-def plot_all_errors(sweep_steps, num, wave_count):
+def plot_all_errors(sweep_steps, num, wave_count, square_size):
     filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-errors.png"
     filename_in = f"{OUTPUT_DIR}/out-error-all.bin"
     filename_in_max_py = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
@@ -290,7 +290,7 @@ def plot_all_errors(sweep_steps, num, wave_count):
         error = data[idx, :, 1] / data_max_py[idx, 1]
         a0_now = np.full(num, a0_current, dtype=np.float64)
         
-        sc = ax.scatter(pos, a0_now, c=error, cmap='RdBu_r', s=1, marker='s')
+        sc = ax.scatter(pos, a0_now, c=error, cmap='inferno', s=square_size, marker='s')
         
     plt.xlim(-wave_count, wave_count)
     plt.ylim(np.min(data_max_py[:, 0]), np.max(data_max_py[:, 0]))

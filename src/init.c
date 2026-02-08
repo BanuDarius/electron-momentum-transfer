@@ -168,7 +168,7 @@ void set_parameters(struct parameters *param, char **argv) {
 	param->core_num = atoi(argv[11]);
 	
 	param->wavelength = 2.0 * pi * c / param->omega;
-	param->r = atoi(argv[6]) * param->wavelength;
+	param->r = atof(argv[6]) * param->wavelength;
 	param->E0 = param->omega * c * param->a0;
 	param->dtau = param->tauf / param->steps;
 	

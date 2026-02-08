@@ -5,7 +5,7 @@ import scripts.plotting as plots
 pi = 3.14159265359
 wavelength = 2.0 * pi * 137.036 / 0.057
 
-core_num = 4
+core_num = 8
 framerate = 3
 square_size = 2
 first_eighth = 8
@@ -19,14 +19,14 @@ substeps_pond = 1
 
 # ----------------------------------- #
 
-wave_count = 1.0
-num_full = 16000
-num_phase = 256
 sweep_steps = 256
+wave_count = 1.0
+num_full = 64000
+num_phase = 256
 steps_electromag = 4096
-steps_pond = 256
+steps_pond = 512
 tauf = 10000.0
-xif = 4.0 * pi
+xif = 8.0 * pi
 sigma = 16.0 * pi
 
 # ----------------------------------- #
@@ -50,13 +50,13 @@ if __name__ == "__main__":
     programs.clean_output_folder()
     for i in range(0, sweep_steps):
         
-        a0 = 0.03 + i / 200
+        a0 = 0.03 + i / 512
         
-        sim_parameters = SimParameters(a0, num_full, xif, tauf, sigma, steps_electromag, substeps_electromag, core_num, wave_count, final_states)
+        #sim_parameters = SimParameters(a0, num_full, xif, tauf, sigma, steps_electromag, substeps_electromag, core_num, wave_count, final_states)
         
-        programs.run_simulation("electromagnetic", sim_parameters)
+        #programs.run_simulation("electromagnetic", sim_parameters)
         
-        plots.plot_2d_colormap("electromagnetic", a0, wave_count, i)
+        #plots.plot_2d_colormap("electromagnetic", a0, wave_count, i, square_size)
         
         # ----------------------------------- #
         
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     
     plots.plot_average_errors()
     
-    plots.plot_all_errors(sweep_steps, num_phase, wave_count)
+    plots.plot_all_errors(sweep_steps, num_phase, wave_count, square_size)
     
     plots.plot_2d_heatmap_all("electromagnetic", sweep_steps, num_phase, wave_count, square_size)
     
