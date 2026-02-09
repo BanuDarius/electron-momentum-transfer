@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -s -O3 -mavx2 -Iinclude -fopenmp -MMD -MP
-LDLIBS = -lm -fopenmp
+CFLAGS = -g -O3 -mavx2 -Iinclude -fopenmp -MMD -MP
+LDLIBS = -lm -fopenmp -g
 
 SRC_DIR = src
 INC_DIR = include
@@ -34,18 +34,18 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@echo "Compiled $@."
 
 directories:
-	@mkdir -p $(OBJ_DIR) $(BIN_DIR) output output-image output-video
+	@mkdir -p $(OBJ_DIR) $(BIN_DIR) output output-image output-video input
 
 clean:
 	@rm -rf $(OBJ_DIR) $(BIN_DIR)
 	@echo "Removed binary files."
 
 clean-output:
-	@rm -rf output output-image output-video
+	@rm -rf output output-image output-video input
 	@echo "Removed output directories."
 
 clean-all:
-	@rm -rf $(OBJ_DIR) $(BIN_DIR) output output-image output-video
+	@rm -rf $(OBJ_DIR) $(BIN_DIR) output output-image output-video input
 	@echo "Removed all output files."
 
 -include $(OBJ_DIR)/*.d

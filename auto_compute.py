@@ -15,21 +15,21 @@ trajectory_until_exit = False
 substeps_electromag = 8
 substeps_pond = 1
 
-# ----------------------------------- #
+# ------------------------------------------------------- #
 
 core_num = 8
-square_size = 1
-sweep_steps = 512
+square_size = 4
+sweep_steps = 256
 wave_count = 1.0
 num_full = 64000
-num_phase = 512
+num_phase = 256
 steps_electromag = 4096
 steps_pond = 256
 tauf = 10000.0
-xif = 8.0 * pi
+xif = 0.0 * pi
 sigma = 16.0 * pi
 
-# ----------------------------------- #
+# ------------------------------------------------------- #
 
 class SimParameters:
     def __init__(self, i, a0, num, xif, tauf, sigma, steps, divider,substeps, core_num, wave_count, output_mode, square_size, sweep_steps, full_trajectory):
@@ -49,13 +49,13 @@ class SimParameters:
         self.sweep_steps = sweep_steps
         self.full_trajectory = full_trajectory
 
-# ----------------------------------- #
+# ------------------------------------------------------- #
 
 if __name__ == "__main__":
     programs.clean_output_folder()
     for i in range(0, sweep_steps):
         
-        a0 = 0.02 + i / 600
+        a0 = 0.02 + i / 400.0
         
         '''sim_parameters = SimParameters(i, a0, num_full, xif, tauf, sigma, steps_electromag, first_eighth,
             substeps_electromag, core_num, wave_count, final_states, square_size, sweep_steps, full_trajectory)
@@ -64,7 +64,7 @@ if __name__ == "__main__":
         
         plots.plot_2d_colormap("electromagnetic", sim_parameters)'''
         
-        # ----------------------------------- #
+        # ------------------------------------------------------- #
         
         sim_parameters = SimParameters(i, a0, num_phase, xif, tauf, sigma, steps_electromag, first_eighth,
             substeps_electromag, core_num, wave_count, all_states, square_size, sweep_steps, full_trajectory)
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         
         #plots.plot_phases("electromagnetic", sim_parameters)
         
-        # ----------------------------------- #
+        # ------------------------------------------------------- #
         
         sim_parameters = SimParameters(i, a0, num_phase, xif, tauf, sigma, steps_pond, first_eighth,
             substeps_pond, core_num, wave_count, all_states, square_size, sweep_steps, trajectory_until_exit)
@@ -102,7 +102,7 @@ if __name__ == "__main__":
         
         #plots.plot_phases("ponderomotive", sim_parameters)
         
-        # ----------------------------------- #
+        # ------------------------------------------------------- #
         programs.calculate_errors(sim_parameters)
         
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")

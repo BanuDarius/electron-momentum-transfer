@@ -75,12 +75,12 @@ void simulate(struct parameters *param, void (*compute_function)(double *, doubl
 int main(int argc, char **argv) {
 	srand(128);
 	clock_t ti = clock();
-	FILE *out = fopen(argv[12], "wb");
+	FILE *out = fopen(argv[2], "wb");
 	if(!out) { perror("Cannot open output file."); return 1; }
 	
 	double vi[3], alpha = pi / 2.0, beta = 0.0;
 	struct parameters *param = malloc(sizeof(struct parameters));
-	set_parameters(param, argv);
+	set_parameters(param, argv[1]);
 	
 	struct laser *l = malloc(NUM_LASERS * sizeof(struct laser));
 	struct particle *p = malloc(param->num * sizeof(struct particle));

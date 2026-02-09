@@ -181,7 +181,6 @@ def plot_2d_heatmap_all(method, sim_parameters):
     data_max_py = np.fromfile(filename_in_max_py, dtype=np.float64).reshape(sweep_steps, 2)
     fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
     
-    
     for idx in range(sweep_steps):
         a0_current = data_max_py[idx, 0]
         

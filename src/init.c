@@ -1,4 +1,5 @@
 #include <math.h>
+#include <string.h>
 #include <stdlib.h>
 
 #include "init.h"
@@ -154,24 +155,44 @@ void set_mode(void (**compute_function)(double *, double *, struct laser *), int
 		*compute_function = ponderomotive;
 }
 
-void set_parameters(struct parameters *param, char **argv) {
+void set_parameters(struct parameters *param, char *input) {
+	FILE *in = fopen(input, "r");
+	if(!in) { perror("Cannot open input file."); abort(); }
+	param->h = 0.0;
+	param->z = 0.0;
 	param->omega = 0.057;
-	param->mode = atoi(argv[1]);
-	param->output_mode = atoi(argv[2]);
-	param->a0 = atof(argv[3]);
-	param->num = atoi(argv[4]);
-	param->steps = atoi(argv[5]);
-	param->xif = atof(argv[7]);
-	param->tauf = atof(argv[8]);
-	param->substeps = atoi(argv[9]);
-	param->sigma = atof(argv[10]);
-	param->core_num = atoi(argv[11]);
+	
+	char current[16];
+	
+	while(fscanf(in, "%s", current) != EOF) {	
+		if(!strcmp(current, "mode"))
+			fscanf(in, "%i", &param->mode);
+		else if(!strcmp(current, "a0"))
+			fscanf(in, "%lf", &param->a0);
+		else if(!strcmp(current, "num"))
+			fscanf(in, "%i", &param->num);
+		else if(!strcmp(current, "xif"))
+			fscanf(in, "%lf", &param->xif);
+		else if(!strcmp(current, "tauf"))
+			fscanf(in, "%lf", &param->tauf);
+		else if(!strcmp(current, "steps"))
+			fscanf(in, "%i", &param->steps);
+		else if(!strcmp(current, "sigma"))
+			fscanf(in, "%lf", &param->sigma);
+		else if(!strcmp(current, "substeps"))
+			fscanf(in, "%i", &param->substeps);
+		else if(!strcmp(current, "core_num"))
+			fscanf(in, "%i", &param->core_num);
+		else if(!strcmp(current, "wave_count"))
+			fscanf(in, "%lf", &param->r);
+		else if(!strcmp(current, "output_mode"))
+			fscanf(in, "%i", &param->output_mode);
+	}
 	
 	param->wavelength = 2.0 * pi * c / param->omega;
-	param->r = atof(argv[6]) * param->wavelength;
+	param->r = param->r * param->wavelength;
 	param->E0 = param->omega * c * param->a0;
 	param->dtau = param->tauf / param->steps;
 	
-	param->h = 0.0;
-	param->z = 0.0;
+	fclose(in);
 }

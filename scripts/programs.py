@@ -7,14 +7,21 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 BIN_DIR = PROJECT_ROOT / "bin"
+INPUT_DIR = PROJECT_ROOT / "input"
 OUTPUT_DIR = PROJECT_ROOT / "output"
 OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
 # ----------------------------------------------------------------------- #
 
 def run_simulation(method, sim_parameters):
+    if method == "electromagnetic":
+        mode = 0
+    else:
+        mode = 1
+    
     program_path = f"{BIN_DIR}/laser_electron"
     filename_out = f"{OUTPUT_DIR}/out-data.bin"
+    filename_input = f"{INPUT_DIR}/input.txt"
     
     a0 = sim_parameters.a0
     num = sim_parameters.num
@@ -27,12 +34,20 @@ def run_simulation(method, sim_parameters):
     wave_count = sim_parameters.wave_count
     output_mode = int(sim_parameters.output_mode == True)
     
-    if method == "electromagnetic":
-        mode = 0
-    else:
-        mode = 1
+    with open(filename_input, "w") as file:
+        file.write(f"a0 {a0}\n")
+        file.write(f"num {num}\n")
+        file.write(f"xif {xif}\n")
+        file.write(f"tauf {tauf}\n")
+        file.write(f"steps {steps}\n")
+        file.write(f"sigma {sigma}\n")
+        file.write(f"substeps {substeps}\n")
+        file.write(f"core_num {core_num}\n")
+        file.write(f"wave_count {wave_count}\n")
+        file.write(f"output_mode {output_mode}\n")
+        file.write(f"mode {mode}\n")
     
-    os.system(f"{program_path} {mode} {output_mode} {a0:0.3f} {num} {steps} {wave_count:0.3f} {xif:0.3f} {tauf:0.3f} {substeps} {sigma:0.3f} {core_num} {filename_out}")
+    os.system(f"{program_path} {filename_input} {filename_out}")
 
 # ----------------------------------------------------------------------- #
 
