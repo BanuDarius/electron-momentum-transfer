@@ -1,6 +1,8 @@
 bin/
 build/
+input/
 output/
 output-image/
 output-video/
 __pycache__/
+scripts/__pycache__/
