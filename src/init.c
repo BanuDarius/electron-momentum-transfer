@@ -1,3 +1,24 @@
+/* MIT License
+*
+* Copyright (c) 2026 Banu Darius-Matei
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"),
+* to deal in the Software without restriction, including without limitation the
+* rights to use, copy, modify, merge, publish, distribute, sublicense,
+* and/or sell copies of the Software, and to permit persons to whom the
+* Software is furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included
+* in all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+* INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+* FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+* OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+* WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
+* OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
+
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -5,6 +26,8 @@
 #include "init.h"
 #include "extra.h"
 #include "ponderomotive.h"
+
+//This is a helper library which includes electromagnetic field computation functions, initializing particles and lasers, and parsing the simulation parameters.
 
 void compute_e(double *E, double *u, struct laser *l, int i) {
 	double k = l[i].omega / c;
@@ -71,39 +94,6 @@ void set_position(struct particle *p, double r, double h, double z, int i, int n
 	p->u[3] = rand_val(h - z, h + z);
 }
 
-void rotate(double *u, double phi, double theta) {
-	double x, y, z;
-	y = u[1];
-	z = u[2];
-	u[1] = y * cos(phi) - z * sin(phi);
-	u[2] = y * sin(phi) + z * cos(phi);
-	x = u[0];
-	y = u[1];
-	u[0] = x * cos(theta) - y * sin(theta);
-	u[1] = x * sin(theta) + y * cos(theta);
-}
-
-double *direction_vec(double phi_l, double theta_l) {
-	double *u = new_vec(3);
-	u[0] = 0.0;
-	u[1] = 0.0;
-	u[2] = 1.0;
-	rotate(u, phi_l, theta_l);
-	return u;
-}
-
-void epsilon(double *u, double *w) {
-	double v[3];
-	v[0] = 1.0;
-	v[1] = 0.0;
-	v[2] = 0.0;
-	cross(u, v, w);
-	double mag = magnitude(w);
-	double scale = magnitude(u);
-	for (int i = 0; i < 3; i++)
-		w[i] = scale * w[i] / mag;
-}
-
 void set_initial_vel(double *vi, double m, double phi, double theta) {
 	set_vec(vi, direction_vec(phi, theta), 3);
 	mult_vec(vi, m);
@@ -141,12 +131,16 @@ void set_particles(struct particle *p, int num, double r, double h, double z, do
 	}
 }
 
+//This function dynamically allocates output_chunk based on the output mode.
+
 double *create_out_chunk(int output_mode, int num, int steps, int substeps, int core_num) {
 	if(output_mode == 0)
 		return malloc(U_SIZE * steps * num / substeps * sizeof(double));
 	else
 		return malloc(2 * U_SIZE * CHUNK_SIZE * core_num * sizeof(double));
 }
+
+//This function switched the compute_function to be either the electromagnetic method or the ponderomotive method.
 
 void set_mode(void (**compute_function)(double *, double *, struct laser *), int mode) {
 	if(mode == 0)
@@ -163,30 +157,31 @@ void set_parameters(struct parameters *param, char *input) {
 	param->omega = 0.057;
 	
 	char current[16];
+	int i;
 	
 	while(fscanf(in, "%s", current) != EOF) {	
 		if(!strcmp(current, "mode"))
-			fscanf(in, "%i", &param->mode);
+			i = fscanf(in, "%i", &param->mode);
 		else if(!strcmp(current, "a0"))
-			fscanf(in, "%lf", &param->a0);
+			i = fscanf(in, "%lf", &param->a0);
 		else if(!strcmp(current, "num"))
-			fscanf(in, "%i", &param->num);
+			i = fscanf(in, "%i", &param->num);
 		else if(!strcmp(current, "xif"))
-			fscanf(in, "%lf", &param->xif);
+			i = fscanf(in, "%lf", &param->xif);
 		else if(!strcmp(current, "tauf"))
-			fscanf(in, "%lf", &param->tauf);
+			i = fscanf(in, "%lf", &param->tauf);
 		else if(!strcmp(current, "steps"))
-			fscanf(in, "%i", &param->steps);
+			i = fscanf(in, "%i", &param->steps);
 		else if(!strcmp(current, "sigma"))
-			fscanf(in, "%lf", &param->sigma);
+			i = fscanf(in, "%lf", &param->sigma);
 		else if(!strcmp(current, "substeps"))
-			fscanf(in, "%i", &param->substeps);
+			i = fscanf(in, "%i", &param->substeps);
 		else if(!strcmp(current, "core_num"))
-			fscanf(in, "%i", &param->core_num);
+			i = fscanf(in, "%i", &param->core_num);
 		else if(!strcmp(current, "wave_count"))
-			fscanf(in, "%lf", &param->r);
+			i = fscanf(in, "%lf", &param->r);
 		else if(!strcmp(current, "output_mode"))
-			fscanf(in, "%i", &param->output_mode);
+			i = fscanf(in, "%i", &param->output_mode);
 	}
 	
 	param->wavelength = 2.0 * pi * c / param->omega;

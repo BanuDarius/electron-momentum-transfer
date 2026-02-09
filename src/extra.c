@@ -1,8 +1,31 @@
+/* MIT License
+*
+* Copyright (c) 2026 Banu Darius-Matei
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"),
+* to deal in the Software without restriction, including without limitation the
+* rights to use, copy, modify, merge, publish, distribute, sublicense,
+* and/or sell copies of the Software, and to permit persons to whom the
+* Software is furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included
+* in all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+* INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+* FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+* OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+* WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
+* OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
+
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "extra.h"
+
+//This is a helper library which includes several simple functions for vector operations and mathematics.
 
 double rand_val(double min, double max) {
 	double s = rand() / (double) RAND_MAX;
@@ -98,6 +121,41 @@ double compute_gamma(double *v) {
 	return gamma;
 }
 
+void rotate(double *u, double phi, double theta) {
+	double x, y, z;
+	y = u[1];
+	z = u[2];
+	u[1] = y * cos(phi) - z * sin(phi);
+	u[2] = y * sin(phi) + z * cos(phi);
+	x = u[0];
+	y = u[1];
+	u[0] = x * cos(theta) - y * sin(theta);
+	u[1] = x * sin(theta) + y * cos(theta);
+}
+
+double *direction_vec(double phi_l, double theta_l) {
+	double *u = new_vec(3);
+	u[0] = 0.0;
+	u[1] = 0.0;
+	u[2] = 1.0;
+	rotate(u, phi_l, theta_l);
+	return u;
+}
+
+void epsilon(double *u, double *w) {
+	double v[3];
+	v[0] = 1.0;
+	v[1] = 0.0;
+	v[2] = 0.0;
+	cross(u, v, w);
+	double mag = magnitude(w);
+	double scale = magnitude(u);
+	for (int i = 0; i < 3; i++)
+		w[i] = scale * w[i] / mag;
+}
+
+//These functions are for the envelope.
+
 double env(double xi, double xif, double sigma) {
 	if(xi > -xif && xi < xif)
 		return 1.0;
@@ -115,6 +173,8 @@ double env_prime(double xi, double xif, double sigma) {
 	else
 		return - 2.0 * (xi + xif) / (sigma * sigma) * exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
 }
+
+//This function is a Runge-Kutta fourth-order solver, with a general compute_function() which can be switched easily.
 
 void rk4_step(double *u, double dt, struct laser *l, void compute_function(double *, double *, struct laser *)) {
 	double u0[U_SIZE], u_temp[U_SIZE];
@@ -138,6 +198,8 @@ void rk4_step(double *u, double dt, struct laser *l, void compute_function(doubl
 	for (int i = 0; i < U_SIZE; i++)
 		u[i] = u0[i] + (dt / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
 }
+
+//Manual calculation of indices for stability.
 
 int initial_index(int n, int thread_num, int core_num) {
 	int index = n * thread_num / core_num;

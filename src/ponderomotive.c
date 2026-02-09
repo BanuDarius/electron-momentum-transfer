@@ -1,3 +1,24 @@
+/* MIT License
+*
+* Copyright (c) 2026 Banu Darius-Matei
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"),
+* to deal in the Software without restriction, including without limitation the
+* rights to use, copy, modify, merge, publish, distribute, sublicense,
+* and/or sell copies of the Software, and to permit persons to whom the
+* Software is furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included
+* in all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+* INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+* FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+* OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+* WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
+* OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
+
 #include <math.h>
 
 #include "extra.h"
@@ -72,15 +93,6 @@ double integrate(double *u, struct laser *l) {
 		u_temp[0] += dh;
 	}
 	return integral;
-	/*for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
-	set_zero_n(a1_temp, 4);
-	for(int j = 0; j < NUM_LASERS; j++) {
-		potential_a(a1temp, utemp, l, j);
-		add_vec4(a1, a1temp);
-	}
-	integral += dh * dot4(a1, a1);
-	utemp[0] += dh;
-	}*/
 }
 
 double integrate_dmuda(double *u, struct laser *l, int index) {
@@ -121,17 +133,6 @@ double integrate_dmuda(double *u, struct laser *l, int index) {
 		u_temp[0] += dh;
 	}
 	return integral;
-	/*for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
-		set_zero_n(a1, 4); set_zero_n(a2, 4);
-		for(int j = 0; j < NUM_LASERS; j++) {
-			potential_a(a1temp, utemp, l, j);
-			potential_deriv_a(a2temp, utemp, l, index, j);
-			add_vec4(a1, a1temp);
-			add_vec4(a2, a2temp);
-		}
-		integral += dh * dot4(a1, a2);
-		utemp[0] += dh;
-	}*/
 }
 
 double compute_a(double *u, struct laser *l) {
@@ -153,8 +154,9 @@ void ponderomotive(double *u, double *up, struct laser *l) {
 	double mass = m * sqrt(1.0 + a);
 	double dmdx[4];
 	
+	double m_sqrt_a = 0.5 * m / sqrt(1.0 + a);
 	for(int i = 0; i < 4; i++)
-		dmdx[i] = 0.5 * derivative_a(u, l, i) * m / sqrt(1.0 + a);
+		dmdx[i] = derivative_a(u, l, i) * m_sqrt_a;
 	
 	up[0] = u[4];
 	up[1] = u[5];

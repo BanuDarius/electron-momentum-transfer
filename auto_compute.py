@@ -18,7 +18,7 @@ substeps_pond = 1
 # ------------------------------------------------------- #
 
 core_num = 8
-square_size = 4
+square_size = 2
 sweep_steps = 256
 wave_count = 1.0
 num_full = 64000
