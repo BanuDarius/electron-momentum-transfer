@@ -8,12 +8,7 @@
 #define U_SIZE 8
 #define CHUNK_SIZE 100
 #define PONDEROMOTIVE_STEPS 4
-#define DEG_TO_RAD (pi / 180.0)
-
-static const double m = 1.0; //The mass of an electron in atomic units.
-static const double q = -1.0; //The electric charge of an electron in atomic units.
-static const double c = 137.036; //The speed of light in a.u.
-static const double pi = 3.1415926535;
+#define DEG_TO_RAD (M_PI / 180.0)
 
 //These are the function declarations implemented in extra.c
 

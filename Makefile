@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -s -O3 -mavx2 -Iinclude -fopenmp -MMD -MP
+CFLAGS = -s -O3 -march=native -Iinclude -fopenmp -MMD -MP
 LDLIBS = -lm -fopenmp
 
 SRC_DIR = src
@@ -10,7 +10,7 @@ BIN_DIR = bin
 MODULE_SRCS = $(SRC_DIR)/extra.c $(SRC_DIR)/init.c $(SRC_DIR)/ponderomotive.c
 MODULE_OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(MODULE_SRCS))
 
-MAIN_SRCS = $(SRC_DIR)/laser_electron.c $(SRC_DIR)/error_calculator.c $(SRC_DIR)/find_enter_exit_time.c $(SRC_DIR)/find_final_py.c $(SRC_DIR)/find_max_py.c $(SRC_DIR)/oscillator.c
+MAIN_SRCS = $(SRC_DIR)/laser_electron.c $(SRC_DIR)/error_calculator.c $(SRC_DIR)/find_enter_exit_time.c $(SRC_DIR)/find_final_py.c $(SRC_DIR)/find_max_py.c
 
 MAIN_BIN = $(patsubst $(SRC_DIR)/%.c, $(BIN_DIR)/%, $(MAIN_SRCS))
 

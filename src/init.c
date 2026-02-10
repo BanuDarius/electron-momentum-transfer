@@ -23,6 +23,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "units.h"
 #include "init.h"
 #include "extra.h"
 #include "ponderomotive.h"
@@ -99,11 +100,11 @@ void set_initial_vel(double *vi, double m, double phi, double theta) {
 	mult_vec(vi, m);
 }
 
-void set_particles(struct particle *p, int num, double r, double h, double z, double angle, double *vi, int output_mode) {
-	for(int i = 0; i < num; i++) {
+void set_particles(struct particle *p, struct parameters *param, double *vi) {
+	for(int i = 0; i < param->num; i++) {
 		p[i].u[0] = 0;
-		set_position(&p[i], r, h, z, i, num, output_mode);
-		rotate_around_z_axis(&p[i].u[1], angle);
+		set_position(&p[i], param->r, param->h, param->z, i, param->num, param->output_mode);
+		rotate_around_z_axis(&p[i].u[1], param->line_angle);
 		double gamma = compute_gamma(vi);
 		p[i].u[4] = m * c * gamma;
 		p[i].u[5] = m * vi[0] * gamma;
@@ -114,11 +115,11 @@ void set_particles(struct particle *p, int num, double r, double h, double z, do
 
 //This function dynamically allocates output_chunk based on the output mode.
 
-double *create_out_chunk(int output_mode, int num, int steps, int substeps, int core_num) {
-	if(output_mode == 0)
-		return malloc(U_SIZE * steps * num / substeps * sizeof(double));
+double *create_out_chunk(struct parameters *param) {
+	if(param->output_mode == 0)
+		return malloc(U_SIZE * param->steps * param->num / param->substeps * sizeof(double));
 	else
-		return malloc(2 * U_SIZE * CHUNK_SIZE * core_num * sizeof(double));
+		return malloc(2 * U_SIZE * CHUNK_SIZE * param->core_num * sizeof(double));
 }
 
 //This function switched the compute_function to be either the electromagnetic method or the ponderomotive method.
@@ -156,15 +157,13 @@ void set_parameters(struct parameters *param, char *input) {
 			i = fscanf(in, "%i", &param->output_mode);
 		else if(!strcmp(current, "core_num"))
 			i = fscanf(in, "%i", &param->core_num);
-		else if(!strcmp(current, "wave_count"))
+		else if(!strcmp(current, "r"))
 			i = fscanf(in, "%lf", &param->r);
-
+		else if(!strcmp(current, "line_angle"))
+			i = fscanf(in, "%lf", &param->line_angle);
 	}
 	
-	param->wavelength = 2.0 * pi * c / 0.057;
-	param->r = param->r * param->wavelength;
 	param->dtau = param->tauf / param->steps;
-	
 	fclose(in);
 }
 

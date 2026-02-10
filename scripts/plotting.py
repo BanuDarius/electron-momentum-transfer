@@ -10,13 +10,12 @@ BIN_DIR = PROJECT_ROOT / "bin"
 OUTPUT_DIR = PROJECT_ROOT / "output"
 OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
-wavelength = 2 * 3.141592 * 137.036 / 0.057
-
 # ----------------------------------------------------------------------- #
 
 def plot_2d_colormap(method, sim_parameters, a0_array):
     i = sim_parameters.i
     a0 = a0_array[i]
+    r = sim_parameters.r
     wave_count = sim_parameters.wave_count
     square_size = sim_parameters.square_size
     
@@ -26,11 +25,10 @@ def plot_2d_colormap(method, sim_parameters, a0_array):
         filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-pond-{i}.png"
     filename = f"{OUTPUT_DIR}/out-data.bin"
     
-    
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 16)
     
-    x = data[:, 2] / wavelength
-    y = data[:, 3] / wavelength
+    x = data[:, 2] / r
+    y = data[:, 3] / r
     c = data[:, 14]
     
     plt.figure(figsize=(10,10))
@@ -48,12 +46,13 @@ def plot_2d_colormap(method, sim_parameters, a0_array):
 
 # ----------------------------------------------------------------------- #
 
-def plot_phases(method, sim_parameters):
+def plot_phases(method, sim_parameters, a0_array):
     i = sim_parameters.i
-    a0 = sim_parameters.a0
+    a0 = a0_array[i]
+    r = sim_parameters.r
     num = sim_parameters.num
-    steps = sim_parameters.steps // sim_parameters.substeps
     wave_count = sim_parameters.wave_count
+    steps = sim_parameters.steps // sim_parameters.substeps
     full_trajectory = sim_parameters.full_trajectory
     divider = sim_parameters.divider
     
@@ -64,7 +63,6 @@ def plot_phases(method, sim_parameters):
         filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-pond-{i}.png"
         filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
     filename = f"{OUTPUT_DIR}/out-data.bin"
-    
     
     data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
     data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
@@ -87,7 +85,7 @@ def plot_phases(method, sim_parameters):
         color = idx / subsection
         color_cmap = colmap(color)
         
-        x = traj[:, 2] / wavelength
+        x = traj[:, 2] / r
         y = traj[:, 6]
         
         sc = ax.plot(x, y, c=color_cmap, linewidth=0.5)
@@ -108,9 +106,9 @@ def plot_phases(method, sim_parameters):
 def plot_time_momentum(method, sim_parameters, a0_array):
     i = sim_parameters.i
     a0 = a0_array[i]
+    r = sim_parameters.r
     num = sim_parameters.num
     steps = sim_parameters.steps // sim_parameters.substeps
-    wave_count = sim_parameters.wave_count
     divider = sim_parameters.divider
     full_trajectory = sim_parameters.full_trajectory
     
@@ -153,60 +151,95 @@ def plot_time_momentum(method, sim_parameters, a0_array):
     ax.set_xlabel(r"$t$")
     ax.set_ylabel(r"$p_y$")
     
-    
     plt.savefig(filename_out, bbox_inches='tight')
     plt.close()
-    
     
     print(f"Created time-momentum plot.")
     
 # ----------------------------------------------------------------------- #
 
 def plot_2d_heatmap_all(method, sim_parameters, a0_array):
+    r = sim_parameters.r
     num = sim_parameters.num
-    wave_count = sim_parameters.wave_count
     sweep_steps = sim_parameters.sweep_steps
-    square_size = sim_parameters.square_size
+    wave_count = sim_parameters.wave_count
     
     if(method == "electromagnetic"):
         filename_in = f"{OUTPUT_DIR}/out-final-py-all-electromag.bin"
         filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-electromag.png"
-        filename_in_max_py = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
     else:
         filename_in = f"{OUTPUT_DIR}/out-final-py-all-pond.bin"
         filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-pond.png"
-        filename_in_max_py = f"{OUTPUT_DIR}/out-max-py-pond.bin"
-        
+    
     data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
-    data_max_py = np.fromfile(filename_in_max_py, dtype=np.float64).reshape(sweep_steps, 2)
+    
+    x = data[:, :, 0] / r
+    y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
+    z = data[:, :, 1]
     fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
     
-    for idx in range(sweep_steps):
-        a0_current = a0_array[idx]
-        
-        pos = data[idx, :, 0] / wavelength
-        py = data[idx, :, 1]
-        a0_now = np.full(num, a0_current, dtype=np.float64)
-        
-        sc = ax.scatter(pos, a0_now, c=py, cmap='RdBu_r', s=square_size, marker='s')
-        
+    pcm = ax.pcolormesh(x, y, z, cmap='RdBu_r', shading='auto', rasterized=True)
+    
+    cbar = plt.colorbar(pcm, ax=ax, label=r"$p_y$")
+    cbar.set_label("Final momentum [a.u.]")
+    
     plt.xlim(-wave_count, wave_count)
     plt.ylim(min(a0_array), max(a0_array))
     plt.xlabel(r"Y [$\lambda$]")
     plt.ylabel(r"$a_0$")
-    plt.title(f"Full parameter sweep heatmap")
+    plt.title(f"Full parameter sweep heatmap ({method})")
+    
     plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
-
+    
     print(f"Created 2D heatmap of full {method} parameter sweep.")
 
 # ----------------------------------------------------------------------- #
 
+def plot_2d_errors_heatmap(sim_parameters, a0_array):
+    r = sim_parameters.r
+    num = sim_parameters.num
+    wave_count = sim_parameters.wave_count
+    sweep_steps = sim_parameters.sweep_steps
+    
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-errors.png"
+    filename_in = f"{OUTPUT_DIR}/out-error-all.bin"
+    filename_in_max_py = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
+    
+    data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
+    data_max_py = np.fromfile(filename_in_max_py, dtype=np.float64).reshape(sweep_steps, 2)
+    
+    error = data[:, :, 1]
+    x = data[:, :, 0] / r
+    y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
+    norm = data_max_py[:, 1][:, np.newaxis]
+    z = error / norm
+    
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
+    pcm = ax.pcolormesh(x, y, z, cmap='inferno', shading='auto', rasterized=True)
+    
+    cbar = plt.colorbar(pcm, ax=ax)
+    cbar.set_label("Relative error [%]")
+    
+    plt.xlim(-wave_count, wave_count)
+    plt.ylim(min(a0_array), max(a0_array))
+    plt.xlabel(r"Y [$\lambda$]")
+    plt.ylabel(r"$a_0$")
+    plt.title(f"Full error heatmap")
+    
+    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Created 2D error heatmap.")
+
+# ----------------------------------------------------------------------- #
+
 def plot_enter_exit_time(method, sim_parameters, a0_array):
+    r = sim_parameters.r
+    num = sim_parameters.num
     i = sim_parameters.i
     a0 = a0_array[i]
-    num = sim_parameters.num
-    steps = sim_parameters.steps//sim_parameters.substeps
+    steps = sim_parameters.steps // sim_parameters.substeps
     
     if method == "electromagnetic":
         mode = 0
@@ -214,13 +247,18 @@ def plot_enter_exit_time(method, sim_parameters, a0_array):
     else:
         mode = 1
         filename_enter_exit_time = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
-
+        
     data = np.fromfile(filename_enter_exit_time, dtype=np.float64).reshape(-1, 4)
     
-    
-    x = data[:, 0] / wavelength
+    x = data[:, 0] / r
     y1 = data[:, 1] / 137.036
     y2 = data[:, 2] / 137.036
+    
+    mask = (y1 != 0.0) & (y2 != 0.0)
+    
+    x = x[mask]
+    y1 = y1[mask]
+    y2 = y2[mask]
     
     plt.figure(figsize=(10,10))
     plt.plot(x, y1, linestyle='-', c='blue', linewidth=1)
@@ -246,6 +284,7 @@ def plot_enter_exit_time(method, sim_parameters, a0_array):
 
 def plot_errors(sim_parameters):
     i = sim_parameters.i
+    r = sim_parameters.r
     a0 = sim_parameters.a0
     num = sim_parameters.num
     
@@ -255,11 +294,11 @@ def plot_errors(sim_parameters):
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
     data2 = np.fromfile(filename_max_py, dtype=np.float64).reshape(-1, 2)
     
-    x = data[:, 0] / wavelength
+    x = data[:, 0] / r
     y = data[:, 1]
     
     y_max = data2[i, 1]
-    print(f"For a0 = {a0:0.3f}, max(py) = {yMax:0.3f}")
+    print(f"For a0 = {a0:0.3f}, max(py) = {y_max:0.3f}")
     
     y_final = y / y_max * 100.0
     
@@ -276,41 +315,6 @@ def plot_errors(sim_parameters):
     plt.close()
     
     print(f"Created error scatter plot.")
-
-# ----------------------------------------------------------------------- #
-
-def plot_all_errors(sim_parameters, a0_array):
-    num = sim_parameters.num
-    wave_count = sim_parameters.wave_count
-    square_size = sim_parameters.square_size
-    sweep_steps = sim_parameters.sweep_steps
-    
-    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-errors.png"
-    filename_in = f"{OUTPUT_DIR}/out-error-all.bin"
-    filename_in_max_py = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
-    
-    data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
-    data_max_py = np.fromfile(filename_in_max_py, dtype=np.float64).reshape(sweep_steps, 2)
-    fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
-    
-    for idx in range(sweep_steps):
-        a0_current = a0_array[idx]
-        
-        pos = data[idx, :, 0] / wavelength
-        error = data[idx, :, 1] / data_max_py[idx, 1]
-        a0_now = np.full(num, a0_current, dtype=np.float64)
-        
-        sc = ax.scatter(pos, a0_now, c=error, cmap='inferno', s=square_size, marker='s')
-        
-    plt.xlim(-wave_count, wave_count)
-    plt.ylim(min(a0_array), max(a0_array))
-    plt.xlabel(r"Y [$\lambda$]")
-    plt.ylabel(r"$a_0$")
-    plt.title(f"Full error heatmap")
-    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
-    plt.close()
-
-    print(f"Created 2D heatmap of errors.")
 
 # ----------------------------------------------------------------------- #
 
@@ -362,37 +366,5 @@ def plot_average_errors(a0_array):
     plt.close()
     
     print(f"Created average error scatter plot.")
-
-# ----------------------------------------------------------------------- #
-
-def plot_phases_oscillator(a0, i, num, wavelength, wave_count):
-    programPath = f"{BIN_DIR}/oscillator"
-    os.system(f"{programPath} {a0:0.3f} {num}")
-
-    filename = f"{OUTPUT_DIR}/out-oscillator.bin"
-    data = np.fromfile(filename, dtype=np.float64).reshape(num, 4096, 3)
-    fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
-    time_indices = np.arange(4096)
-    
-    for idx in range(num):
-        traj = data[idx]
-        
-        x = traj[:, 1] / wavelength
-        y = traj[:, 2]
-        
-        sc = ax.scatter(x, y, c=time_indices, cmap='viridis', s=0.5)
-
-    ax.set_title(f"Phase space (potential): $a_0 = {a0:0.3f}$ - $N = {num}$")
-    ax.set_xlabel(r"$y$ [$\lambda$]")
-    ax.set_ylabel(r"$p_y$")
-    
-    ax.set_xlim(-1.1 * wave_count, 1.1 * wave_count)
-    
-    filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-potential-{i}.png"
-    
-    plt.savefig(filename_out, bbox_inches='tight')
-    plt.close()
-    
-    print(f"Created potential phase plot.")
 
 # ----------------------------------------------------------------------- #

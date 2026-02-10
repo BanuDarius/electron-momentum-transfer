@@ -21,6 +21,7 @@
 
 #include <math.h>
 
+#include "units.h"
 #include "extra.h"
 #include "init.h"
 #include "ponderomotive.h"
@@ -64,7 +65,7 @@ void potential_a(double *a, double *u, struct laser *l, int n) {
 double integrate(double *u, struct laser *l) {
 	double integral = 0.0;
 	double a1_left[4], a1_right[4], a1_mid[4], a1_temp[4], u_temp[4];
-	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) PONDEROMOTIVE_STEPS;
+	double lambda = 2.0 * M_PI * c / l[0].omega, dh = lambda / (double) PONDEROMOTIVE_STEPS;
 	
 	set_vec(u_temp, u, 4);
 	u_temp[0] -= lambda / 2.0;
@@ -98,7 +99,7 @@ double integrate(double *u, struct laser *l) {
 double integrate_dmuda(double *u, struct laser *l, int index) {
 	double integral = 0.0;
 	double a1_left[4], a1_right[4], a1_mid[4], a2_left[4], a2_right[4], a2_mid[4], a1_temp[4], a2_temp[4], u_temp[4];
-	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) PONDEROMOTIVE_STEPS;
+	double lambda = 2.0 * M_PI * c / l[0].omega, dh = lambda / (double) PONDEROMOTIVE_STEPS;
 	
 	set_vec(u_temp, u, 4);
 	u_temp[0] -= lambda / 2.0;
@@ -136,14 +137,14 @@ double integrate_dmuda(double *u, struct laser *l, int index) {
 }
 
 double compute_a(double *u, struct laser *l) {
-	double lambda = 2.0 * pi * c / l[0].omega;
+	double lambda = 2.0 * M_PI * c / l[0].omega;
 	double a = - (q * q) / (m * m * c * c) * (1.0 / lambda);
 	a *= integrate(u, l);
 	return a;
 }
 
 double derivative_a(double *u, struct laser *l, int index) {
-	double lambda = 2.0 * pi * c / l[0].omega;
+	double lambda = 2.0 * M_PI * c / l[0].omega;
 	double dmuda = - 2.0 * (q * q) / (m * m * c * c ) * (1.0 / lambda);
 	dmuda *= integrate_dmuda(u, l, index);
 	return dmuda;

@@ -23,6 +23,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void set_zero(double *v) {
+	for(int i = 0; i < 3; i++)
+		v[i] = 0.0;
+}
+
 int main(int argc, char **argv) {
 	FILE *in = fopen(argv[1], "rb");
 	FILE *out = fopen(argv[4], "wb");
@@ -40,26 +45,34 @@ int main(int argc, char **argv) {
 			velocity_data[j] = t[6];
 		}
 		
-		fwrite(&initial_position, sizeof(double), 1, out);
+		double v[4];
+		v[0] = initial_position;
 		double firstVelocity = velocity_data[0];
+		double lastVelocity = velocity_data[steps - 1];
+		
 		for(int j = 1; j < steps; j++) {
 			double current_velocity = velocity_data[j];
 			if(fabs(current_velocity - firstVelocity) > 1e-2) {
-				fwrite(&time_data[j], sizeof(double), 1, out);
+				v[1] = time_data[j];
 				break;
 			}
 		}
-	
-		double lastVelocity = velocity_data[steps - 1];
+		
 		for(int j = steps - 2; j > 0; j--) {
 			double current_velocity = velocity_data[j];
 			if(fabs(current_velocity - lastVelocity) > 1e-2) {
-				fwrite(&time_data[j], sizeof(double), 1, out);
-				double lastStep = (double) j;
-				fwrite(&lastStep, sizeof(double), 1, out);
+				double last_step = (double) j;
+				v[2] = time_data[j];
+				v[3] = last_step;
 				break;
 			}
 		}
+		
+		for(int j = 1; j < 4; j++) {
+			if(fabs(v[j]) < 1e-5)
+				set_zero(&v[1]);
+		}
+		fwrite(v, sizeof(double), 4, out);
 	}
 	
 	printf("Calculated particle enter exit times.\n");

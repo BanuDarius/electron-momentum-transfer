@@ -27,14 +27,15 @@ def run_simulation(method, sim_parameters, lasers):
     output_mode = int(sim_parameters.output_mode == True)
     
     with open(filename_input, "w") as file:
+        file.write(f"r {sim_parameters.r}\n")
         file.write(f"num {sim_parameters.num}\n")
         file.write(f"tauf {sim_parameters.tauf}\n")
         file.write(f"steps {sim_parameters.steps}\n")
         file.write(f"substeps {sim_parameters.substeps}\n")
         file.write(f"core_num {sim_parameters.core_num}\n")
-        file.write(f"wave_count {sim_parameters.wave_count}\n")
         file.write(f"output_mode {output_mode}\n")
         file.write(f"mode {mode}\n")
+        file.write(f"line_angle {sim_parameters.line_angle}\n")
         file.write(f"num_lasers {len(lasers)}\n")
    
     with open(filename_lasers, "w") as file:

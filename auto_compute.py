@@ -4,17 +4,18 @@ import scripts.create_video as video
 import scripts.plotting as plots
 
 pi = 3.14159265359
+c = 136.037
 deg_to_rad = pi / 180.0
 
 framerate = 3
 first_eighth = 8
 first_quarter = 4
+substeps_pond = 1
 all_states = False
 final_states = True
 full_trajectory = True
-trajectory_until_exit = False
 substeps_electromag = 8
-substeps_pond = 1
+trajectory_until_exit = False
 
 # ------------------------------------------------------- #
 
@@ -22,23 +23,26 @@ tauf = 1e4
 core_num = 8
 omega = 0.057
 xif = 0.0 * pi
-num_phase = 512
+num_phase = 256
 psi = -60.0 * pi
 steps_pond = 256
 num_full = 16000
 wave_count = 1.0
 sigma = 16.0 * pi
-square_size = 3.0
+square_size = 1.0
 sweep_steps = 256
 steps_electromag = 4096
 phi = 90.0 * deg_to_rad
 theta = 90.0 * deg_to_rad
+r = wave_count * 2.0 * pi * c / omega
+line_angle = 90.0 * deg_to_rad
 
 # ------------------------------------------------------- #
 
 class SimParameters:
-    def __init__(self, i, num, tauf, steps, divider, substeps, core_num, wave_count, output_mode, square_size, sweep_steps, full_trajectory):
+    def __init__(self, i, r, num, tauf, steps, divider, substeps, core_num, output_mode, wave_count, line_angle, sweep_steps, full_trajectory):
         self.i = i
+        self.r = r
         self.num = num
         self.tauf = tauf
         self.steps = steps
@@ -46,8 +50,8 @@ class SimParameters:
         self.substeps = substeps
         self.core_num = core_num
         self.wave_count = wave_count
+        self.line_angle = line_angle
         self.output_mode = output_mode
-        self.square_size = square_size
         self.sweep_steps = sweep_steps
         self.full_trajectory = full_trajectory
 
@@ -72,11 +76,13 @@ if __name__ == "__main__":
     programs.clean_output_folder()
     
     for i in range(0, sweep_steps):
-        a0 = 0.02 + i / 500
+        a0 = 0.02 + i / 800
         a0_array = np.append(a0_array, a0)
         
         laser_1 = LaserParameters(a0, sigma, omega, xif, 0.0, 1.0, phi, theta, psi)
         laser_2 = LaserParameters(a0, sigma, omega, xif, 0.0, 1.0, phi, -theta, psi)
+        #laser_3 = LaserParameters(a0, sigma, omega, xif, 0.0, 1.0, phi, 135 * deg_to_rad, psi)
+        #laser_4 = LaserParameters(a0, sigma, omega, xif, 0.0, 1.0, phi, -135 * deg_to_rad, psi)
         
         lasers = (laser_1, laser_2)
         
@@ -89,8 +95,8 @@ if __name__ == "__main__":
         
         # ------------------------------------------------------- #
         
-        sim_parameters = SimParameters(i, num_phase, tauf,  steps_electromag, first_eighth,
-            substeps_electromag, core_num, wave_count, all_states, square_size, sweep_steps, full_trajectory)
+        sim_parameters = SimParameters(i, r, num_phase, tauf,  steps_electromag, first_eighth,
+            substeps_electromag, core_num, all_states, wave_count, line_angle, sweep_steps, full_trajectory)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -100,16 +106,16 @@ if __name__ == "__main__":
         
         programs.find_enter_exit_time("electromagnetic", sim_parameters)
         
-        #plots.plot_time_momentum("electromagnetic", sim_parameters)
+        #plots.plot_time_momentum("electromagnetic", sim_parameters, a0_array)
         
-        #plots.plot_enter_exit_time("electromagnetic", sim_parameters)
+        #plots.plot_enter_exit_time("electromagnetic", sim_parameters, a0_array)
         
-        #plots.plot_phases("electromagnetic", sim_parameters)
+        #plots.plot_phases("electromagnetic", sim_parameters, a0_array)
         
         # ------------------------------------------------------- #
         
-        sim_parameters = SimParameters(i, num_phase, tauf, steps_pond, first_eighth,
-            substeps_pond, core_num, wave_count, all_states, square_size, sweep_steps, trajectory_until_exit)
+        sim_parameters = SimParameters(i, r, num_phase, tauf, steps_pond, first_eighth,
+            substeps_pond, core_num, all_states, wave_count, line_angle, sweep_steps, full_trajectory)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
@@ -119,11 +125,11 @@ if __name__ == "__main__":
         
         programs.find_enter_exit_time("ponderomotive", sim_parameters)
         
-        #plots.plot_time_momentum("ponderomotive", sim_parameters)
+        #plots.plot_time_momentum("ponderomotive", sim_parameters, a0_array)
         
-        #plots.plot_enter_exit_time("ponderomotive", sim_parameters)
+        #plots.plot_enter_exit_time("ponderomotive", sim_parameters, a0_array)
         
-        #plots.plot_phases("ponderomotive", sim_parameters)
+        #plots.plot_phases("ponderomotive", sim_parameters, a0_array)
         
         # ------------------------------------------------------- #
         programs.calculate_errors(sim_parameters, a0_array)
@@ -140,7 +146,7 @@ if __name__ == "__main__":
     
     plots.plot_average_errors(a0_array)
     
-    plots.plot_all_errors(sim_parameters, a0_array)
+    plots.plot_2d_errors_heatmap(sim_parameters, a0_array)
     
     plots.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array)
     

@@ -21,6 +21,7 @@
 
 #include <omp.h>
 #include <time.h>
+#include <math.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -108,13 +109,13 @@ int main(int argc, char **argv) {
 	set_lasers(l, param->num_lasers, argv[2]);
 	
 	struct particle *p = malloc(param->num * sizeof(struct particle));
-	double *out_chunk = create_out_chunk(param->output_mode, param->num, param->steps, param->substeps, param->core_num);
+	set_particles(p, param, vi);
+	
+	double *out_chunk = create_out_chunk(param);
 	void (*compute_function)(double *, double *, struct laser *);
 	set_mode(&compute_function, param->mode);
 	
 	if(!l || !p || !out_chunk) { perror("Memory allocation error."); return 1; }
-	
-	set_particles(p, param->num, param->r, param->h, param->z, pi / 2.0, vi, param->output_mode);
 	
 	printf("Simulation started.\n");
 	simulate(param, compute_function, out, out_chunk, l, p);

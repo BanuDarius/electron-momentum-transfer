@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "units.h"
 #include "extra.h"
 
 //This is a helper library which includes several simple functions for vector operations and mathematics.
@@ -38,15 +39,13 @@ void print_chunk(FILE *out, double *chunk, int core_num) {
 
 void copy_initial(double *ch, double *u, int k, int id) {
 	int index = 2 * id * U_SIZE * CHUNK_SIZE + 2 * U_SIZE * k;
-	for(int i = index; i < index + U_SIZE; i++) {
+	for(int i = index; i < index + U_SIZE; i++)
 		ch[i] = u[i - index];
-	}
 }
 
 void set_chunk(double *out_chunk, double *chunk, int init, int fin) {
-	for(int i = init; i < fin; i++) {
+	for(int i = init; i < fin; i++)
 		out_chunk[i] = chunk[i-init];
-	}
 }
 
 void set_vec(double *u1, double *u2, int n) {
