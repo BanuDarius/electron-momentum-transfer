@@ -14,9 +14,10 @@ wavelength = 2 * 3.141592 * 137.036 / 0.057
 
 # ----------------------------------------------------------------------- #
 
-def plot_2d_colormap(method, sim_parameters):
+def plot_2d_colormap(method, sim_parameters, a0_array):
     i = sim_parameters.i
-    a0 = sim_parameters.a0
+    a0 = a0_array[i]
+    wave_count = sim_parameters.wave_count
     square_size = sim_parameters.square_size
     
     if(method == "electromagnetic"):
@@ -104,9 +105,9 @@ def plot_phases(method, sim_parameters):
     
 # ----------------------------------------------------------------------- #
 
-def plot_time_momentum(method, sim_parameters):
+def plot_time_momentum(method, sim_parameters, a0_array):
     i = sim_parameters.i
-    a0 = sim_parameters.a0
+    a0 = a0_array[i]
     num = sim_parameters.num
     steps = sim_parameters.steps // sim_parameters.substeps
     wave_count = sim_parameters.wave_count
@@ -161,8 +162,7 @@ def plot_time_momentum(method, sim_parameters):
     
 # ----------------------------------------------------------------------- #
 
-def plot_2d_heatmap_all(method, sim_parameters):
-    a0 = sim_parameters.a0
+def plot_2d_heatmap_all(method, sim_parameters, a0_array):
     num = sim_parameters.num
     wave_count = sim_parameters.wave_count
     sweep_steps = sim_parameters.sweep_steps
@@ -182,7 +182,7 @@ def plot_2d_heatmap_all(method, sim_parameters):
     fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
     
     for idx in range(sweep_steps):
-        a0_current = data_max_py[idx, 0]
+        a0_current = a0_array[idx]
         
         pos = data[idx, :, 0] / wavelength
         py = data[idx, :, 1]
@@ -191,7 +191,7 @@ def plot_2d_heatmap_all(method, sim_parameters):
         sc = ax.scatter(pos, a0_now, c=py, cmap='RdBu_r', s=square_size, marker='s')
         
     plt.xlim(-wave_count, wave_count)
-    plt.ylim(min(data_max_py[:, 0]), max(data_max_py[:, 0]))
+    plt.ylim(min(a0_array), max(a0_array))
     plt.xlabel(r"Y [$\lambda$]")
     plt.ylabel(r"$a_0$")
     plt.title(f"Full parameter sweep heatmap")
@@ -202,9 +202,9 @@ def plot_2d_heatmap_all(method, sim_parameters):
 
 # ----------------------------------------------------------------------- #
 
-def plot_enter_exit_time(method, sim_parameters):
+def plot_enter_exit_time(method, sim_parameters, a0_array):
     i = sim_parameters.i
-    a0 = sim_parameters.a0
+    a0 = a0_array[i]
     num = sim_parameters.num
     steps = sim_parameters.steps//sim_parameters.substeps
     
@@ -258,13 +258,13 @@ def plot_errors(sim_parameters):
     x = data[:, 0] / wavelength
     y = data[:, 1]
     
-    yMax = data2[i, 1]
+    y_max = data2[i, 1]
     print(f"For a0 = {a0:0.3f}, max(py) = {yMax:0.3f}")
     
-    yFinal = y / yMax * 100
+    y_final = y / y_max * 100.0
     
     plt.figure(figsize=(10,10))
-    plt.plot(x, yFinal, c='black',linestyle='-', linewidth=1)
+    plt.plot(x, y_final, c='black',linestyle='-', linewidth=1)
     plt.title(f"Errors for a0 = {a0:0.3f}")
     plt.xlabel(r"Y [$\lambda$]")
     plt.ylabel(f"Error (%)")
@@ -279,7 +279,7 @@ def plot_errors(sim_parameters):
 
 # ----------------------------------------------------------------------- #
 
-def plot_all_errors(sim_parameters):
+def plot_all_errors(sim_parameters, a0_array):
     num = sim_parameters.num
     wave_count = sim_parameters.wave_count
     square_size = sim_parameters.square_size
@@ -294,7 +294,7 @@ def plot_all_errors(sim_parameters):
     fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
     
     for idx in range(sweep_steps):
-        a0_current = data_max_py[idx, 0]
+        a0_current = a0_array[idx]
         
         pos = data[idx, :, 0] / wavelength
         error = data[idx, :, 1] / data_max_py[idx, 1]
@@ -303,7 +303,7 @@ def plot_all_errors(sim_parameters):
         sc = ax.scatter(pos, a0_now, c=error, cmap='inferno', s=square_size, marker='s')
         
     plt.xlim(-wave_count, wave_count)
-    plt.ylim(np.min(data_max_py[:, 0]), np.max(data_max_py[:, 0]))
+    plt.ylim(min(a0_array), max(a0_array))
     plt.xlabel(r"Y [$\lambda$]")
     plt.ylabel(r"$a_0$")
     plt.title(f"Full error heatmap")
@@ -314,7 +314,7 @@ def plot_all_errors(sim_parameters):
 
 # ----------------------------------------------------------------------- #
 
-def plot_max_py(method):
+def plot_max_py(method, a0_array):
     if(method == "electromagnetic"):
         filename = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
         filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-py-electromag.png"
@@ -324,7 +324,7 @@ def plot_max_py(method):
     
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
     
-    x = data[:, 0]
+    x = a0_array
     y = data[:, 1]
     
     plt.figure(figsize=(10,10))
@@ -342,11 +342,11 @@ def plot_max_py(method):
     
 # ----------------------------------------------------------------------- #    
 
-def plot_average_errors():
+def plot_average_errors(a0_array):
     filename = f"{OUTPUT_DIR}/out-average-error.bin"
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
     
-    x = data[:, 0]
+    x = np.array(a0_array)
     y = data[:, 1]
     
     plt.figure(figsize=(10,10))

@@ -1,9 +1,10 @@
+import numpy as np
 import scripts.programs as programs
 import scripts.create_video as video
 import scripts.plotting as plots
 
 pi = 3.14159265359
-wavelength = 2.0 * pi * 137.036 / 0.057
+deg_to_rad = pi / 180.0
 
 framerate = 3
 first_eighth = 8
@@ -17,28 +18,29 @@ substeps_pond = 1
 
 # ------------------------------------------------------- #
 
+tauf = 1e4
 core_num = 8
-square_size = 2
-sweep_steps = 256
-wave_count = 1.0
-num_full = 64000
-num_phase = 256
-steps_electromag = 4096
-steps_pond = 256
-tauf = 10000.0
+omega = 0.057
 xif = 0.0 * pi
+num_phase = 512
+psi = -60.0 * pi
+steps_pond = 256
+num_full = 16000
+wave_count = 1.0
 sigma = 16.0 * pi
+square_size = 3.0
+sweep_steps = 256
+steps_electromag = 4096
+phi = 90.0 * deg_to_rad
+theta = 90.0 * deg_to_rad
 
 # ------------------------------------------------------- #
 
 class SimParameters:
-    def __init__(self, i, a0, num, xif, tauf, sigma, steps, divider,substeps, core_num, wave_count, output_mode, square_size, sweep_steps, full_trajectory):
+    def __init__(self, i, num, tauf, steps, divider, substeps, core_num, wave_count, output_mode, square_size, sweep_steps, full_trajectory):
         self.i = i
-        self.a0 = a0
         self.num = num
-        self.xif = xif
         self.tauf = tauf
-        self.sigma = sigma
         self.steps = steps
         self.divider = divider
         self.substeps = substeps
@@ -51,25 +53,46 @@ class SimParameters:
 
 # ------------------------------------------------------- #
 
+class LaserParameters:
+    def __init__(self, a0, sigma, omega, xif, zetax, zetay, phi, theta, psi):
+        self.a0 = a0
+        self.xif = xif
+        self.phi = phi
+        self.psi = psi
+        self.sigma = sigma
+        self.zetax = zetax
+        self.zetay = zetay
+        self.omega = omega
+        self.theta = theta
+
+# ------------------------------------------------------- #
+
 if __name__ == "__main__":
+    a0_array = np.array([])
     programs.clean_output_folder()
+    
     for i in range(0, sweep_steps):
+        a0 = 0.02 + i / 500
+        a0_array = np.append(a0_array, a0)
         
-        a0 = 0.02 + i / 400.0
+        laser_1 = LaserParameters(a0, sigma, omega, xif, 0.0, 1.0, phi, theta, psi)
+        laser_2 = LaserParameters(a0, sigma, omega, xif, 0.0, 1.0, phi, -theta, psi)
         
-        '''sim_parameters = SimParameters(i, a0, num_full, xif, tauf, sigma, steps_electromag, first_eighth,
+        lasers = (laser_1, laser_2)
+        
+        '''sim_parameters = SimParameters(i, num_full, tauf,  steps_electromag, first_eighth,
             substeps_electromag, core_num, wave_count, final_states, square_size, sweep_steps, full_trajectory)
         
-        programs.run_simulation("electromagnetic", sim_parameters)
+        programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
-        plots.plot_2d_colormap("electromagnetic", sim_parameters)'''
+        plots.plot_2d_colormap("electromagnetic", sim_parameters, a0_array)'''
         
         # ------------------------------------------------------- #
         
-        sim_parameters = SimParameters(i, a0, num_phase, xif, tauf, sigma, steps_electromag, first_eighth,
+        sim_parameters = SimParameters(i, num_phase, tauf,  steps_electromag, first_eighth,
             substeps_electromag, core_num, wave_count, all_states, square_size, sweep_steps, full_trajectory)
         
-        programs.run_simulation("electromagnetic", sim_parameters)
+        programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
         programs.find_final_py("electromagnetic", sim_parameters)
         
@@ -85,10 +108,10 @@ if __name__ == "__main__":
         
         # ------------------------------------------------------- #
         
-        sim_parameters = SimParameters(i, a0, num_phase, xif, tauf, sigma, steps_pond, first_eighth,
+        sim_parameters = SimParameters(i, num_phase, tauf, steps_pond, first_eighth,
             substeps_pond, core_num, wave_count, all_states, square_size, sweep_steps, trajectory_until_exit)
         
-        programs.run_simulation("ponderomotive", sim_parameters)
+        programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
         programs.find_final_py("ponderomotive", sim_parameters)
         
@@ -103,7 +126,7 @@ if __name__ == "__main__":
         #plots.plot_phases("ponderomotive", sim_parameters)
         
         # ------------------------------------------------------- #
-        programs.calculate_errors(sim_parameters)
+        programs.calculate_errors(sim_parameters, a0_array)
         
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
         
@@ -111,18 +134,18 @@ if __name__ == "__main__":
         
         #plotting.plot_phases_oscillator(a0, i, num_phase, wavelength, wave_count)
         
-    plots.plot_max_py("electromagnetic")
+    plots.plot_max_py("electromagnetic", a0_array)
     
-    plots.plot_max_py("ponderomotive")
+    plots.plot_max_py("ponderomotive", a0_array)
     
-    plots.plot_average_errors()
+    plots.plot_average_errors(a0_array)
     
-    plots.plot_all_errors(sim_parameters)
+    plots.plot_all_errors(sim_parameters, a0_array)
     
-    plots.plot_2d_heatmap_all("electromagnetic", sim_parameters)
+    plots.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array)
     
-    plots.plot_2d_heatmap_all("ponderomotive", sim_parameters)
-
+    plots.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array)
+    
     '''video.create_2d_colormap_video("electromagnetic", framerate)
     video.create_2d_colormap_video("ponderomotive", framerate)
     video.create_enter_exit_video("electromagnetic", framerate)
@@ -131,5 +154,5 @@ if __name__ == "__main__":
     video.create_error_video(framerate)'''
     
     #programs.clean_image_folder()
-
+    
     print(f"Program executed successfully. \a")

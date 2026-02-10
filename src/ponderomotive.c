@@ -26,14 +26,14 @@
 #include "ponderomotive.h"
 
 void potential_deriv_a(double *a, double *u, struct laser *l, int index, int n) {
-	double potentialA0 = l[n].E0 * m / (l[n].omega * fabs(q));
+	double potentialA0 = l[n].a0 * m * c / fabs(q);
 	double epsilon4[4], k_vec4[4];
-
+	
 	k_vec4[0] = 1.0;
 	epsilon4[0] = 0.0;
 	set_vec(&k_vec4[1], l[n].n, 3);
 	mult_vec4(k_vec4, l[n].omega / c);
-
+	
 	double phi = dot4(k_vec4, u) + l[n].psi;
 	a[0] = 0.0;
 	double sign = (index > 0) ? -1.0 : +1.0;
@@ -45,14 +45,14 @@ void potential_deriv_a(double *a, double *u, struct laser *l, int index, int n) 
 }
 
 void potential_a(double *a, double *u, struct laser *l, int n) {
-	double potentialA0 = l[n].E0 * m / (l[n].omega * fabs(q));
+	double potentialA0 = l[n].a0 * m * c / fabs(q);
 	double epsilon4[4], k_vec4[4];
-
+	
 	k_vec4[0] = 1.0;
 	epsilon4[0] = 0.0;
 	set_vec(&k_vec4[1], l[n].n, 3);
 	mult_vec4(k_vec4, l[n].omega / c);
-
+	
 	double phi = dot4(k_vec4, u) + l[n].psi;
 	double A0mult = env(phi, l[n].xif, l[n].sigma) * potentialA0;
 	a[0] = 0.0;
@@ -68,13 +68,13 @@ double integrate(double *u, struct laser *l) {
 	
 	set_vec(u_temp, u, 4);
 	u_temp[0] -= lambda / 2.0;
-
+	
 	for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
 		set_zero_n(a1_left, 4);
 		set_zero_n(a1_mid, 4);
 		set_zero_n(a1_right, 4);
 		
-		for(int j = 0; j < NUM_LASERS; j++) {
+		for(int j = 0; j < l[0].num_lasers; j++) {
 			potential_a(a1_temp, u_temp, l, j);
 			add_vec4(a1_left, a1_temp);
 			u_temp[0] += dh / 2.0;
@@ -99,16 +99,16 @@ double integrate_dmuda(double *u, struct laser *l, int index) {
 	double integral = 0.0;
 	double a1_left[4], a1_right[4], a1_mid[4], a2_left[4], a2_right[4], a2_mid[4], a1_temp[4], a2_temp[4], u_temp[4];
 	double lambda = 2.0 * pi * c / l[0].omega, dh = lambda / (double) PONDEROMOTIVE_STEPS;
-
+	
 	set_vec(u_temp, u, 4);
 	u_temp[0] -= lambda / 2.0;
-
+	
 	for(int i = 0; i < PONDEROMOTIVE_STEPS; i++) {
 		set_zero_n(a1_left, 4); set_zero_n(a1_right, 4);
 		set_zero_n(a1_mid, 4); set_zero_n(a2_mid, 4);
 		set_zero_n(a2_left, 4); set_zero_n(a2_right, 4);
 		
-		for(int j = 0; j < NUM_LASERS; j++) {
+		for(int j = 0; j < l[0].num_lasers; j++) {
 			potential_a(a1_temp, u_temp, l, j);
 			potential_deriv_a(a2_temp, u_temp, l, index, j);
 			add_vec4(a1_left, a1_temp);

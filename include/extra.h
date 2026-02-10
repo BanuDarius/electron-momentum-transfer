@@ -6,7 +6,6 @@
 #include "init.h"
 
 #define U_SIZE 8
-#define NUM_LASERS 2
 #define CHUNK_SIZE 100
 #define PONDEROMOTIVE_STEPS 4
 #define DEG_TO_RAD (pi / 180.0)
@@ -36,8 +35,9 @@ double dot(double *a, double *b);
 double dot4(double *u, double *v);
 double magnitude(double *a);
 double compute_gamma(double *v);
-void rotate(double *u, double phi, double theta);
-double *direction_vec(double phi_l, double theta_l);
+void rotate_around_z_axis(double *u, double angle);
+void set_spherical_coords(double *u, double phi, double theta);
+double *direction_vec(double phi, double theta);
 void epsilon(double *u, double *w);
 double env(double xi, double xif, double sigma);
 double env_prime(double xi, double xif, double sigma);

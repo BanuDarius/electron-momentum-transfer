@@ -24,11 +24,11 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
-	int num = atoi(argv[1]);
-	FILE *in_a = fopen("./output/out-final-py-electromag.bin", "rb"), *in_b = fopen("./output/out-final-py-pond.bin", "rb");
-	FILE *out = fopen("./output/out-error.bin", "wb"), *out_average_error = fopen("./output/out-average-error.bin", "ab");
-	FILE *out_error_all = fopen("./output/out-error-all.bin", "ab");
-	double sum = 0.0, a0 = atof(argv[2]);
+	int num = atoi(argv[1]), index = atoi(argv[2]);
+	FILE *in_a = fopen(argv[3], "rb"), *in_b = fopen(argv[4], "rb");
+	FILE *out = fopen(argv[5], "wb"), *out_average_error = fopen(argv[6], "ab");
+	FILE *out_error_all = fopen(argv[7], "ab");
+	double sum = 0.0;
 	
 	for(int i = 0; i < num; i++) {
 		double data[4];
@@ -43,8 +43,8 @@ int main(int argc, char **argv) {
 	}
 	
 	double average = sum / ((double) num);
-	fwrite(&a0, sizeof(double), 1, out_average_error);
-	fwrite(&average, sizeof(double), 1, out_average_error);
+	double v[2] = {(double)index, average};
+	fwrite(v, sizeof(double), 2, out_average_error);
 	
 	printf("Ended error calculation.\n");
 	fclose(out_average_error);

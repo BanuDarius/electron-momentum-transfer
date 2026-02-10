@@ -121,24 +121,23 @@ double compute_gamma(double *v) {
 	return gamma;
 }
 
-void rotate(double *u, double phi, double theta) {
-	double x, y, z;
-	y = u[1];
-	z = u[2];
-	u[1] = y * cos(phi) - z * sin(phi);
-	u[2] = y * sin(phi) + z * cos(phi);
-	x = u[0];
-	y = u[1];
-	u[0] = x * cos(theta) - y * sin(theta);
-	u[1] = x * sin(theta) + y * cos(theta);
+void set_spherical_coords(double *u, double phi, double theta) {
+	double mag = magnitude(u);
+	u[0] = mag * sin(phi) * cos(theta);
+	u[1] = mag * sin(phi) * sin(theta);
+	u[2] = mag * cos(phi);
 }
 
-double *direction_vec(double phi_l, double theta_l) {
+void rotate_around_z_axis(double *u, double angle) {
+	double u_temp[2] = { u[0], u[1] };
+	u[0] = u_temp[0] * cos(angle) - u_temp[1] * sin(angle);
+	u[1] = u_temp[0] * sin(angle) + u_temp[1] * cos(angle);
+}
+
+double *direction_vec(double phi, double theta) {
 	double *u = new_vec(3);
-	u[0] = 0.0;
-	u[1] = 0.0;
-	u[2] = 1.0;
-	rotate(u, phi_l, theta_l);
+	u[0] = 0.0; u[1] = 0.0; u[2] = 1.0;
+	set_spherical_coords(u, phi, theta);
 	return u;
 }
 

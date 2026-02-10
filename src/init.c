@@ -30,6 +30,7 @@
 //This is a helper library which includes electromagnetic field computation functions, initializing particles and lasers, and parsing the simulation parameters.
 
 void compute_e(double *E, double *u, struct laser *l, int i) {
+	double E0 = l[i].omega * c * l[i].a0;
 	double k = l[i].omega / c;
 	double t = u[0] / c;
 	double xif = l[i].xif, sigma = l[i].sigma;
@@ -45,7 +46,7 @@ void compute_e(double *E, double *u, struct laser *l, int i) {
 	mult_vec(E2, Ec2);
 	set_vec(E, E1, 3);
 	add_vec(E, E2);
-	mult_vec(E, l[i].E0);
+	mult_vec(E, E0);
 }
 
 void compute_b(double *B, double *E, double *u, struct laser *l, int i) {
@@ -55,7 +56,7 @@ void compute_b(double *B, double *E, double *u, struct laser *l, int i) {
 
 void compute_e_b(double *E, double *B, double *u, struct laser *l) {
 	double Et[3], Bt[3];
-	for(int i = 0; i < NUM_LASERS; i++) {
+	for(int i = 0; i < l[0].num_lasers; i++) {
 		set_zero(Et);
 		set_zero(Bt);
 		compute_e(Et, u, l, i);
@@ -82,9 +83,8 @@ void electromag(double *u, double *up, struct laser *l) {
 }
 
 void set_position(struct particle *p, double r, double h, double z, int i, int num, int output_mode) {
-	double wavelength = 2.0 * pi * c / 0.057;
 	if(output_mode == 0) {
-		p->u[1] = - r + 2.0 * i * r / num + 50.0;
+		p->u[1] = - r + 2.0 * i * r / num;
 		p->u[2] = 0.0;
 	}
 	else {
@@ -99,30 +99,11 @@ void set_initial_vel(double *vi, double m, double phi, double theta) {
 	mult_vec(vi, m);
 }
 
-void set_laser(struct laser *l, double E0, double phi, double theta, double xif, double omega, double sigma, double psi) {
-	l->E0 = E0;
-	l->psi = psi;
-	l->xif = xif;
-	l->zetax = 0.0;
-	l->zetay = 1.0;
-	l->omega = omega;
-	l->sigma = sigma;
-	double *nv = direction_vec(phi, theta);
-	double epsilon1[3];
-	double epsilon2[3];
-	epsilon(nv, epsilon1);
-	cross(nv, epsilon1, epsilon2);
-	set_vec(l->n, nv, 3);
-	set_vec(l->epsilon1, epsilon1, 3);
-	set_vec(l->epsilon2, epsilon2, 3);
-	free(nv);
-}
-
-void set_particles(struct particle *p, int num, double r, double h, double z, double phi, double theta, double *vi, int output_mode) {
+void set_particles(struct particle *p, int num, double r, double h, double z, double angle, double *vi, int output_mode) {
 	for(int i = 0; i < num; i++) {
 		p[i].u[0] = 0;
 		set_position(&p[i], r, h, z, i, num, output_mode);
-		rotate(&p[i].u[1], phi, theta);
+		rotate_around_z_axis(&p[i].u[1], angle);
 		double gamma = compute_gamma(vi);
 		p[i].u[4] = m * c * gamma;
 		p[i].u[5] = m * vi[0] * gamma;
@@ -154,40 +135,75 @@ void set_parameters(struct parameters *param, char *input) {
 	if(!in) { perror("Cannot open input file."); abort(); }
 	param->h = 0.0;
 	param->z = 0.0;
-	param->omega = 0.057;
 	
 	char current[16];
 	int i;
 	
 	while(fscanf(in, "%s", current) != EOF) {	
-		if(!strcmp(current, "mode"))
-			i = fscanf(in, "%i", &param->mode);
-		else if(!strcmp(current, "a0"))
-			i = fscanf(in, "%lf", &param->a0);
-		else if(!strcmp(current, "num"))
+		if(!strcmp(current, "num"))
 			i = fscanf(in, "%i", &param->num);
-		else if(!strcmp(current, "xif"))
-			i = fscanf(in, "%lf", &param->xif);
-		else if(!strcmp(current, "tauf"))
-			i = fscanf(in, "%lf", &param->tauf);
+		else if(!strcmp(current, "num_lasers"))
+			i = fscanf(in, "%i", &param->num_lasers);
 		else if(!strcmp(current, "steps"))
 			i = fscanf(in, "%i", &param->steps);
-		else if(!strcmp(current, "sigma"))
-			i = fscanf(in, "%lf", &param->sigma);
 		else if(!strcmp(current, "substeps"))
 			i = fscanf(in, "%i", &param->substeps);
+		else if(!strcmp(current, "mode"))
+			i = fscanf(in, "%i", &param->mode);
+		else if(!strcmp(current, "tauf"))
+			i = fscanf(in, "%lf", &param->tauf);
+		else if(!strcmp(current, "output_mode"))
+			i = fscanf(in, "%i", &param->output_mode);
 		else if(!strcmp(current, "core_num"))
 			i = fscanf(in, "%i", &param->core_num);
 		else if(!strcmp(current, "wave_count"))
 			i = fscanf(in, "%lf", &param->r);
-		else if(!strcmp(current, "output_mode"))
-			i = fscanf(in, "%i", &param->output_mode);
+
 	}
 	
-	param->wavelength = 2.0 * pi * c / param->omega;
+	param->wavelength = 2.0 * pi * c / 0.057;
 	param->r = param->r * param->wavelength;
-	param->E0 = param->omega * c * param->a0;
 	param->dtau = param->tauf / param->steps;
 	
 	fclose(in);
+}
+
+void set_lasers(struct laser *l, int num_lasers, char *input) {
+	FILE *in = fopen(input, "r");
+	if(!in) { perror("Cannot open input file."); abort(); }
+	char current[16];
+	int k;
+	
+	for(int i = 0; i < num_lasers; i++) {
+		l[i].num_lasers = num_lasers;
+		for(int j = 0; j < LASER_PARAMS; j++) {
+			k = fscanf(in, "%s", current);
+			if(!strcmp(current, "a0"))
+				k = fscanf(in, "%lf", &l[i].a0);
+			if(!strcmp(current, "sigma"))
+				k = fscanf(in, "%lf", &l[i].sigma);
+			if(!strcmp(current, "omega"))
+				k = fscanf(in, "%lf", &l[i].omega);
+			if(!strcmp(current, "xif"))
+				k = fscanf(in, "%lf", &l[i].xif);
+			if(!strcmp(current, "zetax"))
+				k = fscanf(in, "%lf", &l[i].zetax);
+			if(!strcmp(current, "zetay"))
+				k = fscanf(in, "%lf", &l[i].zetay);
+			if(!strcmp(current, "phi"))
+				k = fscanf(in, "%lf", &l[i].phi);
+			if(!strcmp(current, "theta"))
+				k = fscanf(in, "%lf", &l[i].theta);
+			if(!strcmp(current, "psi"))
+				k = fscanf(in, "%lf", &l[i].psi);
+		}
+		double *nv = direction_vec(l[i].phi, l[i].theta);
+		double epsilon1[3], epsilon2[3];
+		epsilon(nv, epsilon1);
+		cross(nv, epsilon1, epsilon2);
+		set_vec(l[i].n, nv, 3);
+		set_vec(l[i].epsilon1, epsilon1, 3);
+		set_vec(l[i].epsilon2, epsilon2, 3);
+		free(nv);
+	}
 }

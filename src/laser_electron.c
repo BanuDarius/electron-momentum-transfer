@@ -96,27 +96,25 @@ void simulate(struct parameters *param, void (*compute_function)(double *, doubl
 int main(int argc, char **argv) {
 	srand(128);
 	clock_t ti = clock();
-	FILE *out = fopen(argv[2], "wb");
+	FILE *out = fopen(argv[3], "wb");
 	if(!out) { perror("Cannot open output file."); return 1; }
 	
-	double vi[3], alpha = pi / 2.0, beta = 0.0;
+	double vi[3];
+	set_initial_vel(vi, 0.0, 0.0, 0.0);
 	struct parameters *param = malloc(sizeof(struct parameters));
 	set_parameters(param, argv[1]);
 	
-	struct laser *l = malloc(NUM_LASERS * sizeof(struct laser));
+	struct laser *l = malloc(param->num_lasers * sizeof(struct laser));
+	set_lasers(l, param->num_lasers, argv[2]);
+	
 	struct particle *p = malloc(param->num * sizeof(struct particle));
 	double *out_chunk = create_out_chunk(param->output_mode, param->num, param->steps, param->substeps, param->core_num);
 	void (*compute_function)(double *, double *, struct laser *);
+	set_mode(&compute_function, param->mode);
 	
 	if(!l || !p || !out_chunk) { perror("Memory allocation error."); return 1; }
 	
-	set_initial_vel(vi, 0.0, 0.0, 0.0);
-	set_mode(&compute_function, param->mode);
-	//Mode "0" for electromagnetic, "1" for ponderomotive
-	set_laser(&l[0], param->E0, -alpha, beta, param->xif, param->omega, param->sigma, -60.0 * pi);
-	set_laser(&l[1], param->E0, alpha, -beta, param->xif, param->omega, param->sigma, -60.0 * pi);
-	set_particles(p, param->num, param->r, param->h, param->z, pi / 2.0, pi / 2.0, vi, param->output_mode);
-	//Output mode "0" for all positions and velocities, "1" for only the final positions and velocities
+	set_particles(p, param->num, param->r, param->h, param->z, pi / 2.0, vi, param->output_mode);
 	
 	printf("Simulation started.\n");
 	simulate(param, compute_function, out, out_chunk, l, p);
