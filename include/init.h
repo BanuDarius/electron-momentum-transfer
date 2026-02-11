@@ -6,14 +6,14 @@
 //Definitions for the particle struct, laser struct, and parameter struct.
 //All of which are passed to the simulate() function.
 
-#define LASER_PARAMS 9 //This defines how many parameters will be read from a file for one laser.
+#define LASER_PARAMS 10 //This defines how many parameters will be read from a file for one laser.
 
 struct particle {
 	double u[8];
 };
 
 struct laser {
-	int num_lasers;
+	int num_lasers, pond_integrate_steps;
 	double sigma, zetax, zetay, omega, theta, phi, psi, xif, a0;
 	double epsilon1[3], epsilon2[3], n[3];
 };

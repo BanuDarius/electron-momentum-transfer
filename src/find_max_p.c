@@ -25,28 +25,27 @@
 
 int main(int argc, char **argv) {
 	FILE *in = fopen(argv[1], "rb");
-	FILE *out_final_py = fopen(argv[4], "wb"), *out_final_py_all = fopen(argv[5], "ab");
+	FILE *out_max_p = fopen(argv[5], "ab");
 	
 	int num = atoi(argv[2]), steps = atoi(argv[3]);
-	double t[8];
+	double index = atoi(argv[4]), data[num], t[2];
 	
 	for(int i = 0; i < num; i++) {
-		for(int j = 0; j < steps; j++) {
-			int x = fread(t, sizeof(double), 8, in);
-			if(j == 0) {
-				double pos = t[2];
-				fwrite(&pos, sizeof(double), 1, out_final_py);
-				fwrite(&pos, sizeof(double), 1, out_final_py_all);
-			}
-			if(j == steps - 1) {
-				double py = t[6];
-				fwrite(&py, sizeof(double), 1, out_final_py);
-				fwrite(&py, sizeof(double), 1, out_final_py_all);
-			}
-		}
+		int x = fread(t, sizeof(double), 2, in);
+		data[i] = t[1];
 	}
 	
-	fclose(out_final_py_all); fclose(out_final_py); fclose(in);
-	printf("Ended calculating final py.\n");
+	double max_p = -INFINITY;
+	for(int i = 0; i < num; i++) {
+		double p = data[i];
+		if(fabs(p) > max_p)
+			max_p = fabs(p);
+	}
+	
+	double v[2] = { (double)index, max_p };
+	fwrite(v, sizeof(double), 2, out_max_p);
+	
+	fclose(out_max_p); fclose(in);
+	printf("Ended calculating max(p).\n");
 	return 0;
 }

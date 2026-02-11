@@ -30,8 +30,8 @@ void set_zero(double *v) {
 
 int main(int argc, char **argv) {
 	FILE *in = fopen(argv[1], "rb");
-	FILE *out = fopen(argv[4], "wb");
-	int num = atoi(argv[2]), steps = atoi(argv[3]);
+	FILE *out = fopen(argv[6], "wb");
+	int num = atoi(argv[2]), steps = atoi(argv[3]), axis_pos = atoi(argv[4]), axis_p = atoi(argv[5]);
 	
 	double velocity_data[steps], time_data[steps], initial_position;
 	
@@ -40,9 +40,9 @@ int main(int argc, char **argv) {
 			double t[8];
 			int x = fread(t, sizeof(double), 8, in);
 			if(j == 0)
-				initial_position = t[2];
+				initial_position = t[axis_pos + 1];
 			time_data[j] = t[0];
-			velocity_data[j] = t[6];
+			velocity_data[j] = t[axis_p + 5];
 		}
 		
 		double v[4];
@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
 		fwrite(v, sizeof(double), 4, out);
 	}
 	
-	printf("Calculated particle enter exit times.\n");
+	printf("Ended calculating enter exit times.\n");
 	fclose(in); fclose(out);
 	return 0;
 }

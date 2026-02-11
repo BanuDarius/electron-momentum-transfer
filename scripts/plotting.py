@@ -1,8 +1,11 @@
 import os
 import sys
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
+
+c_value = 137.036 #The speed of light in a.u.
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
@@ -12,33 +15,55 @@ OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
 # ----------------------------------------------------------------------- #
 
-def plot_2d_colormap(method, sim_parameters, a0_array):
+def get_axis_text(axis):
+    if(axis == 0):
+        axis_text = "X"
+    elif(axis == 1):
+        axis_text = "Y"
+    else:
+        axis_text = "Z"
+    return axis_text
+
+# ----------------------------------------------------------------------- #
+
+def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, axis_p):
+    axis_text_horiz = get_axis_text(axis_horiz)
+    lowercase_text_horiz = axis_text_horiz.lower()
+    
+    axis_text_vert = get_axis_text(axis_vert)
+    lowercase_text_vert = axis_text_vert.lower()
+    
+    axis_text_p = get_axis_text(axis_p)
+    lowercase_text_p = axis_text_p.lower()
+    
     i = sim_parameters.i
     a0 = a0_array[i]
     r = sim_parameters.r
     wave_count = sim_parameters.wave_count
-    square_size = sim_parameters.square_size
+    square_size = 2
     
     if(method == "electromagnetic"):
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-electromag-{i}.png"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-electromag-{lowercase_text_horiz}{lowercase_text_vert}{lowercase_text_p}-{i}.png"
     else:
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-pond-{i}.png"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-pond-{lowercase_text_horiz}{lowercase_text_vert}{lowercase_text_p}-{i}.png"
+    
     filename = f"{OUTPUT_DIR}/out-data.bin"
     
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 16)
     
-    x = data[:, 2] / r
-    y = data[:, 3] / r
-    c = data[:, 14]
+    x = data[:, axis_horiz + 1] / r
+    y = data[:, axis_vert + 1] / r
+    c = data[:, axis_p + 13]
     
     plt.figure(figsize=(10,10))
     plt.scatter(x, y, c=c, marker='s', s=square_size, cmap='RdBu_r')
     plt.xlim(-wave_count, wave_count)
     plt.ylim(-wave_count, wave_count)
-    plt.xlabel(r"Y [$\lambda$]")
-    plt.ylabel(r"Z [$\lambda$]")
-    plt.title(f"a0 = {a0:0.3f}")
-    plt.colorbar()
+    plt.xlabel(rf"{axis_text_horiz} [$\lambda$]")
+    plt.ylabel(rf"{axis_text_vert} [$\lambda$]")
+    plt.title(rf"Final $p_{lowercase_text_p}$ for ({method}) mode")
+    cbar = plt.colorbar()
+    cbar.set_label(rf"Final $p_{lowercase_text_p}$ [a.u.]")
     plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
         
@@ -46,7 +71,13 @@ def plot_2d_colormap(method, sim_parameters, a0_array):
 
 # ----------------------------------------------------------------------- #
 
-def plot_phases(method, sim_parameters, a0_array):
+def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
+    axis_text_pos = get_axis_text(axis_pos)
+    lowercase_text_pos = axis_text_pos.lower()
+    
+    axis_text_p = get_axis_text(axis_p)
+    lowercase_text_p = axis_text_p.lower()
+    
     i = sim_parameters.i
     a0 = a0_array[i]
     r = sim_parameters.r
@@ -57,11 +88,11 @@ def plot_phases(method, sim_parameters, a0_array):
     divider = sim_parameters.divider
     
     if(method == "electromagnetic"):
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-electromag-{i}.png"
-        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-electromag.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-electromag-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
+        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}.bin"
     else:
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-pond-{i}.png"
-        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-pond-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
+        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-pond-{lowercase_text_pos}{lowercase_text_p}.bin"
     filename = f"{OUTPUT_DIR}/out-data.bin"
     
     data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
@@ -85,14 +116,14 @@ def plot_phases(method, sim_parameters, a0_array):
         color = idx / subsection
         color_cmap = colmap(color)
         
-        x = traj[:, 2] / r
-        y = traj[:, 6]
+        x = traj[:, axis_pos + 1] / r
+        y = traj[:, axis_p + 5]
         
         sc = ax.plot(x, y, c=color_cmap, linewidth=0.5)
         
     ax.set_title(f"Phase space: $a_0 = {a0:0.3f}$ - $N = {subsection}$")
-    ax.set_xlabel(r"$y$ [$\lambda$]")
-    ax.set_ylabel(r"$p_y$")
+    ax.set_xlabel(r"${axis_text_pos}$ [$\lambda$]")
+    ax.set_ylabel(r"$p_{axis_text_p}$")
     
     ax.set_xlim(-1.1 * wave_count, 1.1 * wave_count)
     
@@ -103,7 +134,13 @@ def plot_phases(method, sim_parameters, a0_array):
     
 # ----------------------------------------------------------------------- #
 
-def plot_time_momentum(method, sim_parameters, a0_array):
+def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
+    axis_text_pos = get_axis_text(axis_pos)
+    lowercase_text_pos = axis_text_pos.lower()
+    
+    axis_text_p = get_axis_text(axis_p)
+    lowercase_text_p = axis_text_p.lower()
+    
     i = sim_parameters.i
     a0 = a0_array[i]
     r = sim_parameters.r
@@ -113,11 +150,11 @@ def plot_time_momentum(method, sim_parameters, a0_array):
     full_trajectory = sim_parameters.full_trajectory
     
     if(method == "electromagnetic"):
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-electromag-{i}.png"
-        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-electromag.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-electromag-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
+        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}.bin"
     else:
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-pond-{i}.png"
-        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-pond-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
+        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-pond-{lowercase_text_pos}{lowercase_text_p}.bin"
     filename = f"{OUTPUT_DIR}/out-data.bin"
     
     
@@ -142,14 +179,14 @@ def plot_time_momentum(method, sim_parameters, a0_array):
         color = idx / subsection
         color_cmap = colmap(color)
         
-        x = traj[:, 0] / 137.036
-        y = traj[:, 6]
+        x = traj[:, 0] / c_value
+        y = traj[:, axis_p + 5]
         
         sc = ax.plot(x, y, c=color_cmap, linewidth=0.5)
         
     ax.set_title(f"Time - momentum plot for: $a_0 = {a0:0.3f}$ - $N = {subsection}$")
     ax.set_xlabel(r"$t$")
-    ax.set_ylabel(r"$p_y$")
+    ax.set_ylabel(r"$p_{lowercase_text}$")
     
     plt.savefig(filename_out, bbox_inches='tight')
     plt.close()
@@ -158,34 +195,48 @@ def plot_time_momentum(method, sim_parameters, a0_array):
     
 # ----------------------------------------------------------------------- #
 
-def plot_2d_heatmap_all(method, sim_parameters, a0_array):
+def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
+    axis_text_pos = get_axis_text(axis_pos)
+    lowercase_text_pos = axis_text_pos.lower()
+    
+    axis_text_p = get_axis_text(axis_p)
+    lowercase_text_p = axis_text_p.lower()
+    
     r = sim_parameters.r
     num = sim_parameters.num
     sweep_steps = sim_parameters.sweep_steps
     wave_count = sim_parameters.wave_count
     
     if(method == "electromagnetic"):
-        filename_in = f"{OUTPUT_DIR}/out-final-py-all-electromag.bin"
-        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-electromag.png"
+        filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-electromag.bin"
+        filename_in_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-electromag.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-electromag-{lowercase_text_pos}{lowercase_text_p}.png"
     else:
-        filename_in = f"{OUTPUT_DIR}/out-final-py-all-pond.bin"
-        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-pond.png"
+        filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-pond.bin"
+        filename_in_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-pond.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-pond-{lowercase_text_pos}{lowercase_text_p}.png"
     
     data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
+    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 2)
     
     x = data[:, :, 0] / r
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
-    z = data[:, :, 1]
+    max_py = data_max_p[:, 1][:, np.newaxis]
+    z = data[:, :, 1] / max_py
     fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
     
-    pcm = ax.pcolormesh(x, y, z, cmap='RdBu_r', shading='auto', rasterized=True)
+    with warnings.catch_warnings(record=True) as warn:
+        warnings.simplefilter("always")
+        pcm = ax.pcolormesh(x, y, z, cmap='RdBu_r', shading='auto', rasterized=True)
+        if(len(warn) > 0):
+            print("Warning: Low resolution, please run with a higher num_phase or sweep_steps.")
     
-    cbar = plt.colorbar(pcm, ax=ax, label=r"$p_y$")
-    cbar.set_label("Final momentum [a.u.]")
+    cbar = plt.colorbar(pcm, ax=ax)
+    cbar.set_label(f"Normalized final momentum $p_{lowercase_text_p}$ [a.u.]")
     
     plt.xlim(-wave_count, wave_count)
     plt.ylim(min(a0_array), max(a0_array))
-    plt.xlabel(r"Y [$\lambda$]")
+    plt.xlabel(rf"{axis_text_pos} [$\lambda$]")
     plt.ylabel(r"$a_0$")
     plt.title(f"Full parameter sweep heatmap ({method})")
     
@@ -196,34 +247,47 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array):
 
 # ----------------------------------------------------------------------- #
 
-def plot_2d_errors_heatmap(sim_parameters, a0_array):
+def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
+    axis_text_pos = get_axis_text(axis_pos)
+    lowercase_text_pos = axis_text_pos.lower()
+    
+    axis_text_p = get_axis_text(axis_p)
+    lowercase_text_p = axis_text_p.lower()
+    
     r = sim_parameters.r
     num = sim_parameters.num
     wave_count = sim_parameters.wave_count
     sweep_steps = sim_parameters.sweep_steps
     
-    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-errors.png"
-    filename_in = f"{OUTPUT_DIR}/out-error-all.bin"
-    filename_in_max_py = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
+    filename_in = f"{OUTPUT_DIR}/out-error-all-{lowercase_text_p}.bin"
+    filename_in_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-electromag.bin"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-errors-{lowercase_text_pos}{lowercase_text_p}.png"
     
     data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
-    data_max_py = np.fromfile(filename_in_max_py, dtype=np.float64).reshape(sweep_steps, 2)
+    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 2)
     
-    error = data[:, :, 1]
+    difference = data[:, :, 1]
     x = data[:, :, 0] / r
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
-    norm = data_max_py[:, 1][:, np.newaxis]
-    z = error / norm
+    max_p = data_max_p[:, 1][:, np.newaxis]
+    z = difference / max_p * 100.0
+    
+    row_max = np.max(z, axis=1)[:, np.newaxis]
+    z_final = z / row_max * 100.0
     
     fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
-    pcm = ax.pcolormesh(x, y, z, cmap='inferno', shading='auto', rasterized=True)
+    with warnings.catch_warnings(record=True) as warn:
+        warnings.simplefilter("always")
+        pcm = ax.pcolormesh(x, y, z_final, cmap='inferno', shading='auto', rasterized=True)
+        if(len(warn) > 0):
+            print("Warning: Low resolution, please run with a higher num_phase or sweep_steps.")
     
     cbar = plt.colorbar(pcm, ax=ax)
-    cbar.set_label("Relative error [%]")
+    cbar.set_label("Normalized error [%]")
     
     plt.xlim(-wave_count, wave_count)
     plt.ylim(min(a0_array), max(a0_array))
-    plt.xlabel(r"Y [$\lambda$]")
+    plt.xlabel(rf"{axis_text_pos} [$\lambda$]")
     plt.ylabel(r"$a_0$")
     plt.title(f"Full error heatmap")
     
@@ -234,7 +298,13 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array):
 
 # ----------------------------------------------------------------------- #
 
-def plot_enter_exit_time(method, sim_parameters, a0_array):
+def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
+    axis_text_pos = get_axis_text(axis_pos)
+    lowercase_text_pos = axis_text_pos.lower()
+    
+    axis_text_p = get_axis_text(axis_p)
+    lowercase_text_p = axis_text_p.lower()
+    
     r = sim_parameters.r
     num = sim_parameters.num
     i = sim_parameters.i
@@ -243,11 +313,13 @@ def plot_enter_exit_time(method, sim_parameters, a0_array):
     
     if method == "electromagnetic":
         mode = 0
-        filename_enter_exit_time = f"{OUTPUT_DIR}/out-enter-exit-time-electromag.bin"
+        filename_enter_exit_time = f"{OUTPUT_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
     else:
         mode = 1
-        filename_enter_exit_time = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
-        
+        filename_enter_exit_time = f"{OUTPUT_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-pond-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
+    
     data = np.fromfile(filename_enter_exit_time, dtype=np.float64).reshape(-1, 4)
     
     x = data[:, 0] / r
@@ -264,40 +336,42 @@ def plot_enter_exit_time(method, sim_parameters, a0_array):
     plt.plot(x, y1, linestyle='-', c='blue', linewidth=1)
     plt.plot(x, y2, linestyle='-', c='red', linewidth=1)
     plt.title(f"Enter and exit time for $a_0$ = {a0:0.3f}")
-    plt.xlabel(r"$y$ [$\lambda$]")
+    plt.xlabel(rf"{axis_text} [$\lambda$]")
     plt.ylabel(f"t")
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filename_out = f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-{i}.png"
+
     plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
-    
-    if(mode == 0):
-        os.rename(filename_out, f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-electromag-{i}.png")
-    else:
-        os.rename(filename_out, f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-pond-{i}.png")
 
     print(f"Created enter exit time plot.")
 
 # ----------------------------------------------------------------------- #
 
-def plot_errors(sim_parameters):
+def plot_errors(sim_parameters, axis_pos, axis_p):
+    axis_text_pos = get_axis_text(axis_pos)
+    lowercase_text_pos = axis_text_pos.lower()
+    
+    axis_text_p = get_axis_text(axis_p)
+    lowercase_text_p = axis_text_p.lower()
+    
     i = sim_parameters.i
     r = sim_parameters.r
     a0 = sim_parameters.a0
     num = sim_parameters.num
     
-    filename = f"{OUTPUT_DIR}/out-error.bin"
-    filename_max_py = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
-
+    filename = f"{OUTPUT_DIR}/out-error-{lowercase_text}.bin"
+    filename_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text_pos}{lowercase_text_p}-electromag.bin"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/out-errors-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
+    
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
-    data2 = np.fromfile(filename_max_py, dtype=np.float64).reshape(-1, 2)
+    data2 = np.fromfile(filename_max_p, dtype=np.float64).reshape(-1, 2)
     
     x = data[:, 0] / r
     y = data[:, 1]
-    
     y_max = data2[i, 1]
+    
     print(f"For a0 = {a0:0.3f}, max(py) = {y_max:0.3f}")
     
     y_final = y / y_max * 100.0
@@ -305,12 +379,12 @@ def plot_errors(sim_parameters):
     plt.figure(figsize=(10,10))
     plt.plot(x, y_final, c='black',linestyle='-', linewidth=1)
     plt.title(f"Errors for a0 = {a0:0.3f}")
-    plt.xlabel(r"Y [$\lambda$]")
+    plt.xlabel(rf"{axis_text} [$\lambda$]")
     plt.ylabel(f"Error (%)")
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filename_out = f"{OUTPUT_IMAGE_DIR}/out-errors-{i}.png"
+
     plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
     
@@ -318,13 +392,16 @@ def plot_errors(sim_parameters):
 
 # ----------------------------------------------------------------------- #
 
-def plot_max_py(method, a0_array):
+def plot_max_p(method, a0_array, axis):
+    axis_text = get_axis_text(axis)
+    lowercase_text = axis_text.lower()
+    
     if(method == "electromagnetic"):
-        filename = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
-        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-py-electromag.png"
+        filename = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-electromag.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-p{lowercase_text}-electromag.png"
     else:
-        filename = f"{OUTPUT_DIR}/out-max-py-pond.bin"
-        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-py-pond.png"
+        filename = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-pond.bin"
+        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-p{lowercase_text}-pond.png"
     
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
     
@@ -333,35 +410,44 @@ def plot_max_py(method, a0_array):
     
     plt.figure(figsize=(10,10))
     plt.plot(x, y, c='black', linestyle='-', linewidth=1)
-    plt.title(r"max($p_y$)")
+    plt.title(rf"max($p_{lowercase_text}$) ({method})")
     plt.xlabel(r"$a_0$")
-    plt.ylabel(r"max($p_y$)")
+    plt.ylabel(rf"max($p_{lowercase_text}$)")
     
     plt.axhline(0, color='black', linestyle='--')
     
     plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
     
-    print(f"Created max(py) scatter plot for {method} mode.")
+    print(f"Created max(p) scatter plot for {method} mode.")
     
 # ----------------------------------------------------------------------- #    
 
-def plot_average_errors(a0_array):
-    filename = f"{OUTPUT_DIR}/out-average-error.bin"
+def plot_average_errors(a0_array, axis):
+    axis_text = get_axis_text(axis)
+    lowercase_text = axis_text.lower()
+    
+    filename = f"{OUTPUT_DIR}/out-average-error-{lowercase_text}.bin"
+    filename_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-electromag.bin"
+    
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
+    data2 = np.fromfile(filename_max_p, dtype=np.float64).reshape(-1, 2)
     
     x = np.array(a0_array)
     y = data[:, 1]
+    y_max = data2[:, 1]
+    
+    y_final = y / y_max * 100
     
     plt.figure(figsize=(10,10))
-    plt.plot(x, y, c='black', linestyle='-', linewidth=1)
-    plt.title(r"Average errors")
+    plt.plot(x, y_final, c='black', linestyle='-', linewidth=1)
+    plt.title(f"Average errors on {axis_text} axis")
     plt.xlabel(r"$a_0$")
     plt.ylabel(r"<$\epsilon$> (%)")
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-average-errors.png"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-average-errors-{lowercase_text}.png"
     plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
     

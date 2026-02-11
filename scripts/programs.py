@@ -13,6 +13,21 @@ OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
 # ----------------------------------------------------------------------- #
 
+def get_axis_text(axis):
+    if(axis == 0):
+        axis_text = "X"
+    elif(axis == 1):
+        axis_text = "Y"
+    else:
+        axis_text = "Z"
+    return axis_text
+    
+def get_lowercase_text(axis):
+    text = get_axis_text(axis).lower()
+    return text
+
+# ----------------------------------------------------------------------- #
+
 def run_simulation(method, sim_parameters, lasers):
     if method == "electromagnetic":
         mode = 0
@@ -49,35 +64,44 @@ def run_simulation(method, sim_parameters, lasers):
             file.write(f"phi {lasers[i].phi}\n")
             file.write(f"theta {lasers[i].theta}\n")
             file.write(f"psi {lasers[i].psi}\n")
+            file.write(f"pond_integrate_steps {lasers[i].pond_integrate_steps}\n")
     
     os.system(f"{program_path} {filename_input} {filename_lasers} {filename_out}")
 
 # ----------------------------------------------------------------------- #
 
-def find_enter_exit_time(method, sim_parameters):
+def find_enter_exit_time(method, sim_parameters, axis_pos, axis_p):
+    axis_text_pos = get_axis_text(axis_pos)
+    lowercase_text_pos = axis_text_pos.lower()
+    
+    axis_text_p = get_axis_text(axis_p)
+    lowercase_text_p = axis_text_p.lower()
+    
     if(method == "electromagnetic"):
-        filename_out = f"{OUTPUT_DIR}/out-enter-exit-time-electromag.bin"
+        filename_out = f"{OUTPUT_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}.bin"
     else:
-        filename_out = f"{OUTPUT_DIR}/out-enter-exit-time-pond.bin"
+        filename_out = f"{OUTPUT_DIR}/out-enter-exit-time-pond-{lowercase_text_pos}{lowercase_text_p}.bin"
     program_enter_exit = BIN_DIR/"find_enter_exit_time"
     filename = f"{OUTPUT_DIR}/out-data.bin"
     
     num = sim_parameters.num
     steps_final = sim_parameters.steps // sim_parameters.substeps
 
-    os.system(f"{program_enter_exit} {filename} {num} {steps_final} {filename_out}")
+    os.system(f"{program_enter_exit} {filename} {num} {steps_final} {axis_pos} {axis_p} {filename_out}")
 
 # ----------------------------------------------------------------------- #
 
-def find_max_py(method, sim_parameters):
+def find_max_p(method, sim_parameters, axis):
+    axis_text = get_axis_text(axis)
+    lowercase_text = axis_text.lower()
     if(method == "electromagnetic"):
-        filename_out = f"{OUTPUT_DIR}/out-max-py-electromag.bin"
-        filename_in = f"{OUTPUT_DIR}/out-final-py-electromag.bin"
+        filename_out = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-electromag.bin"
+        filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text}-electromag.bin"
     else:
-        filename_out = f"{OUTPUT_DIR}/out-max-py-pond.bin"
-        filename_in = f"{OUTPUT_DIR}/out-final-py-pond.bin"
+        filename_out = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-pond.bin"
+        filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text}-pond.bin"
     
-    program_path = f"{BIN_DIR}/find_max_py"
+    program_path = f"{BIN_DIR}/find_max_p"
     
     index = sim_parameters.i
     num = sim_parameters.num
@@ -87,31 +111,37 @@ def find_max_py(method, sim_parameters):
 
 # ----------------------------------------------------------------------- #
 
-def find_final_py(method, sim_parameters):
+def find_final_p(method, sim_parameters, axis_pos, axis_p):
+    axis_text_p = get_axis_text(axis_p)
+    lowercase_text_p = axis_text_p.lower()
+    
     if(method == "electromagnetic"):
-        filename_out = f"{OUTPUT_DIR}/out-final-py-electromag.bin"
-        filename_out_all = f"{OUTPUT_DIR}/out-final-py-all-electromag.bin"
+        filename_out = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-electromag.bin"
+        filename_out_all = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-electromag.bin"
     else:
-        filename_out = f"{OUTPUT_DIR}/out-final-py-pond.bin"
-        filename_out_all = f"{OUTPUT_DIR}/out-final-py-all-pond.bin"
+        filename_out = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-pond.bin"
+        filename_out_all = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-pond.bin"
     filename = f"{OUTPUT_DIR}/out-data.bin"
-    program_path = f"{BIN_DIR}/find_final_py"
+    program_path = f"{BIN_DIR}/find_final_p"
     
     num = sim_parameters.num
     steps_final = sim_parameters.steps // sim_parameters.substeps
     
-    os.system(f"{program_path} {filename} {num} {steps_final} {filename_out} {filename_out_all}")
+    os.system(f"{program_path} {filename} {num} {steps_final} {axis_pos} {axis_p} {filename_out} {filename_out_all}")
 
 # ----------------------------------------------------------------------- #
 
-def calculate_errors(sim_parameters, a0_array):
+def calculate_errors(sim_parameters, a0_array, axis):
+    axis_text = get_axis_text(axis)
+    lowercase_text = axis_text.lower()
+    
     filename = f"{OUTPUT_DIR}/out-data.bin"
     program_path = f"{BIN_DIR}/error_calculator"
-    filename_in_a = f"{OUTPUT_DIR}/out-final-py-electromag.bin"
-    filename_in_b = f"{OUTPUT_DIR}/out-final-py-pond.bin"
-    filename_out = f"{OUTPUT_DIR}/out-error.bin"
-    filename_out_average_error = f"{OUTPUT_DIR}/out-average-error.bin"
-    filename_out_error_all = f"{OUTPUT_DIR}/out-error-all.bin"
+    filename_in_a = f"{OUTPUT_DIR}/out-final-p{lowercase_text}-electromag.bin"
+    filename_in_b = f"{OUTPUT_DIR}/out-final-p{lowercase_text}-pond.bin"
+    filename_out = f"{OUTPUT_DIR}/out-error-{lowercase_text}.bin"
+    filename_out_average_error = f"{OUTPUT_DIR}/out-average-error-{lowercase_text}.bin"
+    filename_out_error_all = f"{OUTPUT_DIR}/out-error-all-{lowercase_text}.bin"
     
     i = sim_parameters.i
     num = sim_parameters.num

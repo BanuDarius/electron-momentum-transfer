@@ -87,12 +87,13 @@ void set_position(struct particle *p, double r, double h, double z, int i, int n
 	if(output_mode == 0) {
 		p->u[1] = - r + 2.0 * i * r / num;
 		p->u[2] = 0.0;
+		p->u[3] = 0.0;
 	}
 	else {
 		p->u[1] = rand_val(h - r, h + r);
-		p->u[2] = rand_val(h - r, h + r);
+		p->u[2] = 0.0;
+		p->u[3] = rand_val(h - r, h + r);
 	}
-	p->u[3] = rand_val(h - z, h + z);
 }
 
 void set_initial_vel(double *vi, double m, double phi, double theta) {
@@ -137,7 +138,7 @@ void set_parameters(struct parameters *param, char *input) {
 	param->h = 0.0;
 	param->z = 0.0;
 	
-	char current[16];
+	char current[32];
 	int i;
 	
 	while(fscanf(in, "%s", current) != EOF) {	
@@ -170,7 +171,7 @@ void set_parameters(struct parameters *param, char *input) {
 void set_lasers(struct laser *l, int num_lasers, char *input) {
 	FILE *in = fopen(input, "r");
 	if(!in) { perror("Cannot open input file."); abort(); }
-	char current[16];
+	char current[32];
 	int k;
 	
 	for(int i = 0; i < num_lasers; i++) {
@@ -179,22 +180,24 @@ void set_lasers(struct laser *l, int num_lasers, char *input) {
 			k = fscanf(in, "%s", current);
 			if(!strcmp(current, "a0"))
 				k = fscanf(in, "%lf", &l[i].a0);
-			if(!strcmp(current, "sigma"))
+			else if(!strcmp(current, "sigma"))
 				k = fscanf(in, "%lf", &l[i].sigma);
-			if(!strcmp(current, "omega"))
+			else if(!strcmp(current, "omega"))
 				k = fscanf(in, "%lf", &l[i].omega);
-			if(!strcmp(current, "xif"))
+			else if(!strcmp(current, "xif"))
 				k = fscanf(in, "%lf", &l[i].xif);
-			if(!strcmp(current, "zetax"))
+			else if(!strcmp(current, "zetax"))
 				k = fscanf(in, "%lf", &l[i].zetax);
-			if(!strcmp(current, "zetay"))
+			else if(!strcmp(current, "zetay"))
 				k = fscanf(in, "%lf", &l[i].zetay);
-			if(!strcmp(current, "phi"))
+			else if(!strcmp(current, "phi"))
 				k = fscanf(in, "%lf", &l[i].phi);
-			if(!strcmp(current, "theta"))
+			else if(!strcmp(current, "theta"))
 				k = fscanf(in, "%lf", &l[i].theta);
-			if(!strcmp(current, "psi"))
+			else if(!strcmp(current, "psi"))
 				k = fscanf(in, "%lf", &l[i].psi);
+			else if(!strcmp(current, "pond_integrate_steps"))
+				k = fscanf(in, "%i", &l[i].pond_integrate_steps);
 		}
 		double *nv = direction_vec(l[i].phi, l[i].theta);
 		double epsilon1[3], epsilon2[3];

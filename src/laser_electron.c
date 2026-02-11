@@ -82,8 +82,8 @@ void simulate(struct parameters *param, void (*compute_function)(double *, doubl
 						print_chunk(out, out_chunk, core_num);
 						set_zero_n(out_chunk, 2 * U_SIZE * CHUNK_SIZE * core_num);
 					}
-					#pragma omp barrier
 					chunk_current = 0;
+					#pragma omp barrier
 				}
 			}
 		}

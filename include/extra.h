@@ -7,8 +7,6 @@
 
 #define U_SIZE 8
 #define CHUNK_SIZE 100
-#define PONDEROMOTIVE_STEPS 4
-#define DEG_TO_RAD (M_PI / 180.0)
 
 //These are the function declarations implemented in extra.c
 

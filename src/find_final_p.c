@@ -25,27 +25,28 @@
 
 int main(int argc, char **argv) {
 	FILE *in = fopen(argv[1], "rb");
-	FILE *out_max_py = fopen(argv[5], "ab");
+	FILE *out_final_p = fopen(argv[6], "wb"), *out_final_p_all = fopen(argv[7], "ab");
 	
-	int num = atoi(argv[2]), steps = atoi(argv[3]);
-	double index = atoi(argv[4]), data[num], t[2];
+	int num = atoi(argv[2]), steps = atoi(argv[3]), axis_pos = atoi(argv[4]), axis_p = atoi(argv[5]);
+	double t[8];
 	
 	for(int i = 0; i < num; i++) {
-		int x = fread(t, sizeof(double), 2, in);
-		data[i] = t[1];
+		for(int j = 0; j < steps; j++) {
+			int x = fread(t, sizeof(double), 8, in);
+			if(j == 0) {
+				double pos = t[axis_pos + 1];
+				fwrite(&pos, sizeof(double), 1, out_final_p);
+				fwrite(&pos, sizeof(double), 1, out_final_p_all);
+			}
+			if(j == steps - 1) {
+				double p = t[axis_p + 5];
+				fwrite(&p, sizeof(double), 1, out_final_p);
+				fwrite(&p, sizeof(double), 1, out_final_p_all);
+			}
+		}
 	}
 	
-	double max_py = -INFINITY;
-	for(int i = 0; i < num; i++) {
-		double py = data[i];
-		if(fabs(py) > max_py)
-			max_py = fabs(py);
-	}
-	
-	double v[2] = {(double)index, max_py};
-	fwrite(v, sizeof(double), 2, out_max_py);
-	
-	fclose(out_max_py); fclose(in);
-	printf("Ended calculating max(py).\n");
+	fclose(out_final_p_all); fclose(out_final_p); fclose(in);
+	printf("Ended calculating final momentum.\n");
 	return 0;
 }
