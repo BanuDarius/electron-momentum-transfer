@@ -24,18 +24,21 @@ trajectory_until_exit = False
 
 # ------------------------------------------------------- #
 
+min_a0 = 0.02
+max_a0 = 0.52
+
 tauf = 1e4
 core_num = 8
 omega = 0.057
 xif = 0.0 * pi
-num_phase = 512
+num_phase = 256
 psi = -60.0 * pi
-steps_pond = 256
+steps_pond = 64
 num_full = 16000
 wave_count = 1.0
 sigma = 16.0 * pi
 square_size = 1.0
-sweep_steps = 512
+sweep_steps = 256
 steps_electromag = 4096
 phi = 90.0 * deg_to_rad
 theta = 90.0 * deg_to_rad
@@ -50,7 +53,7 @@ if __name__ == "__main__":
     programs.clean_output_folder()
     
     for i in range(0, sweep_steps):
-        a0 = 0.02 + i / 800.0
+        a0 = min_a0 + (max_a0 - min_a0) * i / sweep_steps
         a0_array = np.append(a0_array, a0)
         
         laser_1 = sim_init.LaserParameters(a0, sigma, omega, xif, 0.0, 1.0, phi, theta, psi, pond_integrate_steps)
@@ -92,7 +95,7 @@ if __name__ == "__main__":
         
         #plots.plot_time_momentum("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
         #plots.plot_enter_exit_time("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
-        #plots.plot_phases("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
+        plots.plot_phases("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
         
         # ------------------------------------------------------- #
         
