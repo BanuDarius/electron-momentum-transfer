@@ -1,7 +1,8 @@
 #ifndef HC_FUNC
 #define HC_FUNC
 
-double hc_gamma(double *u);
+//Declarations for functions needed for the Higuera-Cary push
+
 double hc_s_factor(double *t_rot);
 void hc_beta(double *beta, double *B, double dt);
 void hc_epsilon(double *epsilon, double *E, double dt);

@@ -25,11 +25,7 @@
 #include "extra.h"
 #include "hc_func.h"
 
-double hc_gamma(double *u) {
-	double mag = magnitude(u);
-	double gamma = sqrt(1.0 + (mag * mag) / (c * c));
-	return gamma;
-}
+//This file contains the definitions of the helper functions for the Higuera-Cary push
 
 double hc_s_factor(double *t_rot) {
 	double s_factor = 2.0 / (1.0 + dot(t_rot, t_rot));
@@ -43,7 +39,7 @@ void hc_beta(double *beta, double *B, double dt) {
 
 void hc_epsilon(double *epsilon, double *E, double dt) {
 	for(int i = 0; i < 3; i++)
-		epsilon[i] = E[i] * q * dt / (2.0 * m);
+		epsilon[i] = E[i] * q * dt / 2.0;
 }
 
 void hc_t_rot(double *t_rot, double *beta, double gamma_new) {

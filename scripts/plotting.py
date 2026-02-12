@@ -232,7 +232,7 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
             print("Warning: Low resolution, please run with a higher num_phase or sweep_steps.")
     
     cbar = plt.colorbar(pcm, ax=ax)
-    cbar.set_label(f"Normalized final momentum $p_{lowercase_text_p}$ [a.u.]")
+    cbar.set_label(f"Normalized final momentum [a.u.]")
     
     plt.xlim(-wave_count, wave_count)
     plt.ylim(min(a0_array), max(a0_array))

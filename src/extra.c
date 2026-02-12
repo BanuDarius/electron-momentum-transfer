@@ -115,9 +115,9 @@ double magnitude(double *a) {
 	return x;
 }
 
-double compute_gamma(double *v) {
-	double mag = magnitude(v);
-	double gamma = 1.0 / sqrt(1.0 - (mag * mag) / (c * c));
+double comp_gamma(double *u) {
+	double mag = magnitude(u);
+	double gamma = sqrt(1.0 + (mag * mag) / (m * m * c * c));
 	return gamma;
 }
 
@@ -199,7 +199,7 @@ void rk4_step(double *u, double dt, struct laser *l, void compute_function(doubl
 }
 
 void higuera_cary_step(double *u, double dt, struct laser *l) {
-	double epsilon_vec[3], u_minus[3], beta[3], E[3] = {0.0}, B[3] = {0.0};
+	double epsilon_vec[3], u_minus[3], beta[3], E[3], B[3];
 	double u_final[3], u_prime[3], u_plus[3], t_rot[3], s_factor;
 	double gamma_fac, gamma_minus, gamma_new;
 	
@@ -215,7 +215,7 @@ void higuera_cary_step(double *u, double dt, struct laser *l) {
 	hc_epsilon(epsilon_vec, E, dt);
 	hc_u_minus(u_minus, &u[5], epsilon_vec);
 	
-	gamma_minus = hc_gamma(u_minus);
+	gamma_minus = comp_gamma(u_minus);
 	gamma_new = hc_gamma_new(u_minus, beta, gamma_minus);
 	
 	hc_t_rot(t_rot, beta, gamma_new);
@@ -227,7 +227,7 @@ void higuera_cary_step(double *u, double dt, struct laser *l) {
 	add_vec(u_final, epsilon_vec);
 	set_vec(&u[5], u_final, 3);
 	
-	gamma_fac = hc_gamma(&u[5]);
+	gamma_fac = comp_gamma(&u[5]);
 	u[0] += 0.5 * c * dt;
 	u[1] += 0.5 * u[5] * dt / gamma_fac;
 	u[2] += 0.5 * u[6] * dt / gamma_fac;

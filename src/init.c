@@ -57,9 +57,11 @@ void compute_b(double *B, double *E, double *u, struct laser *l, int i) {
 
 void compute_e_b(double *E, double *B, double *u, struct laser *l) {
 	double Et[3], Bt[3];
+	memset(E, 0, 3 * sizeof(double));
+	memset(B, 0, 3 * sizeof(double));
 	for(int i = 0; i < l[0].num_lasers; i++) {
-		set_zero(Et);
-		set_zero(Bt);
+		memset(Et, 0, 3 * sizeof(double));
+		memset(Bt, 0, 3 * sizeof(double));
 		compute_e(Et, u, l, i);
 		compute_b(Bt, Et, u, l, i);
 		add_vec(E, Et);
@@ -68,7 +70,7 @@ void compute_e_b(double *E, double *B, double *u, struct laser *l) {
 }
 
 void electromag(double *u, double *up, struct laser *l) {
-	double E[3] = {0.0}, B[3] = {0.0};
+	double E[3], B[3];
 	compute_e_b(E, B, u, l);
 	
 	up[0] = u[4];
@@ -105,7 +107,7 @@ void set_particles(struct particle *p, struct parameters *param, double *vi) {
 		p[i].u[0] = 0.0;
 		set_position(&p[i], param->r, param->h, param->z, i, param->num, param->output_mode);
 		rotate_around_z_axis(&p[i].u[1], param->rotate_angle);
-		double gamma = compute_gamma(vi);
+		double gamma = comp_gamma(vi);
 		p[i].u[4] = gamma * m * c;
 		p[i].u[5] = gamma * m * vi[0];
 		p[i].u[6] = gamma * m * vi[1];

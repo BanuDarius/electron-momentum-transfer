@@ -27,7 +27,7 @@ void cross(double *a, double *b, double *u);
 double dot(double *a, double *b);
 double dot4(double *u, double *v);
 double magnitude(double *a);
-double compute_gamma(double *v);
+double comp_gamma(double *u);
 void rotate_around_z_axis(double *u, double angle);
 void set_spherical_coords(double *u, double phi, double theta);
 double *direction_vec(double phi, double theta);

@@ -20,7 +20,6 @@
 * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 #include <omp.h>
-#include <time.h>
 #include <math.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -98,7 +97,7 @@ void simulate(struct parameters *param, void (*compute_function)(double *, doubl
 
 int main(int argc, char **argv) {
 	srand(128);
-	clock_t ti = clock();
+	double start_time = omp_get_wtime();
 	FILE *out = fopen(argv[3], "wb");
 	if(!out) { perror("Cannot open output file."); return 1; }
 	
@@ -123,7 +122,7 @@ int main(int argc, char **argv) {
 	simulate(param, compute_function, out, out_chunk, l, p);
 	printf("Simulation ended.\n");
 	
-	printf("Time taken: %0.3fs.\n", (double)(clock() - ti) / (CLOCKS_PER_SEC * param->core_num));
+	printf("Time taken: %0.3fs.\n", omp_get_wtime() - start_time);
 	free(out_chunk); free(param); free(p);
 	fclose(out);
 	return 0;
