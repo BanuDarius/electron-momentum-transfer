@@ -31,13 +31,13 @@ max_a0 = 0.60
 tf = 1e4
 core_num = 8
 omega = 0.057
-xif = 0.0 * pi
+xif = 4.0 * pi
 num_phase = 256
 psi = -80.0 * pi
 steps_pond = 256
 num_full = 16000
 wave_count = 1.0
-sigma = 16.0 * pi
+sigma = 4.0 * pi
 square_size = 1.0
 sweep_steps = 256
 steps_electromag = 4096
@@ -94,7 +94,7 @@ if __name__ == "__main__":
         programs.find_max_p("electromagnetic", sim_parameters, z_axis)
         programs.find_enter_exit_time("electromagnetic", sim_parameters, y_axis, z_axis)
         
-        #plots.plot_time_momentum("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
+        plots.plot_time_momentum("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
         #plots.plot_enter_exit_time("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
         #plots.plot_phases("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
         

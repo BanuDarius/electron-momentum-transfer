@@ -238,7 +238,7 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
     plt.ylim(min(a0_array), max(a0_array))
     plt.xlabel(rf"{axis_text_pos} [$\lambda$]")
     plt.ylabel(r"$a_0$")
-    plt.title(f"Full parameter sweep heatmap ({method})")
+    plt.title(f"Final $p_{lowercase_text_p}$ heatmap for ({method})")
     
     plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()
