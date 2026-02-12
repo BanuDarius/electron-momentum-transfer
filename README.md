@@ -17,8 +17,8 @@ This will automatically compute and render the final momentum transfer heatmaps.
 <img width="1234" height="1282" alt="_out-2d-heatmap-errors-yy" src="https://github.com/user-attachments/assets/ea77be0c-66a6-4dbe-8655-7c0080c42452" />
 <img width="1264" height="1279" alt="_out-average-errors-y" src="https://github.com/user-attachments/assets/36f9731c-5858-4119-83dd-9f718daca3d6" />
 
-# Note
+### Note
 This README is not ready yet!
 
-# References
+## References
 [1] Higuera, Adam V., and John R. Cary. "Structure-preserving second-order integration of relativistic charged particle trajectories in electromagnetic fields." Physics of Plasmas 24.5 (2017).
