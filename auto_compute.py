@@ -26,26 +26,26 @@ trajectory_until_exit = False
 # ------------------------------------------------------- #
 
 min_a0 = 0.02
-max_a0 = 0.52
+max_a0 = 0.60
 
 tf = 1e4
 core_num = 8
 omega = 0.057
 xif = 0.0 * pi
-num_phase = 512
+num_phase = 256
 psi = -80.0 * pi
 steps_pond = 256
 num_full = 16000
 wave_count = 1.0
 sigma = 16.0 * pi
 square_size = 1.0
-sweep_steps = 512
+sweep_steps = 256
 steps_electromag = 4096
 phi = 90.0 * deg_to_rad
 theta = 90.0 * deg_to_rad
 r = wave_count * 2.0 * pi * c / omega
 rotate_angle = 90.0 * deg_to_rad
-pond_integrate_steps = 8
+pond_integrate_steps = 4
 
 # ------------------------------------------------------- #
 

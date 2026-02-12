@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 	}
 	
 	double average = sum / ((double) num);
-	double v[2] = {(double)index, average};
+	double v[2] = { (double)index, average };
 	fwrite(v, sizeof(double), 2, out_average_error);
 	
 	printf("Ended error calculation.\n");

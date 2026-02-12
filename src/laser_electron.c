@@ -59,7 +59,7 @@ void simulate(struct parameters *param, void (*compute_function)(double *, doubl
 				
 				if(output_mode == 0 && i % substeps == 0) {
 					int idx = id * U_SIZE * steps * num / (substeps * core_num) + (k - initial_idx) * U_SIZE * steps / substeps + i * U_SIZE / substeps;
-					memcpy(&out_chunk[idx], &p[k].u[0], sizeof(double) * U_SIZE);
+					memcpy(&out_chunk[idx], &p[k].u[0], U_SIZE * sizeof(double));
 					#pragma omp master
 					{
 						if((k + 1) % CHUNK_SIZE == 0 && i == 0) {
@@ -72,19 +72,19 @@ void simulate(struct parameters *param, void (*compute_function)(double *, doubl
 			}
 			
 			if(output_mode == 1) {
-				#pragma omp barrier
 				for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
 					out_chunk[id * 2 * U_SIZE * CHUNK_SIZE + chunk_current + j] = p[k].u[j - U_SIZE];
 				}
 				chunk_current += 2 * U_SIZE;
 				if((k + 1) % CHUNK_SIZE == 0 && k - initial_idx != 0) {
+					#pragma omp barrier
 					#pragma omp master
 					{
 						int current = core_num * (k - initial_idx + 1);
 						int total = core_num * final_idx;
 						printf("Particles processed: %i/%i.\n", current, total);
 						print_chunk(out, out_chunk, core_num);
-						set_zero_n(out_chunk, 2 * U_SIZE * CHUNK_SIZE * core_num);
+						memset(out_chunk, 0, 2 * U_SIZE * CHUNK_SIZE * core_num * sizeof(double));
 					}
 					chunk_current = 0;
 					#pragma omp barrier
@@ -92,8 +92,6 @@ void simulate(struct parameters *param, void (*compute_function)(double *, doubl
 			}
 		}
 	}
-	
-	#pragma omp barrier
 	if(output_mode == 0)
 		fwrite(out_chunk, sizeof(double), U_SIZE * steps * num / substeps, out);
 }
