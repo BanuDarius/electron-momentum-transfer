@@ -35,6 +35,7 @@ void epsilon(double *u, double *w);
 double env(double xi, double xif, double sigma);
 double env_prime(double xi, double xif, double sigma);
 void rk4_step(double *u, double dt, struct laser *l, void compute_function(double *, double *, struct laser *));
+void higuera_cary_step(double *u, double dt, struct laser *l);
 int initial_index(int n, int thread_num, int core_num);
 int final_index(int n, int thread_num, int core_num);
 

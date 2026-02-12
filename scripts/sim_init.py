@@ -1,19 +1,19 @@
 # ----------------------------------------------------------------------- #
 
 class SimParameters:
-    def __init__(self, i, r, num, tauf, steps, divider, substeps, core_num, output_mode, wave_count, line_angle, sweep_steps, full_trajectory):
+    def __init__(self, i, r, num, tf, steps, divider, substeps, core_num, output_mode, wave_count, rotate_angle, sweep_steps, full_trajectory):
         self.i = i
         self.r = r
+        self.tf = tf
         self.num = num
-        self.tauf = tauf
         self.steps = steps
         self.divider = divider
         self.substeps = substeps
         self.core_num = core_num
         self.wave_count = wave_count
-        self.line_angle = line_angle
         self.output_mode = output_mode
         self.sweep_steps = sweep_steps
+        self.rotate_angle = rotate_angle
         self.full_trajectory = full_trajectory
 
 # ------------------------------------------------------- #

@@ -33,12 +33,13 @@
 
 void simulate(struct parameters *param, void (*compute_function)(double *, double *, struct laser *), FILE *out, double *out_chunk, struct laser *l, struct particle *p) {
 	int num = param->num;
+	int mode = param->mode;
 	int steps = param->steps;
 	int substeps = param->substeps;
 	int core_num = param->core_num;
 	int output_mode = param->output_mode;
 	
-	double dtau = param->dtau;
+	double dt = param->dt;
 	
 	#pragma omp parallel num_threads(core_num)
 	{
@@ -51,7 +52,10 @@ void simulate(struct parameters *param, void (*compute_function)(double *, doubl
 			if(output_mode == 1)
 				copy_initial(out_chunk, p[k].u, (k - initial_idx) % CHUNK_SIZE, id);
 			for(int i = 0; i < steps; i++) {
-				rk4_step(&p[k].u[0], dtau, l, compute_function);
+				if(mode > 0)
+					rk4_step(&p[k].u[0], dt, l, compute_function);
+				else
+					higuera_cary_step(&p[k].u[0], dt, l);
 				
 				if(output_mode == 0 && i % substeps == 0) {
 					int idx = id * U_SIZE * steps * num / (substeps * core_num) + (k - initial_idx) * U_SIZE * steps / substeps + i * U_SIZE / substeps;

@@ -122,8 +122,8 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
         sc = ax.plot(x, y, c=color_cmap, linewidth=0.5)
         
     ax.set_title(f"Phase space: $a_0 = {a0:0.3f}$ - $N = {subsection}$")
-    ax.set_xlabel(r"${axis_text_pos}$ [$\lambda$]")
-    ax.set_ylabel(r"$p_{axis_text_p}$")
+    ax.set_xlabel(rf"${axis_text_pos}$ [$\lambda$]")
+    ax.set_ylabel(rf"$p_{axis_text_p}$")
     
     ax.set_xlim(-1.1 * wave_count, 1.1 * wave_count)
     
@@ -186,7 +186,7 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
         
     ax.set_title(f"Time - momentum plot for: $a_0 = {a0:0.3f}$ - $N = {subsection}$")
     ax.set_xlabel(r"$t$")
-    ax.set_ylabel(r"$p_{lowercase_text}$")
+    ax.set_ylabel(rf"$p_{lowercase_text_p}$")
     
     plt.savefig(filename_out, bbox_inches='tight')
     plt.close()
@@ -289,7 +289,7 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     plt.ylim(min(a0_array), max(a0_array))
     plt.xlabel(rf"{axis_text_pos} [$\lambda$]")
     plt.ylabel(r"$a_0$")
-    plt.title(f"Full error heatmap")
+    plt.title(rf"Full error heatmap for $p_{lowercase_text_p}$")
     
     plt.savefig(filename_out, dpi=150, bbox_inches='tight')
     plt.close()

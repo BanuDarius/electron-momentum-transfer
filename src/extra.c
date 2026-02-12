@@ -25,6 +25,7 @@
 
 #include "units.h"
 #include "extra.h"
+#include "hc_func.h"
 
 //This is a helper library which includes several simple functions for vector operations and mathematics.
 
@@ -195,6 +196,43 @@ void rk4_step(double *u, double dt, struct laser *l, void compute_function(doubl
 	compute_function(u_temp, k4, l);
 	for (int i = 0; i < U_SIZE; i++)
 		u[i] = u0[i] + (dt / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
+}
+
+void higuera_cary_step(double *u, double dt, struct laser *l) {
+	double epsilon_vec[3], u_minus[3], beta[3], E[3] = {0.0}, B[3] = {0.0};
+	double u_final[3], u_prime[3], u_plus[3], t_rot[3], s_factor;
+	double gamma_fac, gamma_minus, gamma_new;
+	
+	gamma_fac = u[4] / (m * c);
+	u[0] += 0.5 * c * dt;
+	u[1] += 0.5 * u[5] * dt / gamma_fac;
+	u[2] += 0.5 * u[6] * dt / gamma_fac;
+	u[3] += 0.5 * u[7] * dt / gamma_fac;
+	
+	compute_e_b(E, B, u, l);
+	
+	hc_beta(beta, B, dt);
+	hc_epsilon(epsilon_vec, E, dt);
+	hc_u_minus(u_minus, &u[5], epsilon_vec);
+	
+	gamma_minus = hc_gamma(u_minus);
+	gamma_new = hc_gamma_new(u_minus, beta, gamma_minus);
+	
+	hc_t_rot(t_rot, beta, gamma_new);
+	s_factor = hc_s_factor(t_rot);
+	hc_u_prime(u_prime, u_minus, t_rot);
+	hc_u_plus(u_plus, u_minus, u_prime, s_factor, t_rot);
+	
+	set_vec(u_final, u_plus, 3);
+	add_vec(u_final, epsilon_vec);
+	set_vec(&u[5], u_final, 3);
+	
+	gamma_fac = hc_gamma(&u[5]);
+	u[0] += 0.5 * c * dt;
+	u[1] += 0.5 * u[5] * dt / gamma_fac;
+	u[2] += 0.5 * u[6] * dt / gamma_fac;
+	u[3] += 0.5 * u[7] * dt / gamma_fac;
+	u[4] = gamma_fac * m * c;
 }
 
 //Manual calculation of indices for stability.

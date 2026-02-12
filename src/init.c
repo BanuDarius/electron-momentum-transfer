@@ -39,10 +39,10 @@ void compute_e(double *E, double *u, struct laser *l, int i) {
 	double Ec1 = env(alpha + l[i].psi, xif, sigma);
 	double Ec2 = env_prime(alpha + l[i].psi, xif, sigma);
 	double E1[3], E2[3];
-	for(int j = 0; j < 3; j++)
-		E1[j] = l[i].epsilon1[j] * l[i].zetax * cos(alpha) + l[i].epsilon2[j] * l[i].zetay * sin(alpha);
-	for(int j = 0; j < 3; j++)
-		E2[j] = l[i].epsilon1[j] * l[i].zetax * sin(alpha) + l[i].epsilon2[j] * l[i].zetay * (-cos(alpha));
+	for(int j = 0; j < 3; j++) {
+		E1[j] = l[i].epsilon1[j] * l[i].zetax * (-cos(alpha)) + l[i].epsilon2[j] * l[i].zetay * sin(alpha);
+		E2[j] = l[i].epsilon1[j] * l[i].zetax * (-sin(alpha)) + l[i].epsilon2[j] * l[i].zetay * (-cos(alpha));
+	}
 	mult_vec(E1, Ec1);
 	mult_vec(E2, Ec2);
 	set_vec(E, E1, 3);
@@ -52,7 +52,7 @@ void compute_e(double *E, double *u, struct laser *l, int i) {
 
 void compute_b(double *B, double *E, double *u, struct laser *l, int i) {
 	cross(l[i].n, E, B);
-	mult_vec(B, 1/c);
+	mult_vec(B, 1.0 / c);
 }
 
 void compute_e_b(double *E, double *B, double *u, struct laser *l) {
@@ -68,8 +68,7 @@ void compute_e_b(double *E, double *B, double *u, struct laser *l) {
 }
 
 void electromag(double *u, double *up, struct laser *l) {
-	double E[3], B[3];
-	set_zero(E); set_zero(B);
+	double E[3] = {0.0}, B[3] = {0.0};
 	compute_e_b(E, B, u, l);
 	
 	up[0] = u[4];
@@ -103,14 +102,14 @@ void set_initial_vel(double *vi, double m, double phi, double theta) {
 
 void set_particles(struct particle *p, struct parameters *param, double *vi) {
 	for(int i = 0; i < param->num; i++) {
-		p[i].u[0] = 0;
+		p[i].u[0] = 0.0;
 		set_position(&p[i], param->r, param->h, param->z, i, param->num, param->output_mode);
-		rotate_around_z_axis(&p[i].u[1], param->line_angle);
+		rotate_around_z_axis(&p[i].u[1], param->rotate_angle);
 		double gamma = compute_gamma(vi);
-		p[i].u[4] = m * c * gamma;
-		p[i].u[5] = m * vi[0] * gamma;
-		p[i].u[6] = m * vi[1] * gamma;
-		p[i].u[7] = m * vi[2] * gamma;
+		p[i].u[4] = gamma * m * c;
+		p[i].u[5] = gamma * m * vi[0];
+		p[i].u[6] = gamma * m * vi[1];
+		p[i].u[7] = gamma * m * vi[2];
 	}
 }
 
@@ -126,10 +125,10 @@ double *create_out_chunk(struct parameters *param) {
 //This function switched the compute_function to be either the electromagnetic method or the ponderomotive method.
 
 void set_mode(void (**compute_function)(double *, double *, struct laser *), int mode) {
-	if(mode == 0)
-		*compute_function = electromag;
-	else if(mode == 1)
+	if(mode == 1)
 		*compute_function = ponderomotive;
+	else if(mode == 2)
+		*compute_function = electromag;
 }
 
 void set_parameters(struct parameters *param, char *input) {
@@ -141,7 +140,7 @@ void set_parameters(struct parameters *param, char *input) {
 	char current[32];
 	int i;
 	
-	while(fscanf(in, "%s", current) != EOF) {	
+	while(fscanf(in, "%s", current) != EOF) {
 		if(!strcmp(current, "num"))
 			i = fscanf(in, "%i", &param->num);
 		else if(!strcmp(current, "num_lasers"))
@@ -152,19 +151,18 @@ void set_parameters(struct parameters *param, char *input) {
 			i = fscanf(in, "%i", &param->substeps);
 		else if(!strcmp(current, "mode"))
 			i = fscanf(in, "%i", &param->mode);
-		else if(!strcmp(current, "tauf"))
-			i = fscanf(in, "%lf", &param->tauf);
+		else if(!strcmp(current, "tf"))
+			i = fscanf(in, "%lf", &param->tf);
 		else if(!strcmp(current, "output_mode"))
 			i = fscanf(in, "%i", &param->output_mode);
 		else if(!strcmp(current, "core_num"))
 			i = fscanf(in, "%i", &param->core_num);
 		else if(!strcmp(current, "r"))
 			i = fscanf(in, "%lf", &param->r);
-		else if(!strcmp(current, "line_angle"))
-			i = fscanf(in, "%lf", &param->line_angle);
+		else if(!strcmp(current, "rotate_angle"))
+			i = fscanf(in, "%lf", &param->rotate_angle);
 	}
-	
-	param->dtau = param->tauf / param->steps;
+	param->dt = param->tf / param->steps;
 	fclose(in);
 }
 

@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
+import subprocess
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
@@ -31,8 +32,10 @@ def get_lowercase_text(axis):
 def run_simulation(method, sim_parameters, lasers):
     if method == "electromagnetic":
         mode = 0
-    else:
+    elif method == "ponderomotive":
         mode = 1
+    elif method == "electromagnetic-rk4":
+        mode = 2
     
     program_path = f"{BIN_DIR}/laser_electron"
     filename_out = f"{OUTPUT_DIR}/out-data.bin"
@@ -44,13 +47,13 @@ def run_simulation(method, sim_parameters, lasers):
     with open(filename_input, "w") as file:
         file.write(f"r {sim_parameters.r}\n")
         file.write(f"num {sim_parameters.num}\n")
-        file.write(f"tauf {sim_parameters.tauf}\n")
+        file.write(f"tf {sim_parameters.tf}\n")
         file.write(f"steps {sim_parameters.steps}\n")
         file.write(f"substeps {sim_parameters.substeps}\n")
         file.write(f"core_num {sim_parameters.core_num}\n")
         file.write(f"output_mode {output_mode}\n")
         file.write(f"mode {mode}\n")
-        file.write(f"line_angle {sim_parameters.line_angle}\n")
+        file.write(f"rotate_angle {sim_parameters.rotate_angle}\n")
         file.write(f"num_lasers {len(lasers)}\n")
    
     with open(filename_lasers, "w") as file:
@@ -66,7 +69,14 @@ def run_simulation(method, sim_parameters, lasers):
             file.write(f"psi {lasers[i].psi}\n")
             file.write(f"pond_integrate_steps {lasers[i].pond_integrate_steps}\n")
     
-    os.system(f"{program_path} {filename_input} {filename_lasers} {filename_out}")
+    #os.system(f"{program_path} {filename_input} {filename_lasers} {filename_out}")
+    arguments = [program_path, filename_input, filename_lasers, filename_out]
+    
+    try:
+        res = subprocess.run(arguments, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Critical error: {e.returncode}")
+        sys.exit(1)
 
 # ----------------------------------------------------------------------- #
 
@@ -81,14 +91,22 @@ def find_enter_exit_time(method, sim_parameters, axis_pos, axis_p):
         filename_out = f"{OUTPUT_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}.bin"
     else:
         filename_out = f"{OUTPUT_DIR}/out-enter-exit-time-pond-{lowercase_text_pos}{lowercase_text_p}.bin"
-    program_enter_exit = BIN_DIR/"find_enter_exit_time"
+    program_enter_exit = f"{BIN_DIR}/find_enter_exit_time"
     filename = f"{OUTPUT_DIR}/out-data.bin"
     
     num = sim_parameters.num
     steps_final = sim_parameters.steps // sim_parameters.substeps
 
-    os.system(f"{program_enter_exit} {filename} {num} {steps_final} {axis_pos} {axis_p} {filename_out}")
-
+    #os.system(f"{program_enter_exit} {filename} {num} {steps_final} {axis_pos} {axis_p} {filename_out}")
+    arguments = [program_enter_exit, filename, num, steps_final, axis_pos, axis_p, filename_out]
+    arguments = [str(x) for x in arguments]
+    
+    try:
+        res = subprocess.run(arguments, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Critical error: {e.returncode}")
+        sys.exit(1)
+        
 # ----------------------------------------------------------------------- #
 
 def find_max_p(method, sim_parameters, axis):
@@ -107,8 +125,16 @@ def find_max_p(method, sim_parameters, axis):
     num = sim_parameters.num
     steps_final = sim_parameters.steps // sim_parameters.substeps
     
-    os.system(f"{program_path} {filename_in} {num} {steps_final} {index} {filename_out}")
-
+    #os.system(f"{program_path} {filename_in} {num} {steps_final} {index} {filename_out}")
+    arguments = [program_path, filename_in, num, steps_final, index, filename_out]
+    arguments = [str(x) for x in arguments]
+    
+    try:
+        res = subprocess.run(arguments, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Critical error: {e.returncode}")
+        sys.exit(1)
+    
 # ----------------------------------------------------------------------- #
 
 def find_final_p(method, sim_parameters, axis_pos, axis_p):
@@ -127,7 +153,15 @@ def find_final_p(method, sim_parameters, axis_pos, axis_p):
     num = sim_parameters.num
     steps_final = sim_parameters.steps // sim_parameters.substeps
     
-    os.system(f"{program_path} {filename} {num} {steps_final} {axis_pos} {axis_p} {filename_out} {filename_out_all}")
+    #os.system(f"{program_path} {filename} {num} {steps_final} {axis_pos} {axis_p} {filename_out} {filename_out_all}")
+    arguments = [program_path, filename, num, steps_final, axis_pos, axis_p, filename_out, filename_out_all]
+    arguments = [str(x) for x in arguments]
+    
+    try:
+        res = subprocess.run(arguments, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Critical error: {e.returncode}")
+        sys.exit(1)
 
 # ----------------------------------------------------------------------- #
 
@@ -146,7 +180,15 @@ def calculate_errors(sim_parameters, a0_array, axis):
     i = sim_parameters.i
     num = sim_parameters.num
     
-    os.system(f"{program_path} {num} {i} {filename_in_a} {filename_in_b} {filename_out} {filename_out_average_error} {filename_out_error_all}")
+    #os.system(f"{program_path} {num} {i} {filename_in_a} {filename_in_b} {filename_out} {filename_out_average_error} {filename_out_error_all}")
+    arguments = [program_path, num, i, filename_in_a, filename_in_b, filename_out, filename_out_average_error, filename_out_error_all]
+    arguments = [str(x) for x in arguments]
+    
+    try:
+        res = subprocess.run(arguments, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Critical error: {e.returncode}")
+        sys.exit(1)
 
 # ----------------------------------------------------------------------- #
 

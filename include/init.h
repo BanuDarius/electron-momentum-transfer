@@ -19,7 +19,7 @@ struct laser {
 };
 
 struct parameters {
-	double line_angle, tauf, dtau, r, h, z;
+	double rotate_angle, tf, dt, r, h, z;
 	int num, num_lasers, steps, substeps, mode, output_mode, core_num;
 };
 

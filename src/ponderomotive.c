@@ -39,8 +39,8 @@ void potential_deriv_a(double *a, double *u, struct laser *l, int index, int n) 
 	a[0] = 0.0;
 	double sign = (index > 0) ? -1.0 : +1.0;
 	for(int i = 0; i < 3; i++) {
-		double t1 = l[n].epsilon1[i] * l[n].zetax * (-sin(phi)) + l[n].epsilon2[i] * l[n].zetay * cos(phi);
-		double t2 = l[n].epsilon1[i] * l[n].zetax * (-cos(phi)) + l[n].epsilon2[i] * l[n].zetay * (-sin(phi));
+		double t1 = l[n].epsilon1[i] * l[n].zetax * (sin(phi)) + l[n].epsilon2[i] * l[n].zetay * (cos(phi));
+		double t2 = l[n].epsilon1[i] * l[n].zetax * (cos(phi)) + l[n].epsilon2[i] * l[n].zetay * (-sin(phi));
 		a[i+1] = sign * potentialA0 * k_vec4[index] * (env(phi, l[n].xif, l[n].sigma) * t2 + env_prime(phi, l[n].xif, l[n].sigma) * t1);
 	}
 }
@@ -58,7 +58,7 @@ void potential_a(double *a, double *u, struct laser *l, int n) {
 	double A0mult = env(phi, l[n].xif, l[n].sigma) * potentialA0;
 	a[0] = 0.0;
 	for(int i = 0; i < 3; i++)
-		a[i+1] = (l[n].epsilon1[i] * l[n].zetax * (-sin(phi)) + l[n].epsilon2[i] * l[n].zetay * cos(phi));
+		a[i+1] = l[n].epsilon1[i] * l[n].zetax * (sin(phi)) + l[n].epsilon2[i] * l[n].zetay * cos(phi);
 	mult_vec(&a[1], A0mult);
 }
 

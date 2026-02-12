@@ -51,9 +51,6 @@ def create_phase_video(method, framerate, axis_horiz, axis_pos, axis_p):
     axis_text_p = get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
-    axis_text_p = get_axis_text(axis_p)
-    lowercase_text_p = axis_text_p.lower()
-    
     if(method == "electromagnetic"):
         mode = "electromag"
     else:
@@ -62,5 +59,23 @@ def create_phase_video(method, framerate, axis_horiz, axis_pos, axis_p):
     video_path = f"{OUTPUT_VIDEO_DIR}/out-phase-space-{mode}-{lowercase_text_pos}{lowercase_text_p}.mp4"
     os.system(f"ffmpeg -r {framerate} -i {images_path} -s 1200:1200 -c:v libx264 -b:v 12M -pix_fmt yuv420p -y -loglevel error {video_path}")
     print(f"Created phase space animation for {method} mode.")
+
+# ----------------------------------------------------------------------- #
+
+def create_time_momentum_video(method, framerate, axis_pos, axis_p):
+    axis_text_pos = get_axis_text(axis_pos)
+    lowercase_text_pos = axis_text_pos.lower()
+    
+    axis_text_p = get_axis_text(axis_p)
+    lowercase_text_p = axis_text_p.lower()
+    
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
+    images_path = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-{mode}-{lowercase_text_pos}{lowercase_text_p}-%d.png"
+    video_path = f"{OUTPUT_VIDEO_DIR}/out-time-momentum-{mode}-{lowercase_text_pos}{lowercase_text_p}.mp4"
+    os.system(f"ffmpeg -r {framerate} -i {images_path} -s 1200:1200 -c:v libx264 -b:v 12M -pix_fmt yuv420p -y -loglevel error {video_path}")
+    print(f"Created time-momentum animation for {method} mode.")
 
 # ----------------------------------------------------------------------- #
