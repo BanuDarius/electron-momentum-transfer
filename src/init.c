@@ -29,7 +29,7 @@
 #include "math_tools.h"
 #include "ponderomotive.h"
 
-//This is a helper library which includes electromagnetic field computation functions, initializing particles and lasers, and parsing the simulation parameters.
+//This is a helper library which includes electromagnetic field computation functions, initializing particles and lasers, and parsing the simulation parameters
 
 void compute_e(double *E, double *u, const struct laser *restrict l, int i) {
 	double E0 = l[i].omega * c * l[i].a0;
@@ -52,7 +52,7 @@ void compute_e(double *E, double *u, const struct laser *restrict l, int i) {
 }
 
 void compute_b(double *B, double *E, double *u, const struct laser *restrict l, int i) {
-	cross(l[i].n, E, B);
+	cross(B, l[i].n, E);
 	mult_vec(B, 1.0 / c);
 }
 
@@ -203,7 +203,7 @@ void set_lasers(struct laser *l, int num_lasers, char *input) {
 		double *nv = direction_vec(l[i].phi, l[i].theta);
 		double epsilon1[3], epsilon2[3];
 		epsilon(nv, epsilon1);
-		cross(nv, epsilon1, epsilon2);
+		cross(epsilon2, nv, epsilon1);
 		set_vec(l[i].n, nv, 3);
 		set_vec(l[i].epsilon1, epsilon1, 3);
 		set_vec(l[i].epsilon2, epsilon2, 3);

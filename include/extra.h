@@ -27,8 +27,6 @@ void rotate_around_z_axis(double *u, double angle);
 void set_spherical_coords(double *u, double phi, double theta);
 double *direction_vec(double phi, double theta);
 void epsilon(double *u, double *w);
-double env(double xi, double xif, double sigma);
-double env_prime(double xi, double xif, double sigma);
 void rk4_step(double *u, double dt, const struct laser *restrict l, void compute_function(double *, double *, const struct laser *restrict));
 void higuera_cary_step(double *u, const double dt, const struct laser *restrict l);
 int initial_index(int n, int thread_num, int core_num);

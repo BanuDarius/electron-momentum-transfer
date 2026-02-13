@@ -120,34 +120,14 @@ void epsilon(double *u, double *w) {
 	v[0] = 1.0;
 	v[1] = 0.0;
 	v[2] = 0.0;
-	cross(u, v, w);
+	cross(w, u, v);
 	double mag = magnitude(w);
 	double scale = magnitude(u);
 	for (int i = 0; i < 3; i++)
 		w[i] = scale * w[i] / mag;
 }
 
-//These functions are for the envelope.
-
-double env(double xi, double xif, double sigma) {
-	if(xi > -xif && xi < xif)
-		return 1.0;
-	else if(xi >= xif)
-		return exp(-(xi - xif) * (xi - xif) / (sigma * sigma));
-	else
-		return exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
-}
-
-double env_prime(double xi, double xif, double sigma) {
-	if(xi > -xif && xi < xif)
-		return 0.0;
-	else if(xi >= xif)
-		return - 2.0 * (xi - xif) / (sigma * sigma) * exp(-(xi - xif) * (xi - xif) / (sigma * sigma));
-	else
-		return - 2.0 * (xi + xif) / (sigma * sigma) * exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
-}
-
-//This function is a Runge-Kutta fourth-order solver, with a general compute_function() which can be switched easily.
+//This function is a Runge-Kutta fourth-order solver, with a general compute function
 
 void rk4_step(double *u, double dt, const struct laser *restrict l, void compute_function(double *, double *, const struct laser *restrict)) {
 	double u0[U_SIZE], u_temp[U_SIZE];

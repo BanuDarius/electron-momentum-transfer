@@ -23,8 +23,6 @@ struct parameters {
 	int num, num_lasers, steps, substeps, mode, output_mode, core_num;
 };
 
-//Function declarations, which are defined fully in init.c.
-
 void compute_e(double *E, double *u, const struct laser *restrict l, int i);
 void compute_b(double *B, double *E, double *u, const struct laser *restrict l, int i);
 void compute_e_b(double *E, double *B, double *u, const struct laser *restrict l);

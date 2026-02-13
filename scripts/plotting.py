@@ -13,6 +13,8 @@ BIN_DIR = PROJECT_ROOT / "bin"
 OUTPUT_DIR = PROJECT_ROOT / "output"
 OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
+plt.rcParams.update({'font.size': 12})
+
 # ----------------------------------------------------------------------- #
 
 def get_axis_text(axis):
@@ -64,7 +66,7 @@ def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, ax
     plt.title(rf"Final $p_{lowercase_text_p}$ for ({method}) mode")
     cbar = plt.colorbar()
     cbar.set_label(rf"Final $p_{lowercase_text_p}$ [a.u.]")
-    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
         
     print(f"Created colormap.")
@@ -97,7 +99,7 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
     
     data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
     data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
-    fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
     
     colmap = plt.get_cmap('Spectral')
     
@@ -160,7 +162,7 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     
     data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
     data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
-    fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
     
     colmap = plt.get_cmap('Spectral')
     
@@ -223,7 +225,7 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
     max_py = data_max_p[:, 1][:, np.newaxis]
     z = data[:, :, 1] / max_py
-    fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
     
     with warnings.catch_warnings(record=True) as warn:
         warnings.simplefilter("always")
@@ -240,7 +242,7 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
     plt.ylabel(r"$a_0$")
     plt.title(f"Final $p_{lowercase_text_p}$ heatmap for ({method})")
     
-    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
     
     print(f"Created 2D heatmap of full {method} parameter sweep.")
@@ -275,7 +277,7 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     row_max = np.max(z, axis=1)[:, np.newaxis]
     z_final = z / row_max * 100.0
     
-    fig, ax = plt.subplots(figsize=(10, 10), dpi=150)
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
     with warnings.catch_warnings(record=True) as warn:
         warnings.simplefilter("always")
         pcm = ax.pcolormesh(x, y, z_final, cmap='inferno', shading='auto', rasterized=True)
@@ -291,7 +293,7 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     plt.ylabel(r"$a_0$")
     plt.title(rf"Full error heatmap for $p_{lowercase_text_p}$")
     
-    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
     
     print(f"Created 2D error heatmap.")
@@ -342,7 +344,7 @@ def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
     plt.axhline(0, color='black', linestyle='--')
     
 
-    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
 
     print(f"Created enter exit time plot.")
@@ -385,7 +387,7 @@ def plot_errors(sim_parameters, axis_pos, axis_p):
     plt.axhline(0, color='black', linestyle='--')
     
 
-    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
     
     print(f"Created error scatter plot.")
@@ -416,7 +418,7 @@ def plot_max_p(method, a0_array, axis):
     
     plt.axhline(0, color='black', linestyle='--')
     
-    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
     
     print(f"Created max(p) scatter plot for {method} mode.")
@@ -448,7 +450,7 @@ def plot_average_errors(a0_array, axis):
     plt.axhline(0, color='black', linestyle='--')
     
     filename_out = f"{OUTPUT_IMAGE_DIR}/_out-average-errors-{lowercase_text}.png"
-    plt.savefig(filename_out, dpi=150, bbox_inches='tight')
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
     
     print(f"Created average error scatter plot.")

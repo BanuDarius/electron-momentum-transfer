@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 	FILE *out = fopen(argv[6], "wb");
 	int num = atoi(argv[2]), steps = atoi(argv[3]), axis_pos = atoi(argv[4]), axis_p = atoi(argv[5]);
 	
-	double velocity_data[steps], time_data[steps], initial_position;
+	double velocity_data[steps], time_data[steps], v[4], first_velocity, last_velocity, initial_position;
 	
 	for(int i = 0; i < num; i++) {
 		for(int j = 0; j < steps; j++) {
@@ -44,15 +44,15 @@ int main(int argc, char **argv) {
 			time_data[j] = t[0];
 			velocity_data[j] = t[axis_p + 5];
 		}
+		first_velocity = velocity_data[0];
+		last_velocity = velocity_data[steps - 1];
 		
-		double v[4];
-		v[0] = initial_position;
-		double firstVelocity = velocity_data[0];
-		double lastVelocity = velocity_data[steps - 1];
+		v[0] = initial_position; v[1] = time_data[0];
+		v[2] = time_data[steps - 1]; v[3] = steps - 1;
 		
 		for(int j = 1; j < steps; j++) {
 			double current_velocity = velocity_data[j];
-			if(fabs(current_velocity - firstVelocity) > 1e-2) {
+			if(fabs(current_velocity - first_velocity) > 1e-2) {
 				v[1] = time_data[j];
 				break;
 			}
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
 		
 		for(int j = steps - 2; j > 0; j--) {
 			double current_velocity = velocity_data[j];
-			if(fabs(current_velocity - lastVelocity) > 1e-2) {
+			if(fabs(current_velocity - last_velocity) > 1e-2) {
 				double last_step = (double) j;
 				v[2] = time_data[j];
 				v[3] = last_step;
@@ -68,10 +68,6 @@ int main(int argc, char **argv) {
 			}
 		}
 		
-		for(int j = 1; j < 4; j++) {
-			if(fabs(v[j]) < 1e-5)
-				set_zero(&v[1]);
-		}
 		fwrite(v, sizeof(double), 4, out);
 	}
 	

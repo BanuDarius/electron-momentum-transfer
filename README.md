@@ -1,6 +1,6 @@
 ## Introduction
 This is a C program that calculates the linear momentum transfer caused by multiple laser beams coming from arbitrary directions, to an assembly of electrons, producing a 2D momentum map.
-Parallelized with POSIX threads.
+Parallelized with OpenMP.
 
 ## Usage
 The instalation is as follows:

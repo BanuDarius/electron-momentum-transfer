@@ -20,6 +20,7 @@
 * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 #include <math.h>
+#include <string.h>
 
 #include "units.h"
 #include "extra.h"
@@ -29,16 +30,16 @@
 
 void potential_deriv_a(double *a, double *u, const struct laser *restrict l, int index, int n) {
 	double potentialA0 = l[n].a0 * m * c / fabs(q);
-	double epsilon4[4], k_vec4[4];
+	double epsilon4[4], k_vec4[4], phi, sign;
 	
+	a[0] = 0.0;
 	k_vec4[0] = 1.0;
 	epsilon4[0] = 0.0;
-	set_vec(&k_vec4[1], l[n].n, 3);
+	memcpy(&k_vec4[1], l[n].n, 3 * sizeof(double));
 	mult_vec4(k_vec4, l[n].omega / c);
 	
-	double phi = dot4(k_vec4, u) + l[n].psi;
-	a[0] = 0.0;
-	double sign = (index > 0) ? -1.0 : +1.0;
+	phi = dot4(k_vec4, u) + l[n].psi;
+	sign = (index > 0) ? -1.0 : +1.0;
 	for(int i = 0; i < 3; i++) {
 		double t1 = l[n].epsilon1[i] * l[n].zetax * (sin(phi)) + l[n].epsilon2[i] * l[n].zetay * (cos(phi));
 		double t2 = l[n].epsilon1[i] * l[n].zetax * (cos(phi)) + l[n].epsilon2[i] * l[n].zetay * (-sin(phi));
@@ -48,91 +49,107 @@ void potential_deriv_a(double *a, double *u, const struct laser *restrict l, int
 
 void potential_a(double *a, double *u, const struct laser *restrict l, int n) {
 	double potentialA0 = l[n].a0 * m * c / fabs(q);
-	double epsilon4[4], k_vec4[4];
+	double epsilon4[4], k_vec4[4], phi, A0mult;
 	
+	a[0] = 0.0;
 	k_vec4[0] = 1.0;
 	epsilon4[0] = 0.0;
-	set_vec(&k_vec4[1], l[n].n, 3);
+	memcpy(&k_vec4[1], l[n].n, 3 * sizeof(double));
 	mult_vec4(k_vec4, l[n].omega / c);
 	
-	double phi = dot4(k_vec4, u) + l[n].psi;
-	double A0mult = env(phi, l[n].xif, l[n].sigma) * potentialA0;
-	a[0] = 0.0;
+	phi = dot4(k_vec4, u) + l[n].psi;
+	A0mult = env(phi, l[n].xif, l[n].sigma) * potentialA0;
 	for(int i = 0; i < 3; i++)
 		a[i+1] = l[n].epsilon1[i] * l[n].zetax * (sin(phi)) + l[n].epsilon2[i] * l[n].zetay * cos(phi);
 	mult_vec(&a[1], A0mult);
 }
 
 double integrate(double *u, const struct laser *restrict l) {
-	double integral = 0.0;
-	double a1_left[4], a1_right[4], a1_mid[4], a1_temp[4], u_temp[4];
+	double integral = 0.0, left, center, right;
+	double a1_left[4], a1_right[4], a1_center[4], a1_temp[4], u_temp[4];
 	double lambda = 2.0 * M_PI * c / l[0].omega, dh = lambda / (double) l[0].pond_integrate_steps;
 	
-	set_vec(u_temp, u, 4);
+	memcpy(u_temp, u, 4 * sizeof(double));
 	u_temp[0] -= lambda / 2.0;
 	
+	memset(a1_left, 0, 4 * sizeof(double));
+	for(int j = 0; j < l[0].num_lasers; j++) {
+		potential_a(a1_temp, u_temp, l, j);
+		add_vec4(a1_left, a1_temp);
+	}
+	left = dot4(a1_left, a1_left);
+	u_temp[0] += dh / 2.0;
+	
 	for(int i = 0; i < l[0].pond_integrate_steps; i++) {
-		set_zero_n(a1_left, 4);
-		set_zero_n(a1_mid, 4);
-		set_zero_n(a1_right, 4);
+		memset(a1_center, 0, 4 * sizeof(double));
+		memset(a1_right, 0, 4 * sizeof(double));
 		
 		for(int j = 0; j < l[0].num_lasers; j++) {
 			potential_a(a1_temp, u_temp, l, j);
-			add_vec4(a1_left, a1_temp);
-			u_temp[0] += dh / 2.0;
-			
-			potential_a(a1_temp, u_temp, l, j);
-			add_vec4(a1_mid, a1_temp);
-			u_temp[0] += dh / 2.0;
-			
+			add_vec4(a1_center, a1_temp);
+		}
+		u_temp[0] += dh / 2.0;
+		
+		for(int j = 0; j < l[0].num_lasers; j++) {
 			potential_a(a1_temp, u_temp, l, j);
 			add_vec4(a1_right, a1_temp);
-			
-			u_temp[0] -= dh;
 		}
+		u_temp[0] -= dh / 2.0;
 		
-		integral += dh / 6.0 * (dot4(a1_left, a1_left) + 4.0 * dot4(a1_mid, a1_mid) + dot4(a1_right, a1_right));
+		center = dot4(a1_center, a1_center);
+		right = dot4(a1_right, a1_right);
+		integral += (left + 4.0 * center + right) * dh / 6.0;
+		
 		u_temp[0] += dh;
+		left = right;
 	}
 	return integral;
 }
 
 double integrate_dmuda(double *u, const struct laser *restrict l, int index) {
-	double integral = 0.0;
-	double a1_left[4], a1_right[4], a1_mid[4], a2_left[4], a2_right[4], a2_mid[4], a1_temp[4], a2_temp[4], u_temp[4];
+	double integral = 0.0, left, center, right;
+	double a1_left[4], a1_right[4], a1_center[4], a2_left[4], a2_right[4], a2_center[4], a1_temp[4], a2_temp[4], u_temp[4];
 	double lambda = 2.0 * M_PI * c / l[0].omega, dh = lambda / (double) l[0].pond_integrate_steps;
 	
-	set_vec(u_temp, u, 4);
+	memcpy(u_temp, u, 4 * sizeof(double));
 	u_temp[0] -= lambda / 2.0;
 	
+	memset(a1_left, 0, 4 * sizeof(double)); memset(a2_left, 0, 4 * sizeof(double));
+	for(int j = 0; j < l[0].num_lasers; j++) {
+		potential_a(a1_temp, u_temp, l, j);
+		potential_deriv_a(a2_temp, u_temp, l, index, j);
+		add_vec4(a1_left, a1_temp);
+		add_vec4(a2_left, a2_temp);
+	}
+	left = dot4(a1_left, a2_left);
+	u_temp[0] += dh / 2.0;
+	
 	for(int i = 0; i < l[0].pond_integrate_steps; i++) {
-		set_zero_n(a1_left, 4); set_zero_n(a1_right, 4);
-		set_zero_n(a1_mid, 4); set_zero_n(a2_mid, 4);
-		set_zero_n(a2_left, 4); set_zero_n(a2_right, 4);
+		memset(a1_center, 0, 4 * sizeof(double)); memset(a2_center, 0, 4 * sizeof(double));
+		memset(a1_right, 0, 4 * sizeof(double)); memset(a2_right, 0, 4 * sizeof(double));
 		
 		for(int j = 0; j < l[0].num_lasers; j++) {
 			potential_a(a1_temp, u_temp, l, j);
 			potential_deriv_a(a2_temp, u_temp, l, index, j);
-			add_vec4(a1_left, a1_temp);
-			add_vec4(a2_left, a2_temp);
-			u_temp[0] += dh / 2.0;
-			
-			potential_a(a1_temp, u_temp, l, j);
-			potential_deriv_a(a2_temp, u_temp, l, index, j);
-			add_vec4(a1_mid, a1_temp);
-			add_vec4(a2_mid, a2_temp);
-			u_temp[0] += dh / 2.0;
-			
+			add_vec4(a1_center, a1_temp);
+			add_vec4(a2_center, a2_temp);
+		}
+		u_temp[0] += dh / 2.0;
+		
+		for(int j = 0; j < l[0].num_lasers; j++) {
 			potential_a(a1_temp, u_temp, l, j);
 			potential_deriv_a(a2_temp, u_temp, l, index, j);
 			add_vec4(a1_right, a1_temp);
 			add_vec4(a2_right, a2_temp);
-			
-			u_temp[0] -= dh;
 		}
+		u_temp[0] -= dh / 2.0;
 		
-		integral += dh / 6.0 * (dot4(a1_left, a2_left) + 4.0 * dot4(a1_mid, a2_mid) + dot4(a1_right, a2_right));
+		center = dot4(a1_center, a2_center);
+		right = dot4(a1_right, a2_right);
+		integral += (left + 4.0 * center + right) * dh / 6.0;
+		
 		u_temp[0] += dh;
+		left = right;
 	}
 	return integral;
 }

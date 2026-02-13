@@ -25,9 +25,8 @@
 #include <math.h>
 
 #include "units.h"
-#include "extra.h"
 
-//This file contains the definitions of the helper functions for the Higuera-Cary push
+//These are optimized helper functions for the Higuera-Cary push
 
 static inline double hc_s_factor(const double *restrict t_rot) {
 	double s_factor = 2.0 / (1.0 + dot(t_rot, t_rot));
@@ -56,7 +55,7 @@ static inline void hc_u_minus(double *restrict u_minus, const double *restrict u
 
 static inline void hc_u_prime(double *restrict u_prime, const double *restrict u_minus, const double *restrict t_rot) {
 	double t1[3];
-	cross(u_minus, t_rot, t1);
+	cross(t1, u_minus, t_rot);
 	for(int i = 0; i < 3; i++)
 		u_prime[i] = u_minus[i] + t1[i];
 }
@@ -73,7 +72,7 @@ static inline void hc_u_plus(double *restrict u_plus, const double *restrict u_m
 	double t1[3], t2[3];
 	set_vec(t1, t_rot, 3);
 	mult_vec(t1, s_factor);
-	cross(u_prime, t1, t2);
+	cross(t2, u_prime, t1);
 	for(int i = 0; i < 3; i++)
 		u_plus[i] = u_minus[i] + t2[i];
 }
