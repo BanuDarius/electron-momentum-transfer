@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include "units.h"
+#include "math_tools.h"
 #include "extra.h"
 #include "hc_func.h"
 
@@ -49,7 +50,7 @@ void set_chunk(double *out_chunk, double *chunk, int init, int fin) {
 		out_chunk[i] = chunk[i-init];
 }
 
-void set_vec(double *u1, double *u2, int n) {
+void set_vec(double *u1, const double *u2, int n) {
 	for (int i = 0; i < n; i++)
 		u1[i] = u2[i];
 }
@@ -94,31 +95,10 @@ void sub_vec(double *x, double *u, double *v) {
 		x[i] = u[i] - v[i];
 }
 
-void cross(double *a, double *b, double *u) {
-	u[0] = a[1] * b[2] - a[2] * b[1];
-	u[1] = a[2] * b[0] - a[0] * b[2];
-	u[2] = a[0] * b[1] - a[1] * b[0];
-}
-
-double dot(double *a, double *b) {
-	double x = a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-	return x;
-}
-
-double dot4(double *u, double *v) {
-	double x = u[0] * v[0] - u[1] * v[1] - u[2] * v[2] - u[3] * v[3];
-	return x;
-}
-
-double magnitude(double *a) {
-	double x = sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
-	return x;
-}
-
-double comp_gamma(double *u) {
-	double mag = magnitude(u);
-	double gamma = sqrt(1.0 + (mag * mag) / (m * m * c * c));
-	return gamma;
+void rotate_around_z_axis(double *u, double angle) {
+	double u_temp[2] = { u[0], u[1] };
+	u[0] = u_temp[0] * cos(angle) - u_temp[1] * sin(angle);
+	u[1] = u_temp[0] * sin(angle) + u_temp[1] * cos(angle);
 }
 
 void set_spherical_coords(double *u, double phi, double theta) {
@@ -126,12 +106,6 @@ void set_spherical_coords(double *u, double phi, double theta) {
 	u[0] = mag * sin(phi) * cos(theta);
 	u[1] = mag * sin(phi) * sin(theta);
 	u[2] = mag * cos(phi);
-}
-
-void rotate_around_z_axis(double *u, double angle) {
-	double u_temp[2] = { u[0], u[1] };
-	u[0] = u_temp[0] * cos(angle) - u_temp[1] * sin(angle);
-	u[1] = u_temp[0] * sin(angle) + u_temp[1] * cos(angle);
 }
 
 double *direction_vec(double phi, double theta) {
@@ -175,7 +149,7 @@ double env_prime(double xi, double xif, double sigma) {
 
 //This function is a Runge-Kutta fourth-order solver, with a general compute_function() which can be switched easily.
 
-void rk4_step(double *u, double dt, struct laser *l, void compute_function(double *, double *, struct laser *)) {
+void rk4_step(double *u, double dt, const struct laser *restrict l, void compute_function(double *, double *, const struct laser *restrict)) {
 	double u0[U_SIZE], u_temp[U_SIZE];
 	double k1[U_SIZE]; double k2[U_SIZE];
 	double k3[U_SIZE]; double k4[U_SIZE];
@@ -198,7 +172,7 @@ void rk4_step(double *u, double dt, struct laser *l, void compute_function(doubl
 		u[i] = u0[i] + (dt / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
 }
 
-void higuera_cary_step(double *u, double dt, struct laser *l) {
+void higuera_cary_step(double *u, const double dt, const struct laser *restrict l) {
 	double epsilon_vec[3], u_minus[3], beta[3], E[3], B[3];
 	double u_final[3], u_prime[3], u_plus[3], t_rot[3], s_factor;
 	double gamma_fac, gamma_minus, gamma_new;

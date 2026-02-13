@@ -24,9 +24,10 @@
 #include "units.h"
 #include "extra.h"
 #include "init.h"
+#include "math_tools.h"
 #include "ponderomotive.h"
 
-void potential_deriv_a(double *a, double *u, struct laser *l, int index, int n) {
+void potential_deriv_a(double *a, double *u, const struct laser *restrict l, int index, int n) {
 	double potentialA0 = l[n].a0 * m * c / fabs(q);
 	double epsilon4[4], k_vec4[4];
 	
@@ -45,7 +46,7 @@ void potential_deriv_a(double *a, double *u, struct laser *l, int index, int n) 
 	}
 }
 
-void potential_a(double *a, double *u, struct laser *l, int n) {
+void potential_a(double *a, double *u, const struct laser *restrict l, int n) {
 	double potentialA0 = l[n].a0 * m * c / fabs(q);
 	double epsilon4[4], k_vec4[4];
 	
@@ -62,7 +63,7 @@ void potential_a(double *a, double *u, struct laser *l, int n) {
 	mult_vec(&a[1], A0mult);
 }
 
-double integrate(double *u, struct laser *l) {
+double integrate(double *u, const struct laser *restrict l) {
 	double integral = 0.0;
 	double a1_left[4], a1_right[4], a1_mid[4], a1_temp[4], u_temp[4];
 	double lambda = 2.0 * M_PI * c / l[0].omega, dh = lambda / (double) l[0].pond_integrate_steps;
@@ -96,7 +97,7 @@ double integrate(double *u, struct laser *l) {
 	return integral;
 }
 
-double integrate_dmuda(double *u, struct laser *l, int index) {
+double integrate_dmuda(double *u, const struct laser *restrict l, int index) {
 	double integral = 0.0;
 	double a1_left[4], a1_right[4], a1_mid[4], a2_left[4], a2_right[4], a2_mid[4], a1_temp[4], a2_temp[4], u_temp[4];
 	double lambda = 2.0 * M_PI * c / l[0].omega, dh = lambda / (double) l[0].pond_integrate_steps;
@@ -136,21 +137,21 @@ double integrate_dmuda(double *u, struct laser *l, int index) {
 	return integral;
 }
 
-double compute_a(double *u, struct laser *l) {
+double compute_a(double *u, const struct laser *restrict l) {
 	double lambda = 2.0 * M_PI * c / l[0].omega;
 	double a = - (q * q) / (m * m * c * c) * (1.0 / lambda);
 	a *= integrate(u, l);
 	return a;
 }
 
-double derivative_a(double *u, struct laser *l, int index) {
+double derivative_a(double *u, const struct laser *restrict l, int index) {
 	double lambda = 2.0 * M_PI * c / l[0].omega;
 	double dmuda = - 2.0 * (q * q) / (m * m * c * c ) * (1.0 / lambda);
 	dmuda *= integrate_dmuda(u, l, index);
 	return dmuda;
 }
 
-void ponderomotive(double *u, double *up, struct laser *l) {
+void ponderomotive(double *restrict u, double *restrict up, const struct laser *restrict l) {
 	double a = compute_a(u, l);
 	double mass = m * sqrt(1.0 + a);
 	double dmdx[4];

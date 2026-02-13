@@ -26,11 +26,12 @@
 #include "units.h"
 #include "init.h"
 #include "extra.h"
+#include "math_tools.h"
 #include "ponderomotive.h"
 
 //This is a helper library which includes electromagnetic field computation functions, initializing particles and lasers, and parsing the simulation parameters.
 
-void compute_e(double *E, double *u, struct laser *l, int i) {
+void compute_e(double *E, double *u, const struct laser *restrict l, int i) {
 	double E0 = l[i].omega * c * l[i].a0;
 	double k = l[i].omega / c;
 	double t = u[0] / c;
@@ -50,12 +51,12 @@ void compute_e(double *E, double *u, struct laser *l, int i) {
 	mult_vec(E, E0);
 }
 
-void compute_b(double *B, double *E, double *u, struct laser *l, int i) {
+void compute_b(double *B, double *E, double *u, const struct laser *restrict l, int i) {
 	cross(l[i].n, E, B);
 	mult_vec(B, 1.0 / c);
 }
 
-void compute_e_b(double *E, double *B, double *u, struct laser *l) {
+void compute_e_b(double *E, double *B, double *u, const struct laser *restrict l) {
 	double Et[3], Bt[3];
 	memset(E, 0, 3 * sizeof(double));
 	memset(B, 0, 3 * sizeof(double));
@@ -69,7 +70,7 @@ void compute_e_b(double *E, double *B, double *u, struct laser *l) {
 	}
 }
 
-void electromag(double *u, double *up, struct laser *l) {
+void electromag(double *restrict u, double *restrict up, const struct laser *restrict l) {
 	double E[3], B[3];
 	compute_e_b(E, B, u, l);
 	
@@ -84,16 +85,16 @@ void electromag(double *u, double *up, struct laser *l) {
 	mult_vec4(&up[4], q / (m * c));
 }
 
-void set_position(struct particle *p, double r, double h, double z, int i, int num, int output_mode) {
+void set_position(double *u, double r, double h, double z, int i, int num, int output_mode) {
 	if(output_mode == 0) {
-		p->u[1] = - r + 2.0 * i * r / num;
-		p->u[2] = 0.0;
-		p->u[3] = 0.0;
+		u[0] = - r + 2.0 * i * r / num;
+		u[1] = 0.0;
+		u[2] = 0.0;
 	}
 	else {
-		p->u[1] = rand_val(h - r, h + r);
-		p->u[2] = 0.0;
-		p->u[3] = rand_val(h - r, h + r);
+		u[0] = rand_val(h - r, h + r);
+		u[1] = 0.0;
+		u[2] = rand_val(h - r, h + r);
 	}
 }
 
@@ -105,7 +106,7 @@ void set_initial_vel(double *vi, double m, double phi, double theta) {
 void set_particles(struct particle *p, struct parameters *param, double *vi) {
 	for(int i = 0; i < param->num; i++) {
 		p[i].u[0] = 0.0;
-		set_position(&p[i], param->r, param->h, param->z, i, param->num, param->output_mode);
+		set_position(&p[i].u[1], param->r, param->h, param->z, i, param->num, param->output_mode);
 		rotate_around_z_axis(&p[i].u[1], param->rotate_angle);
 		double gamma = comp_gamma(vi);
 		p[i].u[4] = gamma * m * c;
@@ -126,7 +127,7 @@ double *create_out_chunk(struct parameters *param) {
 
 //This function switched the compute_function to be either the electromagnetic method or the ponderomotive method.
 
-void set_mode(void (**compute_function)(double *, double *, struct laser *), int mode) {
+void set_mode(void (**compute_function)(double *, double *, const struct laser *restrict), int mode) {
 	if(mode == 1)
 		*compute_function = ponderomotive;
 	else if(mode == 2)

@@ -7,7 +7,7 @@ INC_DIR = include
 OBJ_DIR = build
 BIN_DIR = bin
 
-MODULE_SRCS = $(SRC_DIR)/extra.c $(SRC_DIR)/init.c $(SRC_DIR)/hc_func.c $(SRC_DIR)/ponderomotive.c
+MODULE_SRCS = $(SRC_DIR)/extra.c $(SRC_DIR)/init.c $(SRC_DIR)/ponderomotive.c
 MODULE_OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(MODULE_SRCS))
 
 MAIN_SRCS = $(SRC_DIR)/laser_electron.c $(SRC_DIR)/error_calculator.c $(SRC_DIR)/find_enter_exit_time.c $(SRC_DIR)/find_final_p.c $(SRC_DIR)/find_max_p.c

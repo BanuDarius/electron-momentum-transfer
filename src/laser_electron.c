@@ -30,7 +30,8 @@
 #include "extra.h"
 #include "ponderomotive.h"
 
-void simulate(struct parameters *param, void (*compute_function)(double *, double *, struct laser *), FILE *out, double *out_chunk, struct laser *l, struct particle *p) {
+void simulate(struct parameters *param, void (*compute_function)(double *restrict, double *restrict, const struct laser *restrict), FILE *out,
+	double *out_chunk, struct laser *l, struct particle *p) {
 	int num = param->num;
 	int mode = param->mode;
 	int steps = param->steps;
@@ -113,7 +114,7 @@ int main(int argc, char **argv) {
 	set_particles(p, param, vi);
 	
 	double *out_chunk = create_out_chunk(param);
-	void (*compute_function)(double *, double *, struct laser *);
+	void (*compute_function)(double *restrict, double *restrict, const struct laser *restrict);
 	set_mode(&compute_function, param->mode);
 	
 	if(!l || !p || !out_chunk) { perror("Memory allocation error."); return 1; }

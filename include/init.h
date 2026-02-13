@@ -25,15 +25,15 @@ struct parameters {
 
 //Function declarations, which are defined fully in init.c.
 
-void compute_e(double *E, double *u, struct laser *l, int i);
-void compute_b(double *B, double *E, double *u, struct laser *l, int i);
-void compute_e_b(double *E, double *B, double *u, struct laser *l);
-void electromag(double *u, double *up, struct laser *l);
-void set_position(struct particle *p, double r, double h, double z, int i, int num, int output_mode);
+void compute_e(double *E, double *u, const struct laser *restrict l, int i);
+void compute_b(double *B, double *E, double *u, const struct laser *restrict l, int i);
+void compute_e_b(double *E, double *B, double *u, const struct laser *restrict l);
+void electromag(double *u, double *restrict up, const struct laser *restrict l);
+void set_position(double *u, double r, double h, double z, int i, int num, int output_mode);
 void set_initial_vel(double *vi, double m, double phi, double theta);
 void set_particles(struct particle *p, struct parameters *param, double *vi);
 double *create_out_chunk(struct parameters *param);
-void set_mode(void (**compute_function)(double *, double *, struct laser *l), int mode);
+void set_mode(void (**compute_function)(double *restrict, double *restrict, const struct laser *restrict), int mode);
 void set_parameters(struct parameters *param, char *input);
 void set_lasers(struct laser *l, int num_lasers, char *input);
 

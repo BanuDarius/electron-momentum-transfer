@@ -26,22 +26,22 @@ trajectory_until_exit = False
 # ------------------------------------------------------- #
 
 min_a0 = 0.02
-max_a0 = 0.60
+max_a0 = 1.00
 
 tf = 1e4
 zetax = 1.0
 zetay = 0.0
-core_num = 4
+core_num = 8
 omega = 0.057
 xif = 0.0 * pi
-num_phase = 512
+num_phase = 256
 psi = -80.0 * pi
 steps_pond = 256
 num_full = 16000
-wave_count = 1.0
+wave_count = 2.0
 sigma = 4.0 * pi
 square_size = 1.0
-sweep_steps = 128
+sweep_steps = 256
 steps_electromag = 4096
 phi = 90.0 * deg_to_rad
 theta = 90.0 * deg_to_rad
@@ -150,11 +150,9 @@ if __name__ == "__main__":
     plots.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
     plots.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, z_axis)
     
-    '''video.create_2d_colormap_video("electromagnetic", framerate, y_axis, z_axis, y_axis)
-    video.create_phase_video("electromagnetic", framerate, y_axis, y_axis)
-    video.create_time_momentum_video("electromagnetic", framerate, y_axis, x_axis)
-    video.create_time_momentum_video("electromagnetic", framerate, y_axis, y_axis)
-    video.create_time_momentum_video("electromagnetic", framerate, y_axis, z_axis)'''
+    #video.create_2d_colormap_video("electromagnetic", framerate, y_axis, z_axis, y_axis)
+    #video.create_phase_video("electromagnetic", framerate, y_axis, y_axis)
+    #video.create_time_momentum_video("electromagnetic", framerate, y_axis, x_axis)
     
     #programs.clean_image_folder()
     

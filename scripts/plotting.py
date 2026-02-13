@@ -219,7 +219,7 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
     data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
     data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 2)
     
-    x = data[:, :, 0] / r
+    x = data[:, :, 0] * wave_count / r
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
     max_py = data_max_p[:, 1][:, np.newaxis]
     z = data[:, :, 1] / max_py
@@ -267,7 +267,7 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 2)
     
     difference = data[:, :, 1]
-    x = data[:, :, 0] / r
+    x = data[:, :, 0] * wave_count / r
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
     max_p = data_max_p[:, 1][:, np.newaxis]
     z = difference / max_p * 100.0
