@@ -85,16 +85,16 @@ void electromag(double *restrict u, double *restrict up, const struct laser *res
 	mult_vec4(&up[4], &up[4], q / (m * c));
 }
 
-void set_position(double *u, double r, double h, double z, int i, int num, int output_mode) {
+void set_position(double *u, double r_min, double r_max, double h, double z, int i, int num, int output_mode) {
 	if(output_mode == 0) {
-		u[0] = - r + 2.0 * i * r / num;
+		u[0] = r_min + i * (r_max - r_min) / num;
 		u[1] = 0.0;
 		u[2] = 0.0;
 	}
 	else {
-		u[0] = rand_val(h - r, h + r);
+		u[0] = rand_val(h + r_min, h + r_max);
 		u[1] = 0.0;
-		u[2] = rand_val(h - r, h + r);
+		u[2] = rand_val(h + r_min, h + r_max);
 	}
 }
 
@@ -106,7 +106,7 @@ void set_initial_vel(double *vi, double m, double phi, double theta) {
 void set_particles(struct particle *p, struct parameters *param, double *vi) {
 	for(int i = 0; i < param->num; i++) {
 		p[i].u[0] = 0.0;
-		set_position(&p[i].u[1], param->r, param->h, param->z, i, param->num, param->output_mode);
+		set_position(&p[i].u[1], param->r_min, param->r_max, param->h, param->z, i, param->num, param->output_mode);
 		rotate_around_z_axis(&p[i].u[1], param->rotate_angle);
 		double gamma = comp_gamma(vi);
 		p[i].u[4] = gamma * m * c;
@@ -160,8 +160,10 @@ void set_parameters(struct parameters *param, char *input) {
 			i = fscanf(in, "%i", &param->output_mode);
 		else if(!strcmp(current, "core_num"))
 			i = fscanf(in, "%i", &param->core_num);
-		else if(!strcmp(current, "r"))
-			i = fscanf(in, "%lf", &param->r);
+		else if(!strcmp(current, "r_min"))
+			i = fscanf(in, "%lf", &param->r_min);
+		else if(!strcmp(current, "r_max"))
+			i = fscanf(in, "%lf", &param->r_max);
 		else if(!strcmp(current, "rotate_angle"))
 			i = fscanf(in, "%lf", &param->rotate_angle);
 	}

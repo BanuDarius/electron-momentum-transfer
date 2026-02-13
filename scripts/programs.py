@@ -45,7 +45,8 @@ def run_simulation(method, sim_parameters, lasers):
     output_mode = int(sim_parameters.output_mode == True)
     
     with open(filename_input, "w") as file:
-        file.write(f"r {sim_parameters.r}\n")
+        file.write(f"r_min {sim_parameters.r_min}\n")
+        file.write(f"r_max {sim_parameters.r_max}\n")
         file.write(f"num {sim_parameters.num}\n")
         file.write(f"tf {sim_parameters.tf}\n")
         file.write(f"steps {sim_parameters.steps}\n")

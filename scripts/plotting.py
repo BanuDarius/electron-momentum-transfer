@@ -40,9 +40,11 @@ def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, ax
     
     i = sim_parameters.i
     a0 = a0_array[i]
-    r = sim_parameters.r
-    wave_count = sim_parameters.wave_count
-    square_size = 2
+    num = sim_parameters.num
+    r_min = sim_parameters.r_min
+    r_max = sim_parameters.r_min
+    wavelength = sim_parameters.wavelength
+    square_size = sim_parameters.square_size
     
     if(method == "electromagnetic"):
         filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-electromag-{lowercase_text_horiz}{lowercase_text_vert}{lowercase_text_p}-{i}.png"
@@ -59,8 +61,8 @@ def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, ax
     
     plt.figure(figsize=(10,10))
     plt.scatter(x, y, c=c, marker='s', s=square_size, cmap='RdBu_r')
-    plt.xlim(-wave_count, wave_count)
-    plt.ylim(-wave_count, wave_count)
+    plt.xlim(r_min / wavelength, r_max / wavelength)
+    plt.ylim(r_min / wavelength, r_max / wavelength)
     plt.xlabel(rf"{axis_text_horiz} [$\lambda$]")
     plt.ylabel(rf"{axis_text_vert} [$\lambda$]")
     plt.title(rf"Final $p_{lowercase_text_p}$ for ({method}) mode")
@@ -82,9 +84,10 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
     
     i = sim_parameters.i
     a0 = a0_array[i]
-    r = sim_parameters.r
     num = sim_parameters.num
-    wave_count = sim_parameters.wave_count
+    r_min = sim_parameters.r_min
+    r_max = sim_parameters.r_min
+    wavelength = sim_parameters.wavelength
     steps = sim_parameters.steps // sim_parameters.substeps
     full_trajectory = sim_parameters.full_trajectory
     divider = sim_parameters.divider
@@ -125,9 +128,9 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
         
     ax.set_title(f"Phase space: $a_0 = {a0:0.3f}$ - $N = {subsection}$")
     ax.set_xlabel(rf"${axis_text_pos}$ [$\lambda$]")
-    ax.set_ylabel(rf"$p_{axis_text_p}$")
+    ax.set_ylabel(rf"$p_{axis_text_p}$ [a.u.]")
     
-    ax.set_xlim(-1.1 * wave_count, 1.1 * wave_count)
+    plt.xlim(1.2 * r_min / wavelength, 1.2 * r_max / wavelength)
     
     plt.savefig(filename_out, bbox_inches='tight')
     plt.close()
@@ -145,8 +148,10 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     
     i = sim_parameters.i
     a0 = a0_array[i]
-    r = sim_parameters.r
     num = sim_parameters.num
+    r_min = sim_parameters.r_min
+    r_max = sim_parameters.r_min
+    wavelength = sim_parameters.wavelength
     steps = sim_parameters.steps // sim_parameters.substeps
     divider = sim_parameters.divider
     full_trajectory = sim_parameters.full_trajectory
@@ -158,7 +163,6 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
         filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-pond-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
         filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-pond-{lowercase_text_pos}{lowercase_text_p}.bin"
     filename = f"{OUTPUT_DIR}/out-data.bin"
-    
     
     data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
     data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
@@ -188,7 +192,7 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
         
     ax.set_title(f"Time - momentum plot for: $a_0 = {a0:0.3f}$ - $N = {subsection}$")
     ax.set_xlabel(r"$t$")
-    ax.set_ylabel(rf"$p_{lowercase_text_p}$")
+    ax.set_ylabel(rf"$p_{lowercase_text_p}$ [a.u.]")
     
     plt.savefig(filename_out, bbox_inches='tight')
     plt.close()
@@ -204,10 +208,11 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
     axis_text_p = get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
-    r = sim_parameters.r
     num = sim_parameters.num
+    r_min = sim_parameters.r_min
+    r_max = sim_parameters.r_max
+    wavelength = sim_parameters.wavelength
     sweep_steps = sim_parameters.sweep_steps
-    wave_count = sim_parameters.wave_count
     
     if(method == "electromagnetic"):
         filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-electromag.bin"
@@ -221,7 +226,7 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
     data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
     data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 2)
     
-    x = data[:, :, 0] * wave_count / r
+    x = data[:, :, 0] / wavelength
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
     max_py = data_max_p[:, 1][:, np.newaxis]
     z = data[:, :, 1] / max_py
@@ -231,12 +236,12 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
         warnings.simplefilter("always")
         pcm = ax.pcolormesh(x, y, z, cmap='RdBu_r', shading='auto', rasterized=True)
         if(len(warn) > 0):
-            print("Warning: Low resolution, please run with a higher num_phase or sweep_steps.")
+            print("Note: Noisy image, consider increasing num_part or sweep_steps.")
     
     cbar = plt.colorbar(pcm, ax=ax)
     cbar.set_label(f"Normalized final momentum [a.u.]")
     
-    plt.xlim(-wave_count, wave_count)
+    plt.xlim(r_min / wavelength, r_max / wavelength)
     plt.ylim(min(a0_array), max(a0_array))
     plt.xlabel(rf"{axis_text_pos} [$\lambda$]")
     plt.ylabel(r"$a_0$")
@@ -256,9 +261,10 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     axis_text_p = get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
-    r = sim_parameters.r
     num = sim_parameters.num
-    wave_count = sim_parameters.wave_count
+    r_min = sim_parameters.r_min
+    r_max = sim_parameters.r_max
+    wavelength = sim_parameters.wavelength
     sweep_steps = sim_parameters.sweep_steps
     
     filename_in = f"{OUTPUT_DIR}/out-error-all-{lowercase_text_p}.bin"
@@ -269,7 +275,7 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 2)
     
     difference = data[:, :, 1]
-    x = data[:, :, 0] * wave_count / r
+    x = data[:, :, 0] / wavelength
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
     max_p = data_max_p[:, 1][:, np.newaxis]
     z = difference / max_p * 100.0
@@ -282,12 +288,12 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
         warnings.simplefilter("always")
         pcm = ax.pcolormesh(x, y, z_final, cmap='inferno', shading='auto', rasterized=True)
         if(len(warn) > 0):
-            print("Warning: Low resolution, please run with a higher num_phase or sweep_steps.")
+            print("Note: Noisy image, consider increasing num_part or sweep_steps.")
     
     cbar = plt.colorbar(pcm, ax=ax)
     cbar.set_label("Normalized error [%]")
     
-    plt.xlim(-wave_count, wave_count)
+    plt.xlim(r_min / wavelength, r_max / wavelength)
     plt.ylim(min(a0_array), max(a0_array))
     plt.xlabel(rf"{axis_text_pos} [$\lambda$]")
     plt.ylabel(r"$a_0$")
@@ -342,7 +348,6 @@ def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
     plt.ylabel(f"t")
     
     plt.axhline(0, color='black', linestyle='--')
-    
 
     plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
@@ -359,7 +364,9 @@ def plot_errors(sim_parameters, axis_pos, axis_p):
     lowercase_text_p = axis_text_p.lower()
     
     i = sim_parameters.i
-    r = sim_parameters.r
+    r_min = sim_parameters.r_min
+    r_max = sim_parameters.r_min
+    wavelength = sim_parameters.wavelength
     a0 = sim_parameters.a0
     num = sim_parameters.num
     
@@ -370,7 +377,7 @@ def plot_errors(sim_parameters, axis_pos, axis_p):
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
     data2 = np.fromfile(filename_max_p, dtype=np.float64).reshape(-1, 2)
     
-    x = data[:, 0] / r
+    x = data[:, 0] / wavelength
     y = data[:, 1]
     y_max = data2[i, 1]
     
@@ -385,7 +392,6 @@ def plot_errors(sim_parameters, axis_pos, axis_p):
     plt.ylabel(f"Error (%)")
     
     plt.axhline(0, color='black', linestyle='--')
-    
 
     plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()

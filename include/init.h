@@ -40,7 +40,7 @@ struct laser {
 };
 
 struct parameters {
-	double rotate_angle, tf, dt, r, h, z;
+	double rotate_angle, r_min, r_max, tf, dt, h, z;
 	int num, num_lasers, steps, substeps, mode, output_mode, core_num;
 };
 
@@ -48,7 +48,7 @@ void compute_e(double *E, double *u, const struct laser *restrict l, int i);
 void compute_b(double *B, double *E, double *u, const struct laser *restrict l, int i);
 void compute_e_b(double *E, double *B, double *u, const struct laser *restrict l);
 void electromag(double *u, double *restrict up, const struct laser *restrict l);
-void set_position(double *u, double r, double h, double z, int i, int num, int output_mode);
+void set_position(double *u, double r_min, double r_max, double h, double z, int i, int num, int output_mode);
 void set_initial_vel(double *vi, double m, double phi, double theta);
 void set_particles(struct particle *p, struct parameters *param, double *vi);
 double *create_out_chunk(struct parameters *param);

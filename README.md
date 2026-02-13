@@ -13,9 +13,10 @@ python3 auto_compute.py
 This will automatically compute and render the final momentum transfer heatmaps.
 
 ## Examples
-<img width="1265" height="1282" alt="_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/a2f9334b-4f3f-4ac3-884c-c44a8a479e1d" />
+<img width="2143" height="2155" alt="_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/35a51f1a-d56a-4e27-afee-275067766dfa" />
+<img width="2143" height="2155" alt="_out-2d-heatmap-electromag-yx" src="https://github.com/user-attachments/assets/dda0d6b3-5b19-44f2-8145-1092c0e30c51" />
 <img width="1234" height="1282" alt="_out-2d-heatmap-errors-yy" src="https://github.com/user-attachments/assets/ea77be0c-66a6-4dbe-8655-7c0080c42452" />
-<img width="1264" height="1279" alt="_out-average-errors-y" src="https://github.com/user-attachments/assets/36f9731c-5858-4119-83dd-9f718daca3d6" />
+<img width="2153" height="2154" alt="_out-max-py-electromag" src="https://github.com/user-attachments/assets/2513b091-ada2-4326-bb59-89393373db75" />
 
 ### Note
 This README is not ready yet!
