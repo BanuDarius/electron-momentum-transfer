@@ -50,49 +50,9 @@ void set_chunk(double *out_chunk, double *chunk, int init, int fin) {
 		out_chunk[i] = chunk[i-init];
 }
 
-void set_vec(double *u1, const double *u2, int n) {
-	for (int i = 0; i < n; i++)
-		u1[i] = u2[i];
-}
-
 double *new_vec(int n) {
 	double *u = malloc(n * sizeof(double));
 	return u;
-}
-
-void set_zero(double *u) {
-	for(int i = 0; i < 3; i++)
-		u[i] = 0;
-}
-
-void set_zero_n(double *u, int n) {
-	for(int i = 0; i < n; i++)
-		u[i] = 0;
-}
-
-void mult_vec(double *u, double a) {
-	for(int i = 0; i < 3; i++)
-		u[i] *= a;
-}
-
-void mult_vec4(double *u, double a) {
-	for(int i = 0; i < 4; i++)
-		u[i] *= a;
-}
-
-void add_vec(double *u, double *v) {
-	for(int i = 0; i < 3; i++)
-		u[i] += v[i];
-}
-
-void add_vec4(double *u, double *v) {
-	for(int i = 0; i < 4; i++)
-		u[i] += v[i];
-}
-
-void sub_vec(double *x, double *u, double *v) {
-	for(int i = 0; i < 3; i++)
-		x[i] = u[i] - v[i];
 }
 
 void rotate_around_z_axis(double *u, double angle) {
@@ -108,11 +68,9 @@ void set_spherical_coords(double *u, double phi, double theta) {
 	u[2] = mag * cos(phi);
 }
 
-double *direction_vec(double phi, double theta) {
-	double *u = new_vec(3);
+void direction_vec(double *u, double phi, double theta) {
 	u[0] = 0.0; u[1] = 0.0; u[2] = 1.0;
 	set_spherical_coords(u, phi, theta);
-	return u;
 }
 
 void epsilon(double *u, double *w) {
@@ -178,7 +136,7 @@ void higuera_cary_step(double *u, const double dt, const struct laser *restrict 
 	hc_u_plus(u_plus, u_minus, u_prime, s_factor, t_rot);
 	
 	memcpy(u_final, u_plus, 3 * sizeof(double));
-	add_vec(u_final, epsilon_vec);
+	add_vec(u_final, u_final, epsilon_vec);
 	memcpy(&u[5], u_final, 3 * sizeof(double));
 	
 	gamma_fac = comp_gamma(&u[5]);

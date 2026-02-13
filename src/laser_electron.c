@@ -28,7 +28,6 @@
 
 #include "init.h"
 #include "extra.h"
-#include "ponderomotive.h"
 
 void simulate(struct parameters *param, void (*compute_function)(double *restrict, double *restrict, const struct laser *restrict), FILE *out,
 	double *out_chunk, struct laser *l, struct particle *p) {

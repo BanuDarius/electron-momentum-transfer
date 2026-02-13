@@ -1,3 +1,24 @@
+/* MIT License
+*
+* Copyright (c) 2026 Banu Darius-Matei
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"),
+* to deal in the Software without restriction, including without limitation the
+* rights to use, copy, modify, merge, publish, distribute, sublicense,
+* and/or sell copies of the Software, and to permit persons to whom the
+* Software is furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included
+* in all copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+* INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+* FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+* OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+* WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
+* OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
+
 #ifndef EXTRA_H
 #define EXTRA_H
 
@@ -14,18 +35,9 @@ double rand_val(double min, double max);
 void print_chunk(FILE *out, double *chunk, int core_num);
 void copy_initial(double *ch, double *u, int k, int id);
 void set_chunk(double *out_chunk, double *chunk, int init, int fin);
-void set_vec(double *u1, const double *u2, int n);
-double *new_vec(int n);
-void set_zero(double *u);
-void set_zero_n(double *u, int n);
-void mult_vec(double *u, double a);
-void mult_vec4(double *u, double a);
-void add_vec(double *u, double *v);
-void add_vec4(double *u, double *v);
-void sub_vec(double *x, double *u, double *v);
 void rotate_around_z_axis(double *u, double angle);
 void set_spherical_coords(double *u, double phi, double theta);
-double *direction_vec(double phi, double theta);
+void direction_vec(double *u, double phi, double theta);
 void epsilon(double *u, double *w);
 void rk4_step(double *u, double dt, const struct laser *restrict l, void compute_function(double *, double *, const struct laser *restrict));
 void higuera_cary_step(double *u, const double dt, const struct laser *restrict l);

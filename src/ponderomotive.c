@@ -36,7 +36,7 @@ void potential_deriv_a(double *a, double *u, const struct laser *restrict l, int
 	k_vec4[0] = 1.0;
 	epsilon4[0] = 0.0;
 	memcpy(&k_vec4[1], l[n].n, 3 * sizeof(double));
-	mult_vec4(k_vec4, l[n].omega / c);
+	mult_vec4(k_vec4, k_vec4, l[n].omega / c);
 	
 	phi = dot4(k_vec4, u) + l[n].psi;
 	sign = (index > 0) ? -1.0 : +1.0;
@@ -55,13 +55,13 @@ void potential_a(double *a, double *u, const struct laser *restrict l, int n) {
 	k_vec4[0] = 1.0;
 	epsilon4[0] = 0.0;
 	memcpy(&k_vec4[1], l[n].n, 3 * sizeof(double));
-	mult_vec4(k_vec4, l[n].omega / c);
+	mult_vec4(k_vec4, k_vec4, l[n].omega / c);
 	
 	phi = dot4(k_vec4, u) + l[n].psi;
 	A0mult = env(phi, l[n].xif, l[n].sigma) * potentialA0;
 	for(int i = 0; i < 3; i++)
 		a[i+1] = l[n].epsilon1[i] * l[n].zetax * (sin(phi)) + l[n].epsilon2[i] * l[n].zetay * cos(phi);
-	mult_vec(&a[1], A0mult);
+	mult_vec(&a[1], &a[1], A0mult);
 }
 
 double integrate(double *u, const struct laser *restrict l) {
@@ -75,7 +75,7 @@ double integrate(double *u, const struct laser *restrict l) {
 	memset(a1_left, 0, 4 * sizeof(double));
 	for(int j = 0; j < l[0].num_lasers; j++) {
 		potential_a(a1_temp, u_temp, l, j);
-		add_vec4(a1_left, a1_temp);
+		add_vec4(a1_left, a1_left, a1_temp);
 	}
 	left = dot4(a1_left, a1_left);
 	u_temp[0] += dh / 2.0;
@@ -86,13 +86,13 @@ double integrate(double *u, const struct laser *restrict l) {
 		
 		for(int j = 0; j < l[0].num_lasers; j++) {
 			potential_a(a1_temp, u_temp, l, j);
-			add_vec4(a1_center, a1_temp);
+			add_vec4(a1_center, a1_center, a1_temp);
 		}
 		u_temp[0] += dh / 2.0;
 		
 		for(int j = 0; j < l[0].num_lasers; j++) {
 			potential_a(a1_temp, u_temp, l, j);
-			add_vec4(a1_right, a1_temp);
+			add_vec4(a1_right, a1_right, a1_temp);
 		}
 		u_temp[0] -= dh / 2.0;
 		
@@ -118,8 +118,8 @@ double integrate_dmuda(double *u, const struct laser *restrict l, int index) {
 	for(int j = 0; j < l[0].num_lasers; j++) {
 		potential_a(a1_temp, u_temp, l, j);
 		potential_deriv_a(a2_temp, u_temp, l, index, j);
-		add_vec4(a1_left, a1_temp);
-		add_vec4(a2_left, a2_temp);
+		add_vec4(a1_left, a1_left, a1_temp);
+		add_vec4(a2_left, a2_left, a2_temp);
 	}
 	left = dot4(a1_left, a2_left);
 	u_temp[0] += dh / 2.0;
@@ -131,16 +131,16 @@ double integrate_dmuda(double *u, const struct laser *restrict l, int index) {
 		for(int j = 0; j < l[0].num_lasers; j++) {
 			potential_a(a1_temp, u_temp, l, j);
 			potential_deriv_a(a2_temp, u_temp, l, index, j);
-			add_vec4(a1_center, a1_temp);
-			add_vec4(a2_center, a2_temp);
+			add_vec4(a1_center, a1_center, a1_temp);
+			add_vec4(a2_center, a2_center, a2_temp);
 		}
 		u_temp[0] += dh / 2.0;
 		
 		for(int j = 0; j < l[0].num_lasers; j++) {
 			potential_a(a1_temp, u_temp, l, j);
 			potential_deriv_a(a2_temp, u_temp, l, index, j);
-			add_vec4(a1_right, a1_temp);
-			add_vec4(a2_right, a2_temp);
+			add_vec4(a1_right, a1_right, a1_temp);
+			add_vec4(a2_right, a2_right, a2_temp);
 		}
 		u_temp[0] -= dh / 2.0;
 		
@@ -185,5 +185,5 @@ void ponderomotive(double *restrict u, double *restrict up, const struct laser *
 	up[5] = - u[5] * u[4] * dmdx[0] / c - (c * c) * dmdx[1] - u[5] * u[5] * dmdx[1] - u[5] * u[6] * dmdx[2] - u[5] * u[7] * dmdx[3];
 	up[6] = - u[6] * u[4] * dmdx[0] / c - u[6] * u[5] * dmdx[1] - (c * c) * dmdx[2] - u[6] * u[6] * dmdx[2] - u[6] * u[7] * dmdx[3];
 	up[7] = - u[7] * u[4] * dmdx[0] / c - u[7] * u[5] * dmdx[1] - u[7] * u[6] * dmdx[2] - (c * c) * dmdx[3] - u[7] * u[7] * dmdx[3];
-	mult_vec4(&up[4], 1.0 / mass);
+	mult_vec4(&up[4], &up[4], 1.0 / mass);
 }

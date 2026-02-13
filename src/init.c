@@ -44,16 +44,16 @@ void compute_e(double *E, double *u, const struct laser *restrict l, int i) {
 		E1[j] = l[i].epsilon1[j] * l[i].zetax * (-cos(alpha)) + l[i].epsilon2[j] * l[i].zetay * sin(alpha);
 		E2[j] = l[i].epsilon1[j] * l[i].zetax * (-sin(alpha)) + l[i].epsilon2[j] * l[i].zetay * (-cos(alpha));
 	}
-	mult_vec(E1, Ec1);
-	mult_vec(E2, Ec2);
-	set_vec(E, E1, 3);
-	add_vec(E, E2);
-	mult_vec(E, E0);
+	mult_vec(E1, E1, Ec1);
+	mult_vec(E2, E2, Ec2);
+	memcpy(E, E1, 3 * sizeof(double));
+	add_vec(E, E, E2);
+	mult_vec(E, E, E0);
 }
 
 void compute_b(double *B, double *E, double *u, const struct laser *restrict l, int i) {
 	cross(B, l[i].n, E);
-	mult_vec(B, 1.0 / c);
+	mult_vec(B, B, 1.0 / c);
 }
 
 void compute_e_b(double *E, double *B, double *u, const struct laser *restrict l) {
@@ -65,8 +65,8 @@ void compute_e_b(double *E, double *B, double *u, const struct laser *restrict l
 		memset(Bt, 0, 3 * sizeof(double));
 		compute_e(Et, u, l, i);
 		compute_b(Bt, Et, u, l, i);
-		add_vec(E, Et);
-		add_vec(B, Bt);
+		add_vec(E, E, Et);
+		add_vec(B, B, Bt);
 	}
 }
 
@@ -82,7 +82,7 @@ void electromag(double *restrict u, double *restrict up, const struct laser *res
 	up[5] = E[0] * u[4] + B[2] * c * u[6] - B[1] * c * u[7];
 	up[6] = E[1] * u[4] - B[2] * c * u[5] + B[0] * c * u[7];
 	up[7] = E[2] * u[4] + B[1] * c * u[5] - B[0] * c * u[6];
-	mult_vec4(&up[4], q / (m * c));
+	mult_vec4(&up[4], &up[4], q / (m * c));
 }
 
 void set_position(double *u, double r, double h, double z, int i, int num, int output_mode) {
@@ -99,8 +99,8 @@ void set_position(double *u, double r, double h, double z, int i, int num, int o
 }
 
 void set_initial_vel(double *vi, double m, double phi, double theta) {
-	set_vec(vi, direction_vec(phi, theta), 3);
-	mult_vec(vi, m);
+	direction_vec(vi, phi, theta);
+	mult_vec(vi, vi, m);
 }
 
 void set_particles(struct particle *p, struct parameters *param, double *vi) {
@@ -200,13 +200,12 @@ void set_lasers(struct laser *l, int num_lasers, char *input) {
 			else if(!strcmp(current, "pond_integrate_steps"))
 				k = fscanf(in, "%i", &l[i].pond_integrate_steps);
 		}
-		double *nv = direction_vec(l[i].phi, l[i].theta);
-		double epsilon1[3], epsilon2[3];
+		double epsilon1[3], epsilon2[3], nv[3];
+		direction_vec(nv, l[i].phi, l[i].theta);
 		epsilon(nv, epsilon1);
 		cross(epsilon2, nv, epsilon1);
-		set_vec(l[i].n, nv, 3);
-		set_vec(l[i].epsilon1, epsilon1, 3);
-		set_vec(l[i].epsilon2, epsilon2, 3);
-		free(nv);
+		memcpy(l[i].n, nv, 3 * sizeof(double));
+		memcpy(l[i].epsilon1, epsilon1, 3 * sizeof(double));
+		memcpy(l[i].epsilon2, epsilon2, 3 * sizeof(double));
 	}
 }
