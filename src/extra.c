@@ -177,9 +177,9 @@ void higuera_cary_step(double *u, const double dt, const struct laser *restrict 
 	hc_u_prime(u_prime, u_minus, t_rot);
 	hc_u_plus(u_plus, u_minus, u_prime, s_factor, t_rot);
 	
-	set_vec(u_final, u_plus, 3);
+	memcpy(u_final, u_plus, 3 * sizeof(double));
 	add_vec(u_final, epsilon_vec);
-	set_vec(&u[5], u_final, 3);
+	memcpy(&u[5], u_final, 3 * sizeof(double));
 	
 	gamma_fac = comp_gamma(&u[5]);
 	u[0] += 0.5 * c * dt;

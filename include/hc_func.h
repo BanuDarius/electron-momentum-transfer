@@ -70,7 +70,7 @@ static inline double hc_gamma_new(double *restrict u_minus, const double *restri
 
 static inline void hc_u_plus(double *restrict u_plus, const double *restrict u_minus, const double *restrict u_prime, const double s_factor, const double *restrict t_rot) {
 	double t1[3], t2[3];
-	set_vec(t1, t_rot, 3);
+	memcpy(t1, t_rot, 3 * sizeof(double));
 	mult_vec(t1, s_factor);
 	cross(t2, u_prime, t1);
 	for(int i = 0; i < 3; i++)

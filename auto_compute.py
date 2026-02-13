@@ -5,8 +5,8 @@ import scripts.programs as programs
 import scripts.create_video as video
 import scripts.plotting as plots
 
-pi = 3.14159265359
 c = 137.036
+pi = 3.14159265359
 deg_to_rad = pi / 180.0
 
 x_axis = 0
@@ -25,8 +25,8 @@ trajectory_until_exit = False
 
 # ------------------------------------------------------- #
 
-min_a0 = 0.02
-max_a0 = 1.00
+min_a0 = 0.50
+max_a0 = 0.70
 
 zetax = 0.0
 zetay = 1.0
@@ -34,13 +34,13 @@ tf = 10000.0
 core_num = 8
 omega = 0.057
 xif = 0.0 * pi
-num_phase = 1024
+num_phase = 2048
 steps_pond = 256
 num_full = 16000
-wave_count = 1.0
+wave_count = 0.5
 sigma = 19.0 * pi
 square_size = 1.0
-sweep_steps = 1024
+sweep_steps = 2048
 psi = -3.0 * sigma
 steps_electromag = 8192
 phi = 90.0 * deg_to_rad
