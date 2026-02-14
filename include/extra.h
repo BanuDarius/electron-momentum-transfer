@@ -34,7 +34,6 @@
 double rand_val(double min, double max);
 void print_chunk(FILE *out, double *chunk, int core_num);
 void copy_initial(double *ch, double *u, int k, int id);
-void set_chunk(double *out_chunk, double *chunk, int init, int fin);
 void rotate_around_z_axis(double *u, double angle);
 void set_spherical_coords(double *u, double phi, double theta);
 void direction_vec(double *u, double phi, double theta);

@@ -5,8 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-c_value = 137.036 #The speed of light in a.u.
-
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 BIN_DIR = PROJECT_ROOT / "bin"
@@ -151,10 +149,11 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     num = sim_parameters.num
     r_min = sim_parameters.r_min
     r_max = sim_parameters.r_min
-    wavelength = sim_parameters.wavelength
-    steps = sim_parameters.steps // sim_parameters.substeps
     divider = sim_parameters.divider
+    c_value = sim_parameters.c_value
+    wavelength = sim_parameters.wavelength
     full_trajectory = sim_parameters.full_trajectory
+    steps = sim_parameters.steps // sim_parameters.substeps
     
     if(method == "electromagnetic"):
         filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-electromag-{lowercase_text_pos}{lowercase_text_p}-{i}.png"

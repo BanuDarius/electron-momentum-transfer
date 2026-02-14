@@ -85,6 +85,26 @@ void electromag(double *restrict u, double *restrict up, const struct laser *res
 	mult_vec4(&up[4], &up[4], q / (m * c));
 }
 
+void ponderomotive(double *restrict u, double *restrict up, const struct laser *restrict l) {
+	double a = compute_a(u, l);
+	double mass = m * sqrt(1.0 + a);
+	double dmdx[4];
+	
+	double m_sqrt_a = 0.5 * m / sqrt(1.0 + a);
+	for(int i = 0; i < 4; i++)
+		dmdx[i] = derivative_a(u, l, i) * m_sqrt_a;
+	
+	up[0] = u[4];
+	up[1] = u[5];
+	up[2] = u[6];
+	up[3] = u[7];
+	up[4] = - u[4] * u[4] * dmdx[0] / c + c * dmdx[0] - u[4] * u[5] * dmdx[1] - u[4] * u[6] * dmdx[2] - u[4] * u[7] * dmdx[3];
+	up[5] = - u[5] * u[4] * dmdx[0] / c - (c * c) * dmdx[1] - u[5] * u[5] * dmdx[1] - u[5] * u[6] * dmdx[2] - u[5] * u[7] * dmdx[3];
+	up[6] = - u[6] * u[4] * dmdx[0] / c - u[6] * u[5] * dmdx[1] - (c * c) * dmdx[2] - u[6] * u[6] * dmdx[2] - u[6] * u[7] * dmdx[3];
+	up[7] = - u[7] * u[4] * dmdx[0] / c - u[7] * u[5] * dmdx[1] - u[7] * u[6] * dmdx[2] - (c * c) * dmdx[3] - u[7] * u[7] * dmdx[3];
+	mult_vec4(&up[4], &up[4], 1.0 / mass);
+}
+
 void set_position(double *u, double r_min, double r_max, double h, double z, int i, int num, int output_mode) {
 	if(output_mode == 0) {
 		u[0] = r_min + i * (r_max - r_min) / num;

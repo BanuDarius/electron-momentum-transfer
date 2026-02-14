@@ -28,7 +28,7 @@
 #include "extra.h"
 #include "hc_func.h"
 
-//This is a helper library which includes several simple functions for vector operations and mathematics.
+//This is a helper library which includes several simple functions for vector operations and mathematics
 
 double rand_val(double min, double max) {
 	double s = rand() / (double) RAND_MAX;
@@ -43,16 +43,6 @@ void copy_initial(double *ch, double *u, int k, int id) {
 	int index = 2 * id * U_SIZE * CHUNK_SIZE + 2 * U_SIZE * k;
 	for(int i = index; i < index + U_SIZE; i++)
 		ch[i] = u[i - index];
-}
-
-void set_chunk(double *out_chunk, double *chunk, int init, int fin) {
-	for(int i = init; i < fin; i++)
-		out_chunk[i] = chunk[i-init];
-}
-
-double *new_vec(int n) {
-	double *u = malloc(n * sizeof(double));
-	return u;
 }
 
 void rotate_around_z_axis(double *u, double angle) {

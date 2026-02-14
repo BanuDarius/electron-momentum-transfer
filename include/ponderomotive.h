@@ -28,6 +28,5 @@ double integrate(double *u, const struct laser *restrict l);
 double integrate_dmuda(double *u, const struct laser *restrict l, int index);
 double compute_a(double *u, const struct laser *restrict l);
 double derivative_a(double *u, const struct laser *restrict l, int index);
-void ponderomotive(double *restrict u, double *restrict up, const struct laser *restrict l);
 
 #endif

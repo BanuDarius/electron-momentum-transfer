@@ -24,10 +24,10 @@
 
 #include <stdio.h>
 
-//Definitions for the particle struct, laser struct, and parameter struct.
-//All of which are passed to the simulate() function.
+//Definitions for the particle struct, laser struct, and parameter struct
+//All of which are passed to the simulate() function
 
-#define LASER_PARAMS 10 //This defines how many parameters will be read from a file for one laser.
+#define LASER_PARAMS 10 //This defines how many parameters will be read from a file for one laser
 
 struct particle {
 	double u[8];
@@ -47,7 +47,8 @@ struct parameters {
 void compute_e(double *E, double *u, const struct laser *restrict l, int i);
 void compute_b(double *B, double *E, double *u, const struct laser *restrict l, int i);
 void compute_e_b(double *E, double *B, double *u, const struct laser *restrict l);
-void electromag(double *u, double *restrict up, const struct laser *restrict l);
+void electromag(double *restrict u, double *restrict up, const struct laser *restrict l);
+void ponderomotive(double *restrict u, double *restrict up, const struct laser *restrict l);
 void set_position(double *u, double r_min, double r_max, double h, double z, int i, int num, int output_mode);
 void set_initial_vel(double *vi, double m, double phi, double theta);
 void set_particles(struct particle *p, struct parameters *param, double *vi);
