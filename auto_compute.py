@@ -32,7 +32,8 @@ max_a0 = 0.50 #Minimum and maximum of a0 for lasers
 
 zetax = 1.0
 zetay = 0.0 #Polarization parameters
-tf = 10000.0 #Final time for electromagnetic mode / proper time for ponderomotive mode
+tf = 15000.0 #Final time for electromagnetic mode 
+tauf = 10000.0 #Final proper time for ponderomotive mode
 
 num_part = 128 #Number of particles
 sweep_steps = 128 #Number of parameter sweeps
@@ -64,7 +65,7 @@ square_size = 1.0 #Size of squares in 2D colormaps
 if __name__ == "__main__":
     #In the examples/ directory there are several examples
     #Uncomment this line to reproduce any of them
-    #examples.run_example(1, core_num)
+    examples.run_example(1, core_num)
     
     a0_array = np.array([]) #This array will be passed to plotting functions
     programs.clean_output_folder() #Remove output data from previous run
@@ -75,10 +76,10 @@ if __name__ == "__main__":
         a0_array = np.append(a0_array, a0)
         
         lasers = [] #Defines all lasers
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, theta, psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, -theta, psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, -135.0 * deg_to_rad, psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 135.0 * deg_to_rad, psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 90.0 * deg_to_rad, psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 270.0 * deg_to_rad, psi, pond_integrate_steps))
+        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 180.0 * deg_to_rad, psi, pond_integrate_steps))
+        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 270.0 * deg_to_rad, psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -140,6 +141,7 @@ if __name__ == "__main__":
         #plotting.plot_phases("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         
         # ------------------------------------------------------- #
+        
         programs.calculate_errors(sim_parameters, a0_array, x_axis)
         programs.calculate_errors(sim_parameters, a0_array, y_axis)
         programs.calculate_errors(sim_parameters, a0_array, z_axis)

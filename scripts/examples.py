@@ -25,14 +25,15 @@ trajectory_until_exit = False
 def run_example(example_num, core_num):
     if(example_num == 1):
         min_a0 = 0.02
-        max_a0 = 0.52
+        max_a0 = 1.00
 
         zetax = 1.0
         zetay = 0.0
-        tf = 10000.0
+        tf = 12000.0
+        tauf = 10000.0
 
-        num_part = 512
-        sweep_steps = 512
+        num_part = 1024
+        sweep_steps = 1024
         num_full = 16000
 
         omega = 0.057
@@ -42,13 +43,12 @@ def run_example(example_num, core_num):
 
         wavelength = 2.0 * pi * c / omega
         r_min = -1.00 * wavelength
-        r_max = -0.25 * wavelength
+        r_max = +1.00 * wavelength
 
         phi = 90.0 * deg_to_rad
-        theta = 90.0 * deg_to_rad
         rotate_angle = 90.0 * deg_to_rad
 
-        steps_pond = 256
+        steps_pond = 512
         steps_electromag = 8192
         substeps_pond = 1
         substeps_electromag = 16
@@ -64,10 +64,8 @@ def run_example(example_num, core_num):
         a0_array = np.append(a0_array, a0)
         
         lasers = []
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, theta, psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, -theta, psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, -135.0 * deg_to_rad, psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 135.0 * deg_to_rad, psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 90.0 * deg_to_rad, psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 270.0 * deg_to_rad, psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -90,7 +88,7 @@ def run_example(example_num, core_num):
         
         # ------------------------------------------------------- #
         
-        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_pond, first_eighth,
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
             substeps_pond, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
@@ -108,6 +106,7 @@ def run_example(example_num, core_num):
         programs.find_enter_exit_time("ponderomotive", sim_parameters, y_axis, z_axis)
         
         # ------------------------------------------------------- #
+        
         programs.calculate_errors(sim_parameters, a0_array, x_axis)
         programs.calculate_errors(sim_parameters, a0_array, y_axis)
         programs.calculate_errors(sim_parameters, a0_array, z_axis)
