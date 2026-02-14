@@ -1,9 +1,24 @@
 import sys
 import time
 import numpy as np
+from pathlib import Path
 import scripts.sim_init as sim_init
 import scripts.programs as programs
 import scripts.plotting as plotting
+
+def interpolate(min_v, max_v, i, f):
+    return min_v + (max_v - min_v) * i / f
+    
+def modulo_steps(s, substep):
+    modulo = s % substep
+    if(modulo != 0):
+        s -= modulo
+    return s
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent
+OUTPUT_DIR = PROJECT_ROOT / "output"
+filename_out = f"{OUTPUT_DIR}/out-data.bin"
 
 c = 137.036
 pi = 3.14159265359
@@ -26,33 +41,57 @@ def run_example(example_num, core_num):
     if(example_num == 1):
         min_a0 = 0.02
         max_a0 = 1.00
-
         zetax = 1.0
         zetay = 0.0
         tf = 12000.0
         tauf = 10000.0
-
         num_part = 1024
         sweep_steps = 1024
         num_full = 16000
-
         omega = 0.057
         xif = 0.0 * pi
         sigma = 19.0 * pi
         psi = -3.0 * sigma
-
         wavelength = 2.0 * pi * c / omega
         r_min = -1.00 * wavelength
         r_max = +1.00 * wavelength
-
         phi = 90.0 * deg_to_rad
         rotate_angle = 90.0 * deg_to_rad
-
         steps_pond = 512
-        steps_electromag = 8192
+        min_steps_electromag = 4000
+        max_steps_electromag = 32000
         substeps_pond = 1
         substeps_electromag = 16
-        pond_integrate_steps = 8
+        pond_integrate_steps = 4
+    elif(example_num == 2):
+        min_a0 = 0.02
+        max_a0 = 1.00
+        zetax = 1.0
+        zetay = 0.0
+        tf = 12000.0
+        tauf = 10000.0
+        num_part = 1024
+        sweep_steps = 1024
+        num_full = 16000
+        omega = 0.057
+        xif = 0.0 * pi
+        sigma = 19.0 * pi
+        psi = -3.0 * sigma
+        wavelength = 2.0 * pi * c / omega
+        r_min = -1.00 * wavelength
+        r_max = +1.00 * wavelength
+        phi = 90.0 * deg_to_rad
+        theta = 90.0 * deg_to_rad
+        rotate_angle = 90.0 * deg_to_rad
+        steps_pond = 512
+        min_steps_electromag = 4000
+        max_steps_electromag = 32000
+        substeps_pond = 1
+        substeps_electromag = 16
+        pond_integrate_steps = 4
+    else:
+        print("Error: Example number not found.")
+        sys.exit(1)
         
     a0_array = np.array([])
     programs.clean_output_folder()
@@ -62,48 +101,52 @@ def run_example(example_num, core_num):
     for i in range(0, sweep_steps):
         a0 = min_a0 + (max_a0 - min_a0) * i / sweep_steps
         a0_array = np.append(a0_array, a0)
+        steps_electromag = int(interpolate(min_steps_electromag, max_steps_electromag, i, sweep_steps))
+        steps_electromag = modulo_steps(steps_electromag, substeps_electromag)
         
         lasers = []
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 90.0 * deg_to_rad, psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 270.0 * deg_to_rad, psi, pond_integrate_steps))
+        if(example_num == 1):
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 90.0 * deg_to_rad, psi, pond_integrate_steps))
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 270.0 * deg_to_rad, psi, pond_integrate_steps))
+        elif(example_num == 2):
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 0.0 * deg_to_rad, psi, pond_integrate_steps))
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 120.0 * deg_to_rad, psi, pond_integrate_steps))
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 240.0 * deg_to_rad, psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c) 
+            substeps_electromag, core_num, all_states, rotate_angle, sweep_steps, trajectory_until_exit, wavelength, c, filename_out)
+        
+        #Uncomment this line to check the convergence when changing the number of steps
+        #programs.check_convergence("electromagnetic", sim_parameters, lasers, y_axis, y_axis, steps_electromag, 2 * steps_electromag)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
         programs.find_final_p("electromagnetic", sim_parameters, y_axis, x_axis)
         programs.find_max_p("electromagnetic", sim_parameters, x_axis)
-        programs.find_enter_exit_time("electromagnetic", sim_parameters, y_axis, x_axis)
         
         programs.find_final_p("electromagnetic", sim_parameters, y_axis, y_axis)
         programs.find_max_p("electromagnetic", sim_parameters, y_axis)
-        programs.find_enter_exit_time("electromagnetic", sim_parameters, y_axis, y_axis)
         
         programs.find_final_p("electromagnetic", sim_parameters, y_axis, z_axis)
         programs.find_max_p("electromagnetic", sim_parameters, z_axis)
-        programs.find_enter_exit_time("electromagnetic", sim_parameters, y_axis, z_axis)
         
         # ------------------------------------------------------- #
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_pond, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c, filename_out)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
         programs.find_final_p("ponderomotive", sim_parameters, y_axis, x_axis)
         programs.find_max_p("ponderomotive", sim_parameters, x_axis)
-        programs.find_enter_exit_time("ponderomotive", sim_parameters, y_axis, x_axis)
         
         programs.find_final_p("ponderomotive", sim_parameters, y_axis, y_axis)
         programs.find_max_p("ponderomotive", sim_parameters, y_axis)
-        programs.find_enter_exit_time("ponderomotive", sim_parameters, y_axis, y_axis)
         
         programs.find_final_p("ponderomotive", sim_parameters, y_axis, z_axis)
         programs.find_max_p("ponderomotive", sim_parameters, z_axis)
-        programs.find_enter_exit_time("ponderomotive", sim_parameters, y_axis, z_axis)
         
         # ------------------------------------------------------- #
         
@@ -137,4 +180,4 @@ def run_example(example_num, core_num):
     print(f"Program executed successfully.")
     print(f"Total time taken: {total_time:0.3f}s.\a")
     print(f"Ended reproducing example {example_num}.")
-    sys.exit(1)
+    sys.exit(0)

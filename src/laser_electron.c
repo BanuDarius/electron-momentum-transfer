@@ -107,16 +107,15 @@ int main(int argc, char **argv) {
 	set_parameters(param, argv[1]);
 	
 	struct laser *l = malloc(param->num_lasers * sizeof(struct laser));
-	set_lasers(l, param->num_lasers, argv[2]);
-	
 	struct particle *p = malloc(param->num * sizeof(struct particle));
-	set_particles(p, param, vi);
-	
 	double *out_chunk = create_out_chunk(param);
 	void (*compute_function)(double *restrict, double *restrict, const struct laser *restrict);
-	set_mode(&compute_function, param->mode);
 	
 	if(!l || !p || !out_chunk) { perror("Memory allocation error."); return 1; }
+	
+	set_lasers(l, param->num_lasers, argv[2]);
+	set_particles(p, param, vi);
+	set_mode(&compute_function, param->mode);
 	
 	printf("Simulation started.\n");
 	simulate(param, compute_function, out, out_chunk, l, p);

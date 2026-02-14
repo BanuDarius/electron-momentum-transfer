@@ -49,7 +49,7 @@ def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, ax
     else:
         filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-pond-{lowercase_text_horiz}{lowercase_text_vert}{lowercase_text_p}-{i}.png"
     
-    filename = f"{OUTPUT_DIR}/out-data.bin"
+    filename = sim_parameters.filename_out
     
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 16)
     
@@ -89,6 +89,7 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
     steps = sim_parameters.steps // sim_parameters.substeps
     full_trajectory = sim_parameters.full_trajectory
     divider = sim_parameters.divider
+    subsection = num // divider
     
     if(method == "electromagnetic"):
         filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-electromag-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
@@ -96,18 +97,17 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
     else:
         filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-pond-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
         filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-pond-{lowercase_text_pos}{lowercase_text_p}.bin"
-    filename = f"{OUTPUT_DIR}/out-data.bin"
+    filename = sim_parameters.filename_out
     
     data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
-    data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
-    fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
+    if(not full_trajectory):
+        data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
+        data_exit = data_exit[:subsection]
     
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
     colmap = plt.get_cmap('Spectral')
     
-    subsection = num // divider
-    
     data = data[:subsection]
-    data_exit = data_exit[:subsection]
     
     for idx in range(subsection):
         if(full_trajectory):
@@ -119,7 +119,7 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
         color = idx / subsection
         color_cmap = colmap(color)
         
-        x = traj[:, axis_pos + 1] / r
+        x = traj[:, axis_pos + 1] / wavelength
         y = traj[:, axis_p + 5]
         
         sc = ax.plot(x, y, c=color_cmap, linewidth=0.5)
@@ -128,7 +128,7 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
     ax.set_xlabel(rf"${axis_text_pos}$ [$\lambda$]")
     ax.set_ylabel(rf"$p_{axis_text_p}$ [a.u.]")
     
-    plt.xlim(1.2 * r_min / wavelength, 1.2 * r_max / wavelength)
+    plt.xlim(r_min / wavelength - 2.0 * r_min / wavelength, r_max / wavelength + 2.0 * r_max / wavelength)
     
     plt.savefig(filename_out, bbox_inches='tight')
     plt.close()
@@ -161,7 +161,7 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     else:
         filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-pond-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
         filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-pond-{lowercase_text_pos}{lowercase_text_p}.bin"
-    filename = f"{OUTPUT_DIR}/out-data.bin"
+    filename = sim_parameters.filename_out
     
     data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
     data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
@@ -234,8 +234,6 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
     with warnings.catch_warnings(record=True) as warn:
         warnings.simplefilter("always")
         pcm = ax.pcolormesh(x, y, z, cmap='RdBu_r', shading='auto', rasterized=True)
-        if(len(warn) > 0):
-            print("Note: Noisy image, consider increasing num_part or sweep_steps.")
     
     cbar = plt.colorbar(pcm, ax=ax)
     cbar.set_label(f"Normalized final momentum [a.u.]")
@@ -286,8 +284,6 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     with warnings.catch_warnings(record=True) as warn:
         warnings.simplefilter("always")
         pcm = ax.pcolormesh(x, y, z_final, cmap='inferno', shading='auto', rasterized=True)
-        if(len(warn) > 0):
-            print("Note: Noisy image, consider increasing num_part or sweep_steps.")
     
     cbar = plt.colorbar(pcm, ax=ax)
     cbar.set_label("Normalized error [%]")
