@@ -34,7 +34,7 @@ def run_example(example_num, core_num):
         zetax = 0.0
         zetay = 1.0
         tf = 12000.0
-        tauf = 10000.0
+        tauf = 7000.0
         num_part = 1024
         sweep_steps = 1024
         num_full = 16000
@@ -60,7 +60,7 @@ def run_example(example_num, core_num):
         zetax = 0.0
         zetay = 1.0
         tf = 15000.0
-        tauf = 10000.0
+        tauf = 7000.0
         num_part = 1024
         sweep_steps = 1024
         num_full = 16000
@@ -75,7 +75,7 @@ def run_example(example_num, core_num):
         rotate_angle = np.radians(90.0)
         min_steps_pond = 128
         max_steps_pond = 1024
-        min_steps_electromag = 16000
+        min_steps_electromag = 4000
         max_steps_electromag = 32000
         substeps_pond = 1
         substeps_electromag = 16

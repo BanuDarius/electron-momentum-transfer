@@ -38,7 +38,7 @@ max_a0 = 1.00 #Minimum and maximum of a0 for lasers
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
 tf = 15000.0 #Final time for electromagnetic mode 
-tauf = 10000.0 #Final proper time for ponderomotive mode
+tauf = 7000.0 #Final proper time for ponderomotive mode
 
 num_part = 512 #Number of particles
 sweep_steps = 512 #Number of parameter sweeps
@@ -57,8 +57,8 @@ phi = np.radians(90.0)
 theta = np.radians(90.0) #Angles for the lasers
 rotate_angle = np.radians(90.0) #Angles for rotating the initial particles
 
-min_steps_pond = 4
-max_steps_pond = 4
+min_steps_pond = 128
+max_steps_pond = 512
 min_steps_electromag = 4000
 max_steps_electromag = 16000 #Simulation steps
 substeps_pond = 1
@@ -72,7 +72,7 @@ square_size = 1.0 #Size of squares in 2D colormaps
 if __name__ == "__main__":
     #In the examples/ directory there are several examples
     #Uncomment this line to reproduce any of them
-    examples.run_example(2, core_num)
+    #examples.run_example(2, core_num)
     
     a0_array = np.array([]) #This array will be passed to plotting functions
     programs.clean_output_folder() #Remove output data from previous run
@@ -131,7 +131,7 @@ if __name__ == "__main__":
         # ------------------------------------------------------- #
         
         #Properties for the ponderomotive mode
-        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_pond, first_eighth,
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
             substeps_pond, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c, filename_out)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
@@ -144,9 +144,9 @@ if __name__ == "__main__":
         
         programs.find_final_p("ponderomotive", sim_parameters, y_axis, z_axis)
         programs.find_max_p("ponderomotive", sim_parameters, z_axis)
-        #programs.find_enter_exit_time("ponderomotive", sim_parameters, y_axis, z_axis)
+        programs.find_enter_exit_time("ponderomotive", sim_parameters, y_axis, y_axis)
         
-        #plotting.plot_time_momentum("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
+        plotting.plot_time_momentum("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_enter_exit_time("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_phases("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         
