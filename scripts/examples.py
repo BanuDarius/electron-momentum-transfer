@@ -31,12 +31,12 @@ def run_example(example_num, core_num):
     if(example_num == 1):
         min_a0 = 0.02
         max_a0 = 1.00
-        zetax = 1.0
-        zetay = 0.0
+        zetax = 0.0
+        zetay = 1.0
         tf = 12000.0
         tauf = 10000.0
-        num_part = 1024
-        sweep_steps = 1024
+        num_part = 128
+        sweep_steps = 128
         num_full = 16000
         omega = 0.057
         xif = 0.0 * np.pi
@@ -57,8 +57,8 @@ def run_example(example_num, core_num):
     elif(example_num == 2):
         min_a0 = 0.02
         max_a0 = 1.00
-        zetax = 1.0
-        zetay = 0.0
+        zetax = 0.0
+        zetay = 1.0
         tf = 12000.0
         tauf = 10000.0
         num_part = 1024

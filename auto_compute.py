@@ -33,15 +33,15 @@ trajectory_until_exit = False
 core_num = 8 #Number of threads
 
 min_a0 = 0.02
-max_a0 = 1.00 #Minimum and maximum of a0 for lasers
+max_a0 = 0.50 #Minimum and maximum of a0 for lasers
 
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
 tf = 16000.0 #Final time for electromagnetic mode 
 tauf = 10000.0 #Final proper time for ponderomotive mode
 
-num_part = 128 #Number of particles
-sweep_steps = 128 #Number of parameter sweeps
+num_part = 512 #Number of particles
+sweep_steps = 512 #Number of parameter sweeps
 num_full = 16000 #Number of particles for 2D colormaps
 
 omega = 0.057
@@ -72,7 +72,7 @@ square_size = 1.0 #Size of squares in 2D colormaps
 if __name__ == "__main__":
     #In the examples/ directory there are several examples
     #Uncomment this line to reproduce any of them
-    #examples.run_example(1, core_num)
+    examples.run_example(1, core_num)
     
     a0_array = np.array([]) #This array will be passed to plotting functions
     programs.clean_output_folder() #Remove output data from previous run
