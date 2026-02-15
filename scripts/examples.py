@@ -75,7 +75,7 @@ def run_example(example_num, core_num):
         rotate_angle = np.radians(90.0)
         min_steps_pond = 128
         max_steps_pond = 1024
-        min_steps_electromag = 4000
+        min_steps_electromag = 16000
         max_steps_electromag = 32000
         substeps_pond = 1
         substeps_electromag = 16
@@ -113,7 +113,7 @@ def run_example(example_num, core_num):
             substeps_electromag, core_num, all_states, rotate_angle, sweep_steps, trajectory_until_exit, wavelength, c, filename_out)
         
         #Uncomment this line to check the convergence when changing the number of steps
-        programs.check_convergence("electromagnetic", sim_parameters, lasers, y_axis, y_axis, steps_electromag, 2 * steps_electromag)
+        #programs.check_convergence("electromagnetic", sim_parameters, lasers, y_axis, y_axis, steps_electromag, 2 * steps_electromag)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
