@@ -110,7 +110,7 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, steps_1,
         sys.exit(1)
     
     data_conv = np.fromfile(filename_conv_average, dtype=np.float64).reshape(1, 1)
-    data_max = np.fromfile(filename_max, dtype=np.float64).reshape(1, 2)
+    data_max = np.fromfile(filename_max, dtype=np.float64).reshape(1, 1)
     
     result = (data_conv[0] / data_max[0, 0] * 100)[0]
     print(f"The average error is: {result:0.3f}%.")

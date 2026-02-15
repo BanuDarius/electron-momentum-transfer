@@ -72,7 +72,7 @@ square_size = 1.0 #Size of squares in 2D colormaps
 if __name__ == "__main__":
     #In the examples/ directory there are several examples
     #Uncomment this line to reproduce any of them
-    #examples.run_example(1, core_num)
+    #examples.run_example(2, core_num)
     
     a0_array = np.array([]) #This array will be passed to plotting functions
     programs.clean_output_folder() #Remove output data from previous run

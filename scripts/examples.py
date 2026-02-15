@@ -59,7 +59,7 @@ def run_example(example_num, core_num):
         max_a0 = 1.00
         zetax = 0.0
         zetay = 1.0
-        tf = 12000.0
+        tf = 15000.0
         tauf = 10000.0
         num_part = 1024
         sweep_steps = 1024
@@ -76,7 +76,7 @@ def run_example(example_num, core_num):
         min_steps_pond = 128
         max_steps_pond = 1024
         min_steps_electromag = 4000
-        max_steps_electromag = 16000
+        max_steps_electromag = 32000
         substeps_pond = 1
         substeps_electromag = 16
         pond_integrate_steps = 4
@@ -113,7 +113,7 @@ def run_example(example_num, core_num):
             substeps_electromag, core_num, all_states, rotate_angle, sweep_steps, trajectory_until_exit, wavelength, c, filename_out)
         
         #Uncomment this line to check the convergence when changing the number of steps
-        #programs.check_convergence("electromagnetic", sim_parameters, lasers, y_axis, y_axis, steps_electromag, 2 * steps_electromag)
+        programs.check_convergence("electromagnetic", sim_parameters, lasers, y_axis, y_axis, steps_electromag, 2 * steps_electromag)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
