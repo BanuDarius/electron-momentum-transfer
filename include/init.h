@@ -25,6 +25,7 @@
 #include <stdio.h>
 
 #define LASER_PARAMS 10 //This defines how many parameters will be read from a file for one laser
+#define PARAMS 11 //This defines how many parameters will be read from a file for the general simulation
 #define U_SIZE 8 //Number of elements of the particle struct
 #define CHUNK_SIZE 100 //Number of particles in an output chunk
 

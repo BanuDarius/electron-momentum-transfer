@@ -76,7 +76,34 @@ def run_example(example_num, core_num):
         min_steps_pond = 128
         max_steps_pond = 1024
         min_steps_electromag = 4000
-        max_steps_electromag = 32000
+        max_steps_electromag = 16000
+        substeps_pond = 1
+        substeps_electromag = 16
+        pond_integrate_steps = 4
+    elif(example_num == 3):
+        min_a0 = 0.02
+        max_a0 = 0.50
+        zetax = 1.0 / np.sqrt(2)
+        zetay = 1.0 / np.sqrt(2)
+        tf = 14000.0
+        tauf = 7000.0
+        num_part = 1024
+        sweep_steps = 1024
+        num_full = 16000
+        omega = 0.057
+        xif = 0.0 * np.pi
+        sigma = 19.0 * np.pi
+        psi = -3.0 * sigma
+        wavelength = 2.0 * np.pi * c / omega
+        r_min = 0.00 * wavelength
+        r_max = 1.00 * wavelength
+        phi = np.radians(90.0)
+        theta = np.radians(90.0)
+        rotate_angle = np.radians(90.0)
+        min_steps_pond = 128
+        max_steps_pond = 512
+        min_steps_electromag = 4000
+        max_steps_electromag = 16000
         substeps_pond = 1
         substeps_electromag = 16
         pond_integrate_steps = 4
@@ -101,7 +128,7 @@ def run_example(example_num, core_num):
         if(example_num == 1):
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(90.0), psi, pond_integrate_steps))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(270.0), psi, pond_integrate_steps))
-        elif(example_num == 2):
+        elif(example_num == 2 or example_num == 3):
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(90.0), psi, pond_integrate_steps))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(135.0), psi, pond_integrate_steps))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(225.0), psi, pond_integrate_steps))

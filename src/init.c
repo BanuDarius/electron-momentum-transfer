@@ -156,36 +156,62 @@ void set_mode(void (**compute_function)(double *, double *, const struct laser *
 
 void set_parameters(struct parameters *param, char *input) {
 	FILE *in = fopen(input, "r");
-	if(!in) { perror("Cannot open input file."); abort(); }
+	if(!in) { perror("Cannot open input file."); exit(1); }
 	param->h = 0.0;
 	param->z = 0.0;
 	
 	char current[32];
-	int i;
+	int i, count = 0;
 	
 	while(fscanf(in, "%s", current) != EOF) {
-		if(!strcmp(current, "num"))
+		if(!strcmp(current, "num")) {
 			i = fscanf(in, "%i", &param->num);
-		else if(!strcmp(current, "num_lasers"))
+			count++;
+		}
+		else if(!strcmp(current, "num_lasers")) {
 			i = fscanf(in, "%i", &param->num_lasers);
-		else if(!strcmp(current, "steps"))
+			count++;
+		}
+		else if(!strcmp(current, "steps")) {
 			i = fscanf(in, "%i", &param->steps);
-		else if(!strcmp(current, "substeps"))
+			count++;
+		}
+		else if(!strcmp(current, "substeps")) {
 			i = fscanf(in, "%i", &param->substeps);
-		else if(!strcmp(current, "mode"))
+			count++;
+		}
+		else if(!strcmp(current, "mode")) {
 			i = fscanf(in, "%i", &param->mode);
-		else if(!strcmp(current, "tf"))
+			count++;
+		}
+		else if(!strcmp(current, "tf")) {
 			i = fscanf(in, "%lf", &param->tf);
-		else if(!strcmp(current, "output_mode"))
+			count++;
+		}
+		else if(!strcmp(current, "output_mode")) {
 			i = fscanf(in, "%i", &param->output_mode);
-		else if(!strcmp(current, "core_num"))
+			count++;
+		}
+		else if(!strcmp(current, "core_num")) {
 			i = fscanf(in, "%i", &param->core_num);
-		else if(!strcmp(current, "r_min"))
+			count++;
+		}
+		else if(!strcmp(current, "r_min")) {
 			i = fscanf(in, "%lf", &param->r_min);
-		else if(!strcmp(current, "r_max"))
+			count++;
+		}
+		else if(!strcmp(current, "r_max")) {
 			i = fscanf(in, "%lf", &param->r_max);
-		else if(!strcmp(current, "rotate_angle"))
+			count++;
+		}
+		else if(!strcmp(current, "rotate_angle")) {
 			i = fscanf(in, "%lf", &param->rotate_angle);
+			count++;
+		}
+	}
+	if(count != PARAMS) {
+		printf("Error: Invalid input file.\n");
+		exit(1);
 	}
 	param->dt = param->tf / param->steps;
 	fclose(in);
