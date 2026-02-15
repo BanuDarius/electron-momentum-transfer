@@ -2,18 +2,10 @@ import sys
 import time
 import numpy as np
 from pathlib import Path
+import scripts.common as common
 import scripts.sim_init as sim_init
 import scripts.programs as programs
 import scripts.plotting as plotting
-
-def interpolate(min_v, max_v, i, f):
-    return min_v + (max_v - min_v) * i / f
-    
-def modulo_steps(s, substep):
-    modulo = s % substep
-    if(modulo != 0):
-        s -= modulo
-    return s
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
@@ -57,9 +49,10 @@ def run_example(example_num, core_num):
         r_max = +1.00 * wavelength
         phi = 90.0 * deg_to_rad
         rotate_angle = 90.0 * deg_to_rad
-        steps_pond = 512
+        min_steps_pond = 128
+        max_steps_pond = 1024
         min_steps_electromag = 4000
-        max_steps_electromag = 32000
+        max_steps_electromag = 16000
         substeps_pond = 1
         substeps_electromag = 16
         pond_integrate_steps = 4
@@ -83,9 +76,10 @@ def run_example(example_num, core_num):
         phi = 90.0 * deg_to_rad
         theta = 90.0 * deg_to_rad
         rotate_angle = 90.0 * deg_to_rad
-        steps_pond = 512
+        min_steps_pond = 128
+        max_steps_pond = 1024
         min_steps_electromag = 4000
-        max_steps_electromag = 32000
+        max_steps_electromag = 16000
         substeps_pond = 1
         substeps_electromag = 16
         pond_integrate_steps = 4
@@ -99,10 +93,12 @@ def run_example(example_num, core_num):
     start_time = time.time()
     
     for i in range(0, sweep_steps):
-        a0 = min_a0 + (max_a0 - min_a0) * i / sweep_steps
+        a0 = common.interpolate(a0_min, a0_max, i, sweep_steps)
         a0_array = np.append(a0_array, a0)
-        steps_electromag = int(interpolate(min_steps_electromag, max_steps_electromag, i, sweep_steps))
-        steps_electromag = modulo_steps(steps_electromag, substeps_electromag)
+        steps_electromag = int(common.interpolate(min_steps_electromag, max_steps_electromag, i, sweep_steps))
+        steps_electromag = common.modulo_steps(steps_electromag, substeps_electromag)
+        steps_pond = int(common.interpolate(min_steps_pond, max_steps_pond, i, sweep_steps))
+        steps_pond = common.modulo_steps(steps_pond, substeps_pond)
         
         lasers = []
         if(example_num == 1):
@@ -136,6 +132,8 @@ def run_example(example_num, core_num):
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
             substeps_pond, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c, filename_out)
+        
+        #programs.check_convergence("ponderomotive", sim_parameters, lasers, y_axis, y_axis, steps_pond, 2 * steps_pond)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         

@@ -2,8 +2,9 @@ import os
 import sys
 import warnings
 import numpy as np
-import matplotlib.pyplot as plt
 from pathlib import Path
+import matplotlib.pyplot as plt
+import scripts.common as common
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
@@ -13,27 +14,14 @@ OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
 plt.rcParams.update({'font.size': 12})
 
-# ----------------------------------------------------------------------- #
-
-def get_axis_text(axis):
-    if(axis == 0):
-        axis_text = "X"
-    elif(axis == 1):
-        axis_text = "Y"
-    else:
-        axis_text = "Z"
-    return axis_text
-
-# ----------------------------------------------------------------------- #
-
 def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, axis_p):
-    axis_text_horiz = get_axis_text(axis_horiz)
+    axis_text_horiz = common.get_axis_text(axis_horiz)
     lowercase_text_horiz = axis_text_horiz.lower()
     
-    axis_text_vert = get_axis_text(axis_vert)
+    axis_text_vert = common.get_axis_text(axis_vert)
     lowercase_text_vert = axis_text_vert.lower()
     
-    axis_text_p = get_axis_text(axis_p)
+    axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
     i = sim_parameters.i
@@ -74,10 +62,10 @@ def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, ax
 # ----------------------------------------------------------------------- #
 
 def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
-    axis_text_pos = get_axis_text(axis_pos)
+    axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     
-    axis_text_p = get_axis_text(axis_p)
+    axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
     i = sim_parameters.i
@@ -138,10 +126,10 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
-    axis_text_pos = get_axis_text(axis_pos)
+    axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     
-    axis_text_p = get_axis_text(axis_p)
+    axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
     i = sim_parameters.i
@@ -201,10 +189,10 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
-    axis_text_pos = get_axis_text(axis_pos)
+    axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     
-    axis_text_p = get_axis_text(axis_p)
+    axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
     num = sim_parameters.num
@@ -252,10 +240,10 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
-    axis_text_pos = get_axis_text(axis_pos)
+    axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     
-    axis_text_p = get_axis_text(axis_p)
+    axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
     num = sim_parameters.num
@@ -302,10 +290,10 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
-    axis_text_pos = get_axis_text(axis_pos)
+    axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     
-    axis_text_p = get_axis_text(axis_p)
+    axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
     r = sim_parameters.r
@@ -352,10 +340,10 @@ def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def plot_errors(sim_parameters, axis_pos, axis_p):
-    axis_text_pos = get_axis_text(axis_pos)
+    axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     
-    axis_text_p = get_axis_text(axis_p)
+    axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
     i = sim_parameters.i
@@ -396,7 +384,7 @@ def plot_errors(sim_parameters, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def plot_max_p(method, a0_array, axis):
-    axis_text = get_axis_text(axis)
+    axis_text = common.get_axis_text(axis)
     lowercase_text = axis_text.lower()
     
     if(method == "electromagnetic"):
@@ -427,7 +415,7 @@ def plot_max_p(method, a0_array, axis):
 # ----------------------------------------------------------------------- #    
 
 def plot_average_errors(a0_array, axis):
-    axis_text = get_axis_text(axis)
+    axis_text = common.get_axis_text(axis)
     lowercase_text = axis_text.lower()
     
     filename = f"{OUTPUT_DIR}/out-average-error-{lowercase_text}.bin"

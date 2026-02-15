@@ -1,9 +1,10 @@
 import os
 import sys
-import numpy as np
-import matplotlib.pyplot as plt
-from pathlib import Path
 import subprocess
+import numpy as np
+from pathlib import Path
+import matplotlib.pyplot as plt
+import scripts.common as common
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
@@ -11,23 +12,6 @@ BIN_DIR = PROJECT_ROOT / "bin"
 INPUT_DIR = PROJECT_ROOT / "input"
 OUTPUT_DIR = PROJECT_ROOT / "output"
 OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
-
-# ----------------------------------------------------------------------- #
-
-def get_axis_text(axis):
-    if(axis == 0):
-        axis_text = "X"
-    elif(axis == 1):
-        axis_text = "Y"
-    else:
-        axis_text = "Z"
-    return axis_text
-    
-def get_lowercase_text(axis):
-    text = get_axis_text(axis).lower()
-    return text
-
-# ----------------------------------------------------------------------- #
 
 def run_simulation(method, sim_parameters, lasers):
     if method == "electromagnetic":
@@ -81,7 +65,7 @@ def run_simulation(method, sim_parameters, lasers):
 # ----------------------------------------------------------------------- #
 
 def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, steps_1, steps_2):
-    axis_text_p = get_axis_text(axis_p)
+    axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
     if(method == "electromagnetic"):
@@ -89,7 +73,7 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, steps_1,
         filename_max = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-electromag.bin"
     else:
         filename_final = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-pond.bin"
-        filename_max = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-electromag.bin"
+        filename_max = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-pond.bin"
     
     filename_final_1 = f"{OUTPUT_DIR}/out-final-1.bin"
     filename_final_2 = f"{OUTPUT_DIR}/out-final-2.bin"
@@ -105,16 +89,16 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, steps_1,
     sim_parameters.steps = steps_1
     sim_parameters.filename_out = filename_data_1
     run_simulation(method, sim_parameters, lasers)
-    find_final_p("electromagnetic", sim_parameters, axis_pos, axis_p)
-    find_max_p("electromagnetic", sim_parameters, axis_p)
+    find_final_p(method, sim_parameters, axis_pos, axis_p)
+    find_max_p(method, sim_parameters, axis_p)
     os.rename(filename_final, filename_final_1)
     
     sim_parameters.steps = steps_2
     sim_parameters.filename_out = filename_data_2
     run_simulation(method, sim_parameters, lasers)
-    find_final_p("electromagnetic", sim_parameters, axis_pos, axis_p)
+    find_final_p(method, sim_parameters, axis_pos, axis_p)
     os.rename(filename_final, filename_final_2)
-    find_max_p("electromagnetic", sim_parameters, axis_p)
+    find_max_p(method, sim_parameters, axis_p)
     
     arguments = [program_conv, num, i, filename_final_1, filename_final_2, filename_conv, filename_conv_average]
     arguments = [str(x) for x in arguments]
@@ -136,10 +120,10 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, steps_1,
 # ----------------------------------------------------------------------- #
 
 def find_enter_exit_time(method, sim_parameters, axis_pos, axis_p):
-    axis_text_pos = get_axis_text(axis_pos)
+    axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     
-    axis_text_p = get_axis_text(axis_p)
+    axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
     if(method == "electromagnetic"):
@@ -165,7 +149,7 @@ def find_enter_exit_time(method, sim_parameters, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def find_max_p(method, sim_parameters, axis):
-    axis_text = get_axis_text(axis)
+    axis_text = common.get_axis_text(axis)
     lowercase_text = axis_text.lower()
     if(method == "electromagnetic"):
         filename_out = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-electromag.bin"
@@ -193,7 +177,7 @@ def find_max_p(method, sim_parameters, axis):
 # ----------------------------------------------------------------------- #
 
 def find_final_p(method, sim_parameters, axis_pos, axis_p):
-    axis_text_p = get_axis_text(axis_p)
+    axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
     if(method == "electromagnetic"):
@@ -221,7 +205,7 @@ def find_final_p(method, sim_parameters, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def calculate_errors(sim_parameters, a0_array, axis):
-    axis_text = get_axis_text(axis)
+    axis_text = common.get_axis_text(axis)
     lowercase_text = axis_text.lower()
     
     filename = sim_parameters.filename_out
