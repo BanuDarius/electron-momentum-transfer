@@ -24,10 +24,9 @@
 
 #include <stdio.h>
 
-//Definitions for the particle struct, laser struct, and parameter struct
-//All of which are passed to the simulate() function
-
 #define LASER_PARAMS 10 //This defines how many parameters will be read from a file for one laser
+#define U_SIZE 8 //Number of elements of the particle struct
+#define CHUNK_SIZE 100 //Number of particles in an output chunk
 
 struct particle {
 	double u[8];

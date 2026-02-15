@@ -21,14 +21,12 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include <string.h>
 
-#include "units.h"
+#include "init.h"
+#include "tools.h"
 #include "math_tools.h"
-#include "extra.h"
-#include "hc_func.h"
 
-//This is a helper library which includes several simple functions for vector operations and mathematics
+//This is a helper library which includes several simple functions
 
 double rand_val(double min, double max) {
 	double s = rand() / (double) RAND_MAX;
@@ -73,68 +71,6 @@ void epsilon(double *u, double *w) {
 	double scale = magnitude(u);
 	for (int i = 0; i < 3; i++)
 		w[i] = scale * w[i] / mag;
-}
-
-//This function is a Runge-Kutta fourth-order solver, with a general compute function
-
-void rk4_step(double *u, double dt, const struct laser *restrict l, void compute_function(double *, double *, const struct laser *restrict)) {
-	double u0[U_SIZE], u_temp[U_SIZE];
-	double k1[U_SIZE]; double k2[U_SIZE];
-	double k3[U_SIZE]; double k4[U_SIZE];
-	memcpy(u0, u, U_SIZE * sizeof(double));
-	
-	compute_function(u0, k1, l);
-	for (int i = 0; i < U_SIZE; i++)
-		u_temp[i] = u0[i] + 0.5 * k1[i] * dt;
-	
-	compute_function(u_temp, k2, l);
-	for (int i = 0; i < U_SIZE; i++)
-		u_temp[i] = u0[i] + 0.5 * k2[i] * dt;
-	
-	compute_function(u_temp, k3, l);
-	for (int i = 0; i < U_SIZE; i++)
-		u_temp[i] = u0[i] + k3[i] * dt;
-	
-	compute_function(u_temp, k4, l);
-	for (int i = 0; i < U_SIZE; i++)
-		u[i] = u0[i] + (dt / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
-}
-
-void higuera_cary_step(double *u, const double dt, const struct laser *restrict l) {
-	double epsilon_vec[3], u_minus[3], beta[3], E[3], B[3];
-	double u_final[3], u_prime[3], u_plus[3], t_rot[3], s_factor;
-	double gamma_fac, gamma_minus, gamma_new;
-	
-	gamma_fac = u[4] / (m * c);
-	u[0] += 0.5 * c * dt;
-	u[1] += 0.5 * u[5] * dt / gamma_fac;
-	u[2] += 0.5 * u[6] * dt / gamma_fac;
-	u[3] += 0.5 * u[7] * dt / gamma_fac;
-	
-	compute_e_b(E, B, u, l);
-	
-	hc_beta(beta, B, dt);
-	hc_epsilon(epsilon_vec, E, dt);
-	hc_u_minus(u_minus, &u[5], epsilon_vec);
-	
-	gamma_minus = comp_gamma(u_minus);
-	gamma_new = hc_gamma_new(u_minus, beta, gamma_minus);
-	
-	hc_t_rot(t_rot, beta, gamma_new);
-	s_factor = hc_s_factor(t_rot);
-	hc_u_prime(u_prime, u_minus, t_rot);
-	hc_u_plus(u_plus, u_minus, u_prime, s_factor, t_rot);
-	
-	memcpy(u_final, u_plus, 3 * sizeof(double));
-	add_vec(u_final, u_final, epsilon_vec);
-	memcpy(&u[5], u_final, 3 * sizeof(double));
-	
-	gamma_fac = comp_gamma(&u[5]);
-	u[0] += 0.5 * c * dt;
-	u[1] += 0.5 * u[5] * dt / gamma_fac;
-	u[2] += 0.5 * u[6] * dt / gamma_fac;
-	u[3] += 0.5 * u[7] * dt / gamma_fac;
-	u[4] = gamma_fac * m * c;
 }
 
 //Manual calculation of indices for stability.

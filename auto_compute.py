@@ -32,7 +32,7 @@ trajectory_until_exit = False
 
 core_num = 8 #Number of threads
 
-min_a0 = 0.02
+min_a0 = 0.50
 max_a0 = 1.00 #Minimum and maximum of a0 for lasers
 
 zetax = 0.0
@@ -40,8 +40,8 @@ zetay = 1.0 #Polarization parameters
 tf = 15000.0 #Final time for electromagnetic mode 
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
-num_part = 512 #Number of particles
-sweep_steps = 512 #Number of parameter sweeps
+num_part = 128 #Number of particles
+sweep_steps = 128 #Number of parameter sweeps
 num_full = 16000 #Number of particles for 2D colormaps
 
 omega = 0.057
@@ -58,7 +58,7 @@ theta = np.radians(90.0) #Angles for the lasers
 rotate_angle = np.radians(90.0) #Angles for rotating the initial particles
 
 min_steps_pond = 128
-max_steps_pond = 512
+max_steps_pond = 256
 min_steps_electromag = 4000
 max_steps_electromag = 16000 #Simulation steps
 substeps_pond = 1
@@ -80,12 +80,12 @@ if __name__ == "__main__":
     
     for i in range(0, sweep_steps):
         a0 = common.interpolate(min_a0, max_a0, i, sweep_steps)
-        a0_array = np.append(a0_array, a0)
         steps_electromag = int(common.interpolate(min_steps_electromag, max_steps_electromag, i, sweep_steps))
         steps_electromag = common.modulo_steps(steps_electromag, substeps_electromag)
         steps_pond = int(common.interpolate(min_steps_pond, max_steps_pond, i, sweep_steps))
         steps_pond = common.modulo_steps(steps_pond, substeps_pond)
-            
+        a0_array = np.append(a0_array, a0)
+        
         lasers = [] #Defines all lasers
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(90.0), psi, pond_integrate_steps))
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(135.0), psi, pond_integrate_steps))
@@ -134,6 +134,8 @@ if __name__ == "__main__":
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
             substeps_pond, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c, filename_out)
         
+        #programs.check_convergence("ponderomotive", sim_parameters, lasers, y_axis, y_axis, steps_pond, 2 * steps_pond)
+        
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
         programs.find_final_p("ponderomotive", sim_parameters, y_axis, x_axis)
@@ -144,9 +146,9 @@ if __name__ == "__main__":
         
         programs.find_final_p("ponderomotive", sim_parameters, y_axis, z_axis)
         programs.find_max_p("ponderomotive", sim_parameters, z_axis)
-        programs.find_enter_exit_time("ponderomotive", sim_parameters, y_axis, y_axis)
+        #programs.find_enter_exit_time("ponderomotive", sim_parameters, y_axis, y_axis)
         
-        plotting.plot_time_momentum("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
+        #plotting.plot_time_momentum("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_enter_exit_time("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_phases("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         

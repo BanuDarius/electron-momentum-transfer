@@ -56,7 +56,7 @@ def run_example(example_num, core_num):
         pond_integrate_steps = 4
     elif(example_num == 2):
         min_a0 = 0.02
-        max_a0 = 1.00
+        max_a0 = 0.50
         zetax = 0.0
         zetay = 1.0
         tf = 15000.0
@@ -91,11 +91,11 @@ def run_example(example_num, core_num):
     
     for i in range(0, sweep_steps):
         a0 = common.interpolate(min_a0, max_a0, i, sweep_steps)
-        a0_array = np.append(a0_array, a0)
         steps_electromag = int(common.interpolate(min_steps_electromag, max_steps_electromag, i, sweep_steps))
         steps_electromag = common.modulo_steps(steps_electromag, substeps_electromag)
         steps_pond = int(common.interpolate(min_steps_pond, max_steps_pond, i, sweep_steps))
         steps_pond = common.modulo_steps(steps_pond, substeps_pond)
+        a0_array = np.append(a0_array, a0)
         
         lasers = []
         if(example_num == 1):

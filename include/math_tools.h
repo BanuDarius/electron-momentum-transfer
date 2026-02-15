@@ -19,10 +19,12 @@
 * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
 * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
-#ifndef H_MATH_TOOLS
-#define H_MATH_TOOLS
+#ifndef MATH_TOOLS_H
+#define MATH_TOOLS_H
 
 #include <math.h>
+
+#include "units.h"
 
 //This file includes optimized general purpose math functions
 

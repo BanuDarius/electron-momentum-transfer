@@ -19,12 +19,14 @@
 * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
 * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
-#ifndef HC_FUNC
-#define HC_FUNC
+#ifndef HC_FUNC_H
+#define HC_FUNC_H
 
 #include <math.h>
+#include <string.h>
 
 #include "units.h"
+#include "math_tools.h"
 
 //These are optimized helper functions for the Higuera-Cary push
 

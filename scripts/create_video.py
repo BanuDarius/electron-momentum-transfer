@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
@@ -39,7 +40,16 @@ def create_2d_colormap_video(method, framerate, axis_horiz, axis_vert, axis_p):
         mode = "pond"
     images_path = f"{OUTPUT_IMAGE_DIR}/out-colormap-{mode}-{lowercase_text_horiz}{lowercase_text_vert}{lowercase_text_p}-%d.png"
     video_path = f"{OUTPUT_VIDEO_DIR}/out-colormap-{mode}-{lowercase_text_horiz}{lowercase_text_vert}{lowercase_text_p}.mp4"
-    os.system(f"ffmpeg -r {framerate} -i {images_path} -s 1200:1200 -c:v libx264 -b:v 12M -pix_fmt yuv420p -y -loglevel error {video_path}")
+    
+    arguments = ["ffmpeg", "-r", framerate, "-i", images_path, "-s", "1200:1200", "-c:v", "libx264", "-b:v", "12M", "-pix_fmt", "yuv420p", "-y", "-loglevel", "error", video_path]
+    arguments = [str(x) for x in arguments]
+    
+    try:
+        res = subprocess.run(arguments, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Critical error: {e.returncode}")
+        sys.exit(1)
+        
     print(f"Created 2D colormap animation for {method} mode.")
 
 # ----------------------------------------------------------------------- #
@@ -57,7 +67,16 @@ def create_phase_video(method, framerate, axis_horiz, axis_pos, axis_p):
         mode = "pond"
     images_path = f"{OUTPUT_IMAGE_DIR}/out-phase-space-{mode}-{lowercase_text_pos}{lowercase_text_p}-%d.png"
     video_path = f"{OUTPUT_VIDEO_DIR}/out-phase-space-{mode}-{lowercase_text_pos}{lowercase_text_p}.mp4"
-    os.system(f"ffmpeg -r {framerate} -i {images_path} -s 1200:1200 -c:v libx264 -b:v 12M -pix_fmt yuv420p -y -loglevel error {video_path}")
+    
+    arguments = ["ffmpeg", "-r", framerate, "-i", images_path, "-s", "1200:1200", "-c:v", "libx264", "-b:v", "12M", "-pix_fmt", "yuv420p", "-y", "-loglevel", "error", video_path]
+    arguments = [str(x) for x in arguments]
+    
+    try:
+        res = subprocess.run(arguments, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Critical error: {e.returncode}")
+        sys.exit(1)
+        
     print(f"Created phase space animation for {method} mode.")
 
 # ----------------------------------------------------------------------- #
@@ -75,7 +94,16 @@ def create_time_momentum_video(method, framerate, axis_pos, axis_p):
         mode = "pond"
     images_path = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-{mode}-{lowercase_text_pos}{lowercase_text_p}-%d.png"
     video_path = f"{OUTPUT_VIDEO_DIR}/out-time-momentum-{mode}-{lowercase_text_pos}{lowercase_text_p}.mp4"
-    os.system(f"ffmpeg -r {framerate} -i {images_path} -s 1200:1200 -c:v libx264 -b:v 12M -pix_fmt yuv420p -y -loglevel error {video_path}")
+    
+    arguments = ["ffmpeg", "-r", framerate, "-i", images_path, "-s", "1200:1200", "-c:v", "libx264", "-b:v", "12M", "-pix_fmt", "yuv420p", "-y", "-loglevel", "error", video_path]
+    arguments = [str(x) for x in arguments]
+    
+    try:
+        res = subprocess.run(arguments, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Critical error: {e.returncode}")
+        sys.exit(1)
+        
     print(f"Created time-momentum animation for {method} mode.")
 
 # ----------------------------------------------------------------------- #
