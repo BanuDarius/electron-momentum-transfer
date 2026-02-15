@@ -14,8 +14,6 @@ OUTPUT_DIR = PROJECT_ROOT / "output"
 filename_out = f"{OUTPUT_DIR}/out-data.bin"
     
 c = 137.036
-pi = 3.14159265359
-deg_to_rad = pi / 180.0
 
 x_axis = 0
 y_axis = 1
@@ -37,8 +35,8 @@ core_num = 8 #Number of threads
 min_a0 = 0.02
 max_a0 = 1.00 #Minimum and maximum of a0 for lasers
 
-zetax = 1.0
-zetay = 0.0 #Polarization parameters
+zetax = 0.0
+zetay = 1.0 #Polarization parameters
 tf = 16000.0 #Final time for electromagnetic mode 
 tauf = 10000.0 #Final proper time for ponderomotive mode
 
@@ -47,20 +45,20 @@ sweep_steps = 128 #Number of parameter sweeps
 num_full = 16000 #Number of particles for 2D colormaps
 
 omega = 0.057
-xif = 0.0 * pi
-sigma = 19.0 * pi
+xif = 0.0 * np.pi
+sigma = 19.0 * np.pi
 psi = -3.0 * sigma #Laser parameters
 
-wavelength = 2.0 * pi * c / omega
+wavelength = 2.0 * np.pi * c / omega
 r_min = -1.00 * wavelength
 r_max = +1.00 * wavelength #Minimum and maximum radius for particle positions
 
-phi = 90.0 * deg_to_rad
-theta = 90.0 * deg_to_rad #Angles for the lasers
-rotate_angle = 90.0 * deg_to_rad #Angles for rotating the initial particles
+phi = np.radians(90.0)
+theta = np.radians(90.0) #Angles for the lasers
+rotate_angle = np.radians(90.0) #Angles for rotating the initial particles
 
-min_steps_pond = 128
-max_steps_pond = 512
+min_steps_pond = 16
+max_steps_pond = 16
 min_steps_electromag = 4000
 max_steps_electromag = 16000 #Simulation steps
 substeps_pond = 1
@@ -89,9 +87,10 @@ if __name__ == "__main__":
         steps_pond = common.modulo_steps(steps_pond, substeps_pond)
             
         lasers = [] #Defines all lasers
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 0.0 * deg_to_rad, psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 120.0 * deg_to_rad, psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, 240.0 * deg_to_rad, psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(90.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(135.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(225.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(270.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         

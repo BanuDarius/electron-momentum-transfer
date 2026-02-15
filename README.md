@@ -3,7 +3,7 @@ This is a C program that calculates the linear momentum transfer caused by multi
 Parallelized with OpenMP.
 
 ## Usage
-The instalation is as follows:
+The installation is as follows:
 ```
 git clone --depth 1 https://github.com/BanuDarius/electron-momentum-transfer/
 cd electron-momentum-transfer/
