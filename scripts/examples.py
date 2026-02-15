@@ -93,7 +93,7 @@ def run_example(example_num, core_num):
     start_time = time.time()
     
     for i in range(0, sweep_steps):
-        a0 = common.interpolate(a0_min, a0_max, i, sweep_steps)
+        a0 = common.interpolate(min_a0, max_a0, i, sweep_steps)
         a0_array = np.append(a0_array, a0)
         steps_electromag = int(common.interpolate(min_steps_electromag, max_steps_electromag, i, sweep_steps))
         steps_electromag = common.modulo_steps(steps_electromag, substeps_electromag)

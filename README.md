@@ -12,6 +12,13 @@ python3 auto_compute.py
 ```
 This will automatically compute and render the final momentum transfer heatmaps.
 
+## Reproduce examples
+In order to reproduce the results from the examples/ directory, run this command:
+```
+python -c "import sys; sys.path.append('scripts'); from scripts.examples import run_example; run_example(<num_example>, <num_threads>)"
+```
+And replace `<num_example>` with the respective example number `(1, 2, 3...)`, and `num_threads` with the number of threads to be used in the simulation.
+
 ## Examples
 <img width="2143" height="2155" alt="_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/35a51f1a-d56a-4e27-afee-275067766dfa" />
 <img width="2143" height="2155" alt="_out-2d-heatmap-electromag-yx" src="https://github.com/user-attachments/assets/dda0d6b3-5b19-44f2-8145-1092c0e30c51" />

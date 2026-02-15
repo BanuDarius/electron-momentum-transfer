@@ -211,11 +211,11 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
         filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-pond-{lowercase_text_pos}{lowercase_text_p}.png"
     
     data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
-    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 2)
+    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 1)
     
     x = data[:, :, 0] / wavelength
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
-    max_py = data_max_p[:, 1][:, np.newaxis]
+    max_py = data_max_p[:, 0][:, np.newaxis]
     z = data[:, :, 1] / max_py
     fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
     
@@ -257,12 +257,12 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-errors-{lowercase_text_pos}{lowercase_text_p}.png"
     
     data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
-    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 2)
+    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 1)
     
     difference = data[:, :, 1]
     x = data[:, :, 0] / wavelength
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
-    max_p = data_max_p[:, 1][:, np.newaxis]
+    max_p = data_max_p[:, 0][:, np.newaxis]
     z = difference / max_p * 100.0
     
     row_max = np.max(z, axis=1)[:, np.newaxis]
@@ -339,50 +339,6 @@ def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
 
 # ----------------------------------------------------------------------- #
 
-def plot_errors(sim_parameters, axis_pos, axis_p):
-    axis_text_pos = common.get_axis_text(axis_pos)
-    lowercase_text_pos = axis_text_pos.lower()
-    
-    axis_text_p = common.get_axis_text(axis_p)
-    lowercase_text_p = axis_text_p.lower()
-    
-    i = sim_parameters.i
-    r_min = sim_parameters.r_min
-    r_max = sim_parameters.r_min
-    wavelength = sim_parameters.wavelength
-    a0 = sim_parameters.a0
-    num = sim_parameters.num
-    
-    filename = f"{OUTPUT_DIR}/out-error-{lowercase_text}.bin"
-    filename_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text_pos}{lowercase_text_p}-electromag.bin"
-    filename_out = f"{OUTPUT_IMAGE_DIR}/out-errors-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
-    
-    data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
-    data2 = np.fromfile(filename_max_p, dtype=np.float64).reshape(-1, 2)
-    
-    x = data[:, 0] / wavelength
-    y = data[:, 1]
-    y_max = data2[i, 1]
-    
-    print(f"For a0 = {a0:0.3f}, max(py) = {y_max:0.3f}")
-    
-    y_final = y / y_max * 100.0
-    
-    plt.figure(figsize=(10,10))
-    plt.plot(x, y_final, c='black',linestyle='-', linewidth=1)
-    plt.title(f"Errors for a0 = {a0:0.3f}")
-    plt.xlabel(rf"{axis_text} [$\lambda$]")
-    plt.ylabel(f"Error (%)")
-    
-    plt.axhline(0, color='black', linestyle='--')
-
-    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
-    plt.close()
-    
-    print(f"Created error scatter plot.")
-
-# ----------------------------------------------------------------------- #
-
 def plot_max_p(method, a0_array, axis):
     axis_text = common.get_axis_text(axis)
     lowercase_text = axis_text.lower()
@@ -394,10 +350,10 @@ def plot_max_p(method, a0_array, axis):
         filename = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-pond.bin"
         filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-p{lowercase_text}-pond.png"
     
-    data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
+    data = np.fromfile(filename, dtype=np.float64).reshape(-1, 1)
     
     x = a0_array
-    y = data[:, 1]
+    y = data[:, 0]
     
     plt.figure(figsize=(10,10))
     plt.plot(x, y, c='black', linestyle='-', linewidth=1)
@@ -422,11 +378,11 @@ def plot_average_errors(a0_array, axis):
     filename_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-electromag.bin"
     
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
-    data2 = np.fromfile(filename_max_p, dtype=np.float64).reshape(-1, 2)
+    data2 = np.fromfile(filename_max_p, dtype=np.float64).reshape(-1, 1)
     
     x = np.array(a0_array)
     y = data[:, 1]
-    y_max = data2[:, 1]
+    y_max = data2[:, 0]
     
     y_final = y / y_max * 100
     

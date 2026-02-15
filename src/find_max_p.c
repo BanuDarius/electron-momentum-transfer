@@ -25,10 +25,10 @@
 
 int main(int argc, char **argv) {
 	FILE *in = fopen(argv[1], "rb");
-	FILE *out_max_p = fopen(argv[5], "ab");
+	FILE *out_max_p = fopen(argv[4], "ab");
 	
 	int num = atoi(argv[2]), steps = atoi(argv[3]);
-	double index = atoi(argv[4]), data[num], t[2];
+	double data[num], t[2];
 	
 	for(int i = 0; i < num; i++) {
 		int x = fread(t, sizeof(double), 2, in);
@@ -42,8 +42,7 @@ int main(int argc, char **argv) {
 			max_p = fabs(p);
 	}
 	
-	double v[2] = { (double)index, max_p };
-	fwrite(v, sizeof(double), 2, out_max_p);
+	fwrite(&max_p, sizeof(double), 1, out_max_p);
 	
 	fclose(out_max_p); fclose(in);
 	printf("Ended calculating max(p).\n");
