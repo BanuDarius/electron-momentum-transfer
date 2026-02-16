@@ -114,10 +114,9 @@ def run_example(example_num, core_num):
         print("Error: Example number not found.")
         sys.exit(1)
         
+    start_time = time.time()
     a0_array = np.array([])
     programs.clean_output_folder()
-    
-    start_time = time.time()
     
     for i in range(0, sweep_steps):
         tf = common.interpolate(min_tf, max_tf, i, sweep_steps)
