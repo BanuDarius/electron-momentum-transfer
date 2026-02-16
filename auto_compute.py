@@ -7,11 +7,6 @@ import scripts.programs as programs
 import scripts.plotting as plotting
 import scripts.examples as examples
 import scripts.create_video as create_video
-
-SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR
-OUTPUT_DIR = PROJECT_ROOT / "output"
-filename_out = f"{OUTPUT_DIR}/out-data.bin"
     
 c = 137.036
 
@@ -59,7 +54,7 @@ theta = np.radians(90.0) #Angles for the lasers
 rotate_angle = np.radians(90.0) #Angles for rotating the initial particles
 
 min_steps_pond = 128
-max_steps_pond = 1024
+max_steps_pond = 512
 min_steps_electromag = 4000
 max_steps_electromag = 16000 #Simulation steps
 substeps_pond = 1
@@ -95,7 +90,7 @@ if __name__ == "__main__":
         # ------------------------------------------------------- #
         
         '''sim_parameters = sim_init.SimParameters(i, r, num_full, tf,  steps_electromag, first_eighth,
-            substeps_electromag, core_num, final_states, rotate_angle, sweep_steps, full_trajectory, c, filename_out)
+            substeps_electromag, core_num, final_states, rotate_angle, sweep_steps, full_trajectory, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -107,10 +102,7 @@ if __name__ == "__main__":
         
         #Properties for the electromagneteic mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, core_num, all_states, rotate_angle, sweep_steps, trajectory_until_exit, wavelength, c, filename_out) 
-        
-        #Uncomment this line to check the convergence when changing the number of steps
-        #programs.check_convergence("electromagnetic", sim_parameters, lasers, y_axis, y_axis, steps_electromag, 2 * steps_electromag)
+            substeps_electromag, core_num, all_states, rotate_angle, sweep_steps, trajectory_until_exit, wavelength, c) 
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -119,10 +111,11 @@ if __name__ == "__main__":
         
         programs.find_final_p("electromagnetic", sim_parameters, y_axis, y_axis)
         programs.find_max_p("electromagnetic", sim_parameters, y_axis)
+        #programs.find_enter_exit_time("electromagnetic", sim_parameters, y_axis, y_axis)
+        #programs.check_convergence("electromagnetic", sim_parameters, lasers, y_axis, y_axis, 2)
         
         programs.find_final_p("electromagnetic", sim_parameters, y_axis, z_axis)
         programs.find_max_p("electromagnetic", sim_parameters, z_axis)
-        #programs.find_enter_exit_time("electromagnetic", sim_parameters, y_axis, y_axis)
         
         #plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_enter_exit_time("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
@@ -132,9 +125,7 @@ if __name__ == "__main__":
         
         #Properties for the ponderomotive mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c, filename_out)
-        
-        #programs.check_convergence("ponderomotive", sim_parameters, lasers, y_axis, y_axis, steps_pond, 2 * steps_pond)
+            substeps_pond, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
@@ -143,10 +134,11 @@ if __name__ == "__main__":
         
         programs.find_final_p("ponderomotive", sim_parameters, y_axis, y_axis)
         programs.find_max_p("ponderomotive", sim_parameters, y_axis)
+        #programs.find_enter_exit_time("ponderomotive", sim_parameters, y_axis, y_axis)
+        #programs.check_convergence("ponderomotive", sim_parameters, lasers, y_axis, y_axis, 2)
         
         programs.find_final_p("ponderomotive", sim_parameters, y_axis, z_axis)
         programs.find_max_p("ponderomotive", sim_parameters, z_axis)
-        #programs.find_enter_exit_time("ponderomotive", sim_parameters, y_axis, y_axis)
         
         #plotting.plot_time_momentum("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_enter_exit_time("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
@@ -161,15 +153,17 @@ if __name__ == "__main__":
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
         
     #Plots for data analysis
+    plotting.plot_average_errors(a0_array, x_axis)
+    plotting.plot_average_errors(a0_array, y_axis)
+    plotting.plot_average_errors(a0_array, z_axis)
     plotting.plot_max_p("electromagnetic", a0_array, x_axis)
     plotting.plot_max_p("electromagnetic", a0_array, y_axis)
     plotting.plot_max_p("electromagnetic", a0_array, z_axis)
     plotting.plot_max_p("ponderomotive", a0_array, x_axis)
     plotting.plot_max_p("ponderomotive", a0_array, y_axis)
     plotting.plot_max_p("ponderomotive", a0_array, z_axis)
-    plotting.plot_average_errors(a0_array, x_axis)
-    plotting.plot_average_errors(a0_array, y_axis)
-    plotting.plot_average_errors(a0_array, z_axis)
+    #plotting.plot_convergence("electromagnetic", a0_array, y_axis)
+    #plotting.plot_convergence("ponderomotive", a0_array, y_axis)
     
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, x_axis)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)

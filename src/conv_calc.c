@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 	double average = sum / ((double) num);
 	fwrite(&average, sizeof(double), 1, out_average);
 	
-	printf("Ended convergence calculation.\n");
+	printf("Ended calculating convergence.\n");
 	fclose(in_a); fclose(in_b); fclose(out);
 	fclose(out_average);
 	return 0;

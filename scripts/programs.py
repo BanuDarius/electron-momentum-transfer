@@ -64,41 +64,29 @@ def run_simulation(method, sim_parameters, lasers):
 
 # ----------------------------------------------------------------------- #
 
-def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, steps_1, steps_2):
+def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, multiplier):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
     axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
-    
-    if(method == "electromagnetic"):
-        filename_final = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-electromag.bin"
-        filename_max = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-electromag.bin"
-    else:
-        filename_final = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-pond.bin"
-        filename_max = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-pond.bin"
-    
-    filename_final_1 = f"{OUTPUT_DIR}/out-final-1.bin"
-    filename_final_2 = f"{OUTPUT_DIR}/out-final-2.bin"
-        
-    i = sim_parameters.i
     num = sim_parameters.num
-    filename_data_1 = f"{OUTPUT_DIR}/out-data-1.bin"
-    filename_data_2 = f"{OUTPUT_DIR}/out-data-2.bin"
-    filename_conv = f"{OUTPUT_DIR}/difference.bin"
-    filename_conv_average = f"{OUTPUT_DIR}/average-difference.bin"
+    
+    filename_final_1 = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-{mode}.bin"
+    filename_final_2 = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-{mode}-conv.bin"
+    filename_out_conv = f"{OUTPUT_DIR}/out-data-conv-{mode}-{lowercase_text_p}.bin"
+    filename_conv_average = f"{OUTPUT_DIR}/average-conv-{mode}-{lowercase_text_p}.bin"
+    
+    filename_conv = f"{OUTPUT_DIR}/conv.bin"
     program_conv = f"{BIN_DIR}/conv_calc"
     
-    sim_parameters.steps = steps_1
-    sim_parameters.filename_out = filename_data_1
-    run_simulation(method, sim_parameters, lasers)
-    find_final_p(method, sim_parameters, axis_pos, axis_p)
-    find_max_p(method, sim_parameters, axis_p)
-    os.rename(filename_final, filename_final_1)
+    sim_parameters.check_convergence = True
+    sim_parameters.steps = sim_parameters.steps * multiplier
+    sim_parameters.filename_out = filename_out_conv
     
-    sim_parameters.steps = steps_2
-    sim_parameters.filename_out = filename_data_2
     run_simulation(method, sim_parameters, lasers)
     find_final_p(method, sim_parameters, axis_pos, axis_p)
-    os.rename(filename_final, filename_final_2)
-    find_max_p(method, sim_parameters, axis_p)
     
     arguments = [program_conv, num, filename_final_1, filename_final_2, filename_conv, filename_conv_average]
     arguments = [str(x) for x in arguments]
@@ -108,35 +96,28 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, steps_1,
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         sys.exit(1)
-    
-    data_conv = np.fromfile(filename_conv_average, dtype=np.float64).reshape(1, 1)
-    data_max = np.fromfile(filename_max, dtype=np.float64).reshape(1, 1)
-    
-    result = (data_conv[0] / data_max[0, 0] * 100)[0]
-    print(f"The average error is: {result:0.3f}%.")
-    
-    sys.exit(0)
-    
+        
 # ----------------------------------------------------------------------- #
 
 def find_enter_exit_time(method, sim_parameters, axis_pos, axis_p):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
     axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     
     axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
-    if(method == "electromagnetic"):
-        filename_out = f"{OUTPUT_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}.bin"
-    else:
-        filename_out = f"{OUTPUT_DIR}/out-enter-exit-time-pond-{lowercase_text_pos}{lowercase_text_p}.bin"
+    filename_out = f"{OUTPUT_DIR}/out-enter-exit-time-{mode}-{lowercase_text_pos}{lowercase_text_p}.bin"
+    
     program_enter_exit = f"{BIN_DIR}/find_enter_exit_time"
     filename = sim_parameters.filename_out
     
     num = sim_parameters.num
     steps_final = sim_parameters.steps // sim_parameters.substeps
-
-    #os.system(f"{program_enter_exit} {filename} {num} {steps_final} {axis_pos} {axis_p} {filename_out}")
+    
     arguments = [program_enter_exit, filename, num, steps_final, axis_pos, axis_p, filename_out]
     arguments = [str(x) for x in arguments]
     
@@ -149,14 +130,19 @@ def find_enter_exit_time(method, sim_parameters, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def find_max_p(method, sim_parameters, axis):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
+    
+    if(sim_parameters.check_convergence):
+        mode = mode + "-conv"
+        
     axis_text = common.get_axis_text(axis)
     lowercase_text = axis_text.lower()
-    if(method == "electromagnetic"):
-        filename_out = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-electromag.bin"
-        filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text}-electromag.bin"
-    else:
-        filename_out = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-pond.bin"
-        filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text}-pond.bin"
+    
+    filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text}-{mode}.bin"
+    filename_out = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-{mode}.bin"
     
     program_path = f"{BIN_DIR}/find_max_p"
     
@@ -164,7 +150,6 @@ def find_max_p(method, sim_parameters, axis):
     num = sim_parameters.num
     steps_final = sim_parameters.steps // sim_parameters.substeps
     
-    #os.system(f"{program_path} {filename_in} {num} {steps_final} {index} {filename_out}")
     arguments = [program_path, filename_in, num, steps_final, filename_out]
     arguments = [str(x) for x in arguments]
     
@@ -177,22 +162,25 @@ def find_max_p(method, sim_parameters, axis):
 # ----------------------------------------------------------------------- #
 
 def find_final_p(method, sim_parameters, axis_pos, axis_p):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
+    
+    if(sim_parameters.check_convergence):
+        mode = mode + "-conv"
+        
     axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
+    filename_out = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-{mode}.bin"
+    filename_out_all = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-{mode}.bin"
     
-    if(method == "electromagnetic"):
-        filename_out = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-electromag.bin"
-        filename_out_all = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-electromag.bin"
-    else:
-        filename_out = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-pond.bin"
-        filename_out_all = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-pond.bin"
     filename = sim_parameters.filename_out
     program_path = f"{BIN_DIR}/find_final_p"
     
     num = sim_parameters.num
     steps_final = sim_parameters.steps // sim_parameters.substeps
     
-    #os.system(f"{program_path} {filename} {num} {steps_final} {axis_pos} {axis_p} {filename_out} {filename_out_all}")
     arguments = [program_path, filename, num, steps_final, axis_pos, axis_p, filename_out, filename_out_all]
     arguments = [str(x) for x in arguments]
     

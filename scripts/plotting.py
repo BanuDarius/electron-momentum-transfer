@@ -18,6 +18,11 @@ plt.rcParams.update({'font.size': 12})
 # ----------------------------------------------------------------------- #
 
 def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
+    
     axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     
@@ -30,14 +35,9 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
     wavelength = sim_parameters.wavelength
     sweep_steps = sim_parameters.sweep_steps
     
-    if(method == "electromagnetic"):
-        filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-electromag.bin"
-        filename_in_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-electromag.bin"
-        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-electromag-{lowercase_text_pos}{lowercase_text_p}.png"
-    else:
-        filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-pond.bin"
-        filename_in_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-pond.bin"
-        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-pond-{lowercase_text_pos}{lowercase_text_p}.png"
+    filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-{mode}.bin"
+    filename_in_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-{mode}.bin"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-{mode}-{lowercase_text_pos}{lowercase_text_p}.png"
     
     data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
     data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 1)
@@ -116,15 +116,15 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def plot_max_p(method, a0_array, axis):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
     axis_text = common.get_axis_text(axis)
     lowercase_text = axis_text.lower()
     
-    if(method == "electromagnetic"):
-        filename = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-electromag.bin"
-        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-p{lowercase_text}-electromag.png"
-    else:
-        filename = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-pond.bin"
-        filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-p{lowercase_text}-pond.png"
+    filename = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-{mode}.bin"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-p{lowercase_text}-{mode}.png"
     
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 1)
     
@@ -150,6 +150,7 @@ def plot_average_errors(a0_array, axis):
     axis_text = common.get_axis_text(axis)
     lowercase_text = axis_text.lower()
     
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-average-errors-{lowercase_text}.png"
     filename_average_error = f"{OUTPUT_DIR}/out-average-error-{lowercase_text}.bin"
     filename_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-electromag.bin"
     
@@ -170,7 +171,6 @@ def plot_average_errors(a0_array, axis):
     
     plt.axhline(0, color='black', linestyle='--')
     
-    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-average-errors-{lowercase_text}.png"
     plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
     
@@ -178,7 +178,47 @@ def plot_average_errors(a0_array, axis):
 
 # ----------------------------------------------------------------------- #
 
+def plot_convergence(method, a0_array, axis):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
+    axis_text = common.get_axis_text(axis)
+    lowercase_text = axis_text.lower()
+    
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-conv-{mode}-{lowercase_text}.png"
+    filename_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-{mode}.bin"
+    filename_conv_average = f"{OUTPUT_DIR}/average-conv-{mode}-{lowercase_text}.bin"
+    
+    data_conv = np.fromfile(filename_conv_average, dtype=np.float64).reshape(-1, 1)
+    data_max = np.fromfile(filename_max_p, dtype=np.float64).reshape(-1, 1)
+    
+    x = a0_array
+    y = data_conv[:, 0]
+    y_max = data_max[:, 0]
+    y_final = y / y_max * 100.0
+    
+    plt.figure(figsize=(10,10))
+    plt.plot(x, y, c='black', linestyle='-', linewidth=1)
+    plt.title(rf"Convergence on {axis_text} axis ({method})")
+    plt.xlabel(rf"$a_0$")
+    plt.ylabel(rf"Average error of convergence [%]")
+    
+    plt.axhline(0, color='black', linestyle='--')
+    
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Created convergence plot for {method} mode.")
+    
+# ----------------------------------------------------------------------- #    
+
 def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, axis_p):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
+    
     axis_text_horiz = common.get_axis_text(axis_horiz)
     lowercase_text_horiz = axis_text_horiz.lower()
     
@@ -196,10 +236,7 @@ def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, ax
     wavelength = sim_parameters.wavelength
     square_size = sim_parameters.square_size
     
-    if(method == "electromagnetic"):
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-electromag-{lowercase_text_horiz}{lowercase_text_vert}{lowercase_text_p}-{i}.png"
-    else:
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-pond-{lowercase_text_horiz}{lowercase_text_vert}{lowercase_text_p}-{i}.png"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/out-colormap-{mode}-{lowercase_text_horiz}{lowercase_text_vert}{lowercase_text_p}-{i}.png"
     
     filename = sim_parameters.filename_out
     
@@ -226,6 +263,11 @@ def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, ax
 # ----------------------------------------------------------------------- #
 
 def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
+    
     axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     
@@ -243,12 +285,9 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
     divider = sim_parameters.divider
     subsection = num // divider
     
-    if(method == "electromagnetic"):
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-electromag-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
-        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}.bin"
-    else:
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-pond-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
-        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-pond-{lowercase_text_pos}{lowercase_text_p}.bin"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-{mode}-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
+    filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-{mode}-{lowercase_text_pos}{lowercase_text_p}.bin"
+    
     filename = sim_parameters.filename_out
     
     data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
@@ -290,6 +329,10 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
     axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     
@@ -307,12 +350,8 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     full_trajectory = sim_parameters.full_trajectory
     steps = sim_parameters.steps // sim_parameters.substeps
     
-    if(method == "electromagnetic"):
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-electromag-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
-        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}.bin"
-    else:
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-pond-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
-        filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-pond-{lowercase_text_pos}{lowercase_text_p}.bin"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-{mode}-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
+    filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-{mode}-{lowercase_text_pos}{lowercase_text_p}.bin"
     filename = sim_parameters.filename_out
     
     data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
@@ -353,6 +392,10 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
     axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     
@@ -365,14 +408,8 @@ def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
     a0 = a0_array[i]
     steps = sim_parameters.steps // sim_parameters.substeps
     
-    if method == "electromagnetic":
-        mode = 0
-        filename_enter_exit_time = f"{OUTPUT_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}.bin"
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
-    else:
-        mode = 1
-        filename_enter_exit_time = f"{OUTPUT_DIR}/out-enter-exit-time-electromag-{lowercase_text_pos}{lowercase_text_p}.bin"
-        filename_out = f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-pond-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
+    filename_enter_exit_time = f"{OUTPUT_DIR}/out-enter-exit-time-{mode}-{lowercase_text_pos}{lowercase_text_p}.bin"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-{mode}-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
     
     data = np.fromfile(filename_enter_exit_time, dtype=np.float64).reshape(-1, 4)
     
