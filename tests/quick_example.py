@@ -27,90 +27,32 @@ final_states = True
 full_trajectory = True
 trajectory_until_exit = False
 
-def run_example(example_num, core_num):
-    if(example_num == 1):
-        min_a0 = 0.02
-        max_a0 = 1.00
-        zetax = 0.0
-        zetay = 1.0
-        min_tf = 10000.0
-        max_tf = 16000.0
-        tauf = 7000.0
-        num_part = 1024
-        sweep_steps = 1024
-        omega = 0.057
-        xif = 0.0 * np.pi
-        sigma = 19.0 * np.pi
-        psi = -3.0 * sigma
-        wavelength = 2.0 * np.pi * c / omega
-        r_min = -1.00 * wavelength
-        r_max = +1.00 * wavelength
-        phi = np.radians(90.0)
-        rotate_angle = np.radians(90.0)
-        min_steps_pond = 128
-        max_steps_pond = 1024
-        min_steps_electromag = 4000
-        max_steps_electromag = 16000
-        substeps_pond = 1
-        substeps_electromag = 16
-        pond_integrate_steps = 4
-    elif(example_num == 2):
-        min_a0 = 0.02
-        max_a0 = 0.50
-        zetax = 0.0
-        zetay = 1.0
-        min_tf = 10000.0
-        max_tf = 15000.0
-        tauf = 7000.0
-        num_part = 1024
-        sweep_steps = 1024
-        omega = 0.057
-        xif = 0.0 * np.pi
-        sigma = 19.0 * np.pi
-        psi = -3.0 * sigma
-        wavelength = 2.0 * np.pi * c / omega
-        r_min = -1.00 * wavelength
-        r_max = +1.00 * wavelength
-        phi = np.radians(90.0)
-        rotate_angle = np.radians(90.0)
-        min_steps_pond = 128
-        max_steps_pond = 1024
-        min_steps_electromag = 4000
-        max_steps_electromag = 16000
-        substeps_pond = 1
-        substeps_electromag = 16
-        pond_integrate_steps = 4
-    elif(example_num == 3):
-        min_a0 = 0.02
-        max_a0 = 0.50
-        zetax = 1.0 / np.sqrt(2)
-        zetay = 1.0 / np.sqrt(2)
-        min_tf = 10000.0
-        max_tf = 14000.0
-        tauf = 7000.0
-        num_part = 1024
-        sweep_steps = 1024
-        omega = 0.057
-        xif = 0.0 * np.pi
-        sigma = 19.0 * np.pi
-        psi = -3.0 * sigma
-        wavelength = 2.0 * np.pi * c / omega
-        r_min = 0.00 * wavelength
-        r_max = 1.00 * wavelength
-        phi = np.radians(90.0)
-        theta = np.radians(90.0)
-        rotate_angle = np.radians(90.0)
-        min_steps_pond = 128
-        max_steps_pond = 512
-        min_steps_electromag = 4000
-        max_steps_electromag = 16000
-        substeps_pond = 1
-        substeps_electromag = 16
-        pond_integrate_steps = 4
-    else:
-        print("Error: Example number not found.")
-        sys.exit(1)
-        
+def run_quick_example(core_num):
+    min_a0 = 0.02
+    max_a0 = 1.00
+    zetax = 0.0
+    zetay = 1.0
+    min_tf = 10000.0
+    max_tf = 16000.0
+    tauf = 7000.0
+    num_part = 128
+    sweep_steps = 128
+    omega = 0.057
+    xif = 0.0 * np.pi
+    sigma = 19.0 * np.pi
+    psi = -3.0 * sigma
+    wavelength = 2.0 * np.pi * c / omega
+    r_min = -1.00 * wavelength
+    r_max = +1.00 * wavelength
+    phi = np.radians(90.0)
+    rotate_angle = np.radians(90.0)
+    min_steps_pond = 128
+    max_steps_pond = 512
+    min_steps_electromag = 4000
+    max_steps_electromag = 16000
+    substeps_pond = 1
+    substeps_electromag = 16
+    pond_integrate_steps = 4
     start_time = time.time()
     a0_array = np.array([])
     programs.clean_output_folder()
@@ -125,14 +67,8 @@ def run_example(example_num, core_num):
         a0_array = np.append(a0_array, a0)
         
         lasers = []
-        if(example_num == 1):
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(90.0), psi, pond_integrate_steps))
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(270.0), psi, pond_integrate_steps))
-        elif(example_num == 2 or example_num == 3):
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(90.0), psi, pond_integrate_steps))
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(135.0), psi, pond_integrate_steps))
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(225.0), psi, pond_integrate_steps))
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(270.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(90.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(270.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -199,5 +135,5 @@ def run_example(example_num, core_num):
     total_time = time.time() - start_time
     print(f"Program executed successfully.")
     print(f"Total time taken: {total_time:0.3f}s.\a")
-    print(f"Ended reproducing example {example_num}.")
+    print(f"Ended quick example parameter sweep.")
     sys.exit(0)
