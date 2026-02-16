@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
 	printf("Simulation ended.\n");
 	
 	printf("Time taken: %0.3fs.\n", omp_get_wtime() - start_time);
-	free(out_chunk); free(param); free(p);
+	free(out_chunk); free(param); free(p); free(l);
 	fclose(out);
 	return 0;
 }

@@ -41,8 +41,8 @@ min_tf = 10000.0
 max_tf = 16000.0 #Final time for electromagnetic mode 
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
-num_part = 1024 #Number of particles
-sweep_steps = 1024 #Number of parameter sweeps
+num_part = 128 #Number of particles
+sweep_steps = 128 #Number of parameter sweeps
 num_full = 16000 #Number of particles for 2D colormaps
 
 omega = 0.057
@@ -59,7 +59,7 @@ theta = np.radians(90.0) #Angles for the lasers
 rotate_angle = np.radians(90.0) #Angles for rotating the initial particles
 
 min_steps_pond = 128
-max_steps_pond = 512
+max_steps_pond = 1024
 min_steps_electromag = 4000
 max_steps_electromag = 16000 #Simulation steps
 substeps_pond = 1
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         
         #Properties for the electromagneteic mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c, filename_out) 
+            substeps_electromag, core_num, all_states, rotate_angle, sweep_steps, trajectory_until_exit, wavelength, c, filename_out) 
         
         #Uncomment this line to check the convergence when changing the number of steps
         #programs.check_convergence("electromagnetic", sim_parameters, lasers, y_axis, y_axis, steps_electromag, 2 * steps_electromag)
@@ -122,16 +122,16 @@ if __name__ == "__main__":
         
         programs.find_final_p("electromagnetic", sim_parameters, y_axis, z_axis)
         programs.find_max_p("electromagnetic", sim_parameters, z_axis)
-        #programs.find_enter_exit_time("electromagnetic", sim_parameters, y_axis, z_axis)
+        #programs.find_enter_exit_time("electromagnetic", sim_parameters, y_axis, y_axis)
         
-        #plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, y_axis, x_axis)
+        #plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_enter_exit_time("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_phases("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
         
         # ------------------------------------------------------- #
         
         #Properties for the ponderomotive mode
-        '''sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
             substeps_pond, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c, filename_out)
         
         #programs.check_convergence("ponderomotive", sim_parameters, lasers, y_axis, y_axis, steps_pond, 2 * steps_pond)
@@ -156,7 +156,7 @@ if __name__ == "__main__":
         
         programs.calculate_errors(sim_parameters, a0_array, x_axis)
         programs.calculate_errors(sim_parameters, a0_array, y_axis)
-        programs.calculate_errors(sim_parameters, a0_array, z_axis)'''
+        programs.calculate_errors(sim_parameters, a0_array, z_axis)
         
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
         
@@ -164,27 +164,27 @@ if __name__ == "__main__":
     plotting.plot_max_p("electromagnetic", a0_array, x_axis)
     plotting.plot_max_p("electromagnetic", a0_array, y_axis)
     plotting.plot_max_p("electromagnetic", a0_array, z_axis)
-    '''plotting.plot_max_p("ponderomotive", a0_array, x_axis)
+    plotting.plot_max_p("ponderomotive", a0_array, x_axis)
     plotting.plot_max_p("ponderomotive", a0_array, y_axis)
     plotting.plot_max_p("ponderomotive", a0_array, z_axis)
     plotting.plot_average_errors(a0_array, x_axis)
     plotting.plot_average_errors(a0_array, y_axis)
-    plotting.plot_average_errors(a0_array, z_axis)'''
+    plotting.plot_average_errors(a0_array, z_axis)
     
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, x_axis)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, z_axis)
-    '''plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, x_axis)
+    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, x_axis)
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, z_axis)
     plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, x_axis)
     plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, y_axis)
-    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, z_axis)'''
+    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, z_axis)
     
     #Uncomment to render videos using ffmpeg
     #create_video.create_2d_colormap_video("electromagnetic", framerate, y_axis, z_axis, y_axis)
     #create_video.create_phase_video("electromagnetic", framerate, y_axis, y_axis)
-    #create_video.create_time_momentum_video("electromagnetic", framerate, y_axis, x_axis)
+    #create_video.create_time_momentum_video("electromagnetic", framerate, y_axis, y_axis)
     
     #Uncomment to remove images if you created a video
     #programs.clean_image_folder()

@@ -54,7 +54,7 @@ def create_2d_colormap_video(method, framerate, axis_horiz, axis_vert, axis_p):
 
 # ----------------------------------------------------------------------- #
 
-def create_phase_video(method, framerate, axis_horiz, axis_pos, axis_p):
+def create_phase_video(method, framerate, axis_pos, axis_p):
     axis_text_pos = get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()
     

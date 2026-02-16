@@ -4,6 +4,7 @@ import warnings
 import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 import scripts.common as common
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -93,16 +94,13 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
     z = difference / max_p * 100.0
     
-    row_max = np.max(z, axis=1)[:, np.newaxis]
-    z_final = z / row_max * 100.0
-    
     fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
     with warnings.catch_warnings(record=True) as warn:
         warnings.simplefilter("always")
-        pcm = ax.pcolormesh(x, y, z_final, cmap='inferno', shading='auto', rasterized=True)
+        pcm = ax.pcolormesh(x, y, z, cmap='inferno', shading='auto', rasterized=True, norm=LogNorm(vmin=1e-3, vmax=100.0))
     
     cbar = plt.colorbar(pcm, ax=ax)
-    cbar.set_label("Normalized error [%]")
+    cbar.set_label(rf"Relative error $\epsilon$ [%]")
     
     plt.xlim(r_min / wavelength, r_max / wavelength)
     plt.ylim(min(a0_array), max(a0_array))
@@ -282,7 +280,7 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
     ax.set_xlabel(rf"${axis_text_pos}$ [$\lambda$]")
     ax.set_ylabel(rf"$p_{axis_text_p}$ [a.u.]")
     
-    plt.xlim(r_min / wavelength - 2.0 * r_min / wavelength, r_max / wavelength + 2.0 * r_max / wavelength)
+    plt.xlim(r_min / wavelength - abs(r_min / wavelength), r_max / wavelength + abs(r_max / wavelength))
     
     plt.savefig(filename_out, bbox_inches='tight')
     plt.close()
