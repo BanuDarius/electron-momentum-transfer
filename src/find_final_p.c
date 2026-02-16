@@ -24,6 +24,12 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
+	if(argc != 8) {
+		printf("This is a program which calculates the final momentum of particles interacting with lasers.\n"); 
+		printf("Usage: %s <filename_input> <num> <steps> <axis_pos> <axis_p> <filename_output> <filename_output_all>\n", argv[0]);
+		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
+		return 1;
+	}
 	FILE *in = fopen(argv[1], "rb");
 	FILE *out_final_p = fopen(argv[6], "wb"), *out_final_p_all = fopen(argv[7], "ab");
 	

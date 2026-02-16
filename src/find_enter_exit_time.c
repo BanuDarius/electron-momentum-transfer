@@ -23,12 +23,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void set_zero(double *v) {
-	for(int i = 0; i < 3; i++)
-		v[i] = 0.0;
-}
-
 int main(int argc, char **argv) {
+	if(argc != 7) {
+		printf("This is a program which calculates the enter of exit times of electrons interacting with lasers.\n"); 
+		printf("Usage: %s <filename_output> <num> <steps> <axis_pos> <axis_p> <filename_output>\n", argv[0]);
+		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
+		return 1;
+	}
 	FILE *in = fopen(argv[1], "rb");
 	FILE *out = fopen(argv[6], "wb");
 	int num = atoi(argv[2]), steps = atoi(argv[3]), axis_pos = atoi(argv[4]), axis_p = atoi(argv[5]);

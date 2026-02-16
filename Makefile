@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -s -O3 -march=native -Iinclude -fopenmp -MMD -MP
+BASE_CFLAGS = -s -O3 -fopenmp -MMD -MP -Iinclude
 LDLIBS = -lm -fopenmp
 
 SRC_DIR = src
@@ -14,8 +14,13 @@ MAIN_SRCS = $(SRC_DIR)/laser_electron.c $(SRC_DIR)/error_calc.c $(SRC_DIR)/conv_
 
 MAIN_BIN = $(patsubst $(SRC_DIR)/%.c, $(BIN_DIR)/%, $(MAIN_SRCS))
 
+all: CFLAGS = $(BASE_CFLAGS) -march=native
 all: directories $(MAIN_BIN)
 	@echo "Compilation complete."
+	
+generic: CFLAGS = $(BASE_CFLAGS) -mtune=generic
+generic: directories $(MAIN_BIN)
+	@echo "Build complete (generic computer)."
 
 $(BIN_DIR)/laser_electron: $(OBJ_DIR)/laser_electron.o $(MODULE_OBJS)
 	@$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)

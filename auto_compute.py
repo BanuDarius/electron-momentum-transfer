@@ -35,8 +35,8 @@ core_num = 8 #Number of threads
 min_a0 = 0.02
 max_a0 = 0.50 #Minimum and maximum of a0 for lasers
 
-zetax = 1.0 / np.sqrt(2)
-zetay = 1.0 / np.sqrt(2) #Polarization parameters
+zetax = 0.0
+zetay = 1.0 #Polarization parameters
 tf = 15000.0 #Final time for electromagnetic mode 
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
@@ -50,7 +50,7 @@ sigma = 19.0 * np.pi
 psi = -3.0 * sigma #Laser parameters
 
 wavelength = 2.0 * np.pi * c / omega
-r_min = 0.00 * wavelength
+r_min = -1.00 * wavelength
 r_max = 1.00 * wavelength #Minimum and maximum radius for particle positions
 
 phi = np.radians(90.0)
@@ -58,7 +58,7 @@ theta = np.radians(90.0) #Angles for the lasers
 rotate_angle = np.radians(90.0) #Angles for rotating the initial particles
 
 min_steps_pond = 128
-max_steps_pond = 1024
+max_steps_pond = 512
 min_steps_electromag = 4000
 max_steps_electromag = 16000 #Simulation steps
 substeps_pond = 1
@@ -72,7 +72,7 @@ square_size = 1.0 #Size of squares in 2D colormaps
 if __name__ == "__main__":
     #In the examples/ directory there are several examples
     #Uncomment this line to reproduce any of them
-    #examples.run_example(3, core_num)
+    #examples.run_example(1, core_num)
     
     a0_array = np.array([]) #This array will be passed to plotting functions
     programs.clean_output_folder() #Remove output data from previous run
@@ -88,9 +88,9 @@ if __name__ == "__main__":
         
         lasers = [] #Defines all lasers
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(90.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(45.0), psi, pond_integrate_steps))
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(135.0), psi, pond_integrate_steps))
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(225.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(270.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -146,7 +146,7 @@ if __name__ == "__main__":
         
         programs.find_final_p("ponderomotive", sim_parameters, y_axis, z_axis)
         programs.find_max_p("ponderomotive", sim_parameters, z_axis)
-        programs.find_enter_exit_time("ponderomotive", sim_parameters, y_axis, y_axis)
+        #programs.find_enter_exit_time("ponderomotive", sim_parameters, y_axis, y_axis)
         
         #plotting.plot_time_momentum("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_enter_exit_time("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
@@ -164,22 +164,22 @@ if __name__ == "__main__":
     plotting.plot_max_p("electromagnetic", a0_array, x_axis)
     plotting.plot_max_p("electromagnetic", a0_array, y_axis)
     plotting.plot_max_p("electromagnetic", a0_array, z_axis)
-    '''plotting.plot_max_p("ponderomotive", a0_array, x_axis)
+    plotting.plot_max_p("ponderomotive", a0_array, x_axis)
     plotting.plot_max_p("ponderomotive", a0_array, y_axis)
     plotting.plot_max_p("ponderomotive", a0_array, z_axis)
     plotting.plot_average_errors(a0_array, x_axis)
     plotting.plot_average_errors(a0_array, y_axis)
-    plotting.plot_average_errors(a0_array, z_axis)'''
+    plotting.plot_average_errors(a0_array, z_axis)
     
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, x_axis)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, z_axis)
-    '''plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, x_axis)
+    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, x_axis)
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, z_axis)
     plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, x_axis)
     plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, y_axis)
-    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, z_axis)'''
+    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, z_axis)
     
     #Uncomment to render videos using ffmpeg
     #create_video.create_2d_colormap_video("electromagnetic", framerate, y_axis, z_axis, y_axis)

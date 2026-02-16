@@ -24,9 +24,15 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
-	int num = atoi(argv[1]), index = atoi(argv[2]);
-	FILE *in_a = fopen(argv[3], "rb"), *in_b = fopen(argv[4], "rb");
-	FILE *out = fopen(argv[5], "wb"), *out_average = fopen(argv[6], "ab");
+	if(argc != 6) {
+		printf("This is a program which calculates convergence when increasing the number of steps.\n"); 
+		printf("Usage: %s <num> <filename_input_1> <filename_input_2> <filename_output> <filename_output_all>\n", argv[0]);
+		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
+		return 1;
+	}
+	int num = atoi(argv[1]);
+	FILE *in_a = fopen(argv[2], "rb"), *in_b = fopen(argv[3], "rb");
+	FILE *out = fopen(argv[4], "wb"), *out_average = fopen(argv[5], "ab");
 	double sum = 0.0;
 	
 	for(int i = 0; i < num; i++) {

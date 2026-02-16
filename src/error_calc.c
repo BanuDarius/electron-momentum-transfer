@@ -24,10 +24,16 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
-	int num = atoi(argv[1]), index = atoi(argv[2]);
-	FILE *in_a = fopen(argv[3], "rb"), *in_b = fopen(argv[4], "rb");
-	FILE *out = fopen(argv[5], "wb"), *out_average_error = fopen(argv[6], "ab");
-	FILE *out_error_all = fopen(argv[7], "ab");
+	if(argc != 7) {
+		printf("This is a program which calculates convergence when increasing the number of steps.\n"); 
+		printf("Usage: %s <num> <filename_input_1> <filename_input_2> <filename_output> <filename_output_average> <filename_output_all>\n", argv[0]);
+		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
+		return 1;
+	}
+	int num = atoi(argv[1]);
+	FILE *in_a = fopen(argv[2], "rb"), *in_b = fopen(argv[3], "rb");
+	FILE *out = fopen(argv[4], "wb"), *out_average_error = fopen(argv[5], "ab");
+	FILE *out_error_all = fopen(argv[6], "ab");
 	double sum = 0.0;
 	
 	for(int i = 0; i < num; i++) {
@@ -43,11 +49,10 @@ int main(int argc, char **argv) {
 	}
 	
 	double average = sum / ((double) num);
-	double v[2] = { (double)index, average };
-	fwrite(v, sizeof(double), 2, out_average_error);
+	fwrite(&average, sizeof(double), 1, out_average_error);
 	
 	printf("Ended error calculation.\n");
-	fclose(out_average_error);
-	fclose(in_a); fclose(in_b); fclose(out); fclose(out_error_all);
+	fclose(out_average_error); fclose(out_error_all);
+	fclose(in_a); fclose(in_b); fclose(out);
 	return 0;
 }

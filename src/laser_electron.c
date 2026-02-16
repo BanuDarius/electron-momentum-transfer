@@ -102,6 +102,12 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 int main(int argc, char **argv) {
 	srand(128);
 	double start_time = omp_get_wtime();
+	if(argc != 4) {
+		printf("This is a program which simulates laser-electron interactions.\n"); 
+		printf("Usage: %s <filename_input> <filename_lasers> <filename_output>\n", argv[0]);
+		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
+		return 1;
+	}
 	FILE *out = fopen(argv[3], "wb");
 	if(!out) { perror("Cannot open output file."); return 1; }
 	
@@ -111,7 +117,7 @@ int main(int argc, char **argv) {
 	set_parameters(param, argv[1]);
 	
 	struct laser *l = malloc(param->num_lasers * sizeof(struct laser));
-	struct particle *p = malloc(param->num * sizeof(struct particle));
+	struct particle *p = aligned_alloc(64, param->num * sizeof(struct particle));
 	double *out_chunk = create_out_chunk(param);
 	void (*compute_function)(double *restrict, double *restrict, const struct laser *restrict);
 	

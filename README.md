@@ -12,6 +12,13 @@ python3 auto_compute.py
 ```
 This will automatically compute and render the final momentum transfer heatmaps.
 
+If you have an older computer and the program doesn't compile, use:
+```
+make generic
+```
+
+Which will compile for a generic x86 CPU.
+
 ## Reproduce examples
 In order to reproduce the results from the examples/ directory, run this command:
 ```

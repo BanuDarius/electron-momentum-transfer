@@ -100,7 +100,7 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, steps_1,
     os.rename(filename_final, filename_final_2)
     find_max_p(method, sim_parameters, axis_p)
     
-    arguments = [program_conv, num, i, filename_final_1, filename_final_2, filename_conv, filename_conv_average]
+    arguments = [program_conv, num, filename_final_1, filename_final_2, filename_conv, filename_conv_average]
     arguments = [str(x) for x in arguments]
     
     try:
@@ -216,11 +216,9 @@ def calculate_errors(sim_parameters, a0_array, axis):
     filename_out_average_error = f"{OUTPUT_DIR}/out-average-error-{lowercase_text}.bin"
     filename_out_error_all = f"{OUTPUT_DIR}/out-error-all-{lowercase_text}.bin"
     
-    i = sim_parameters.i
     num = sim_parameters.num
     
-    #os.system(f"{program_path} {num} {i} {filename_in_a} {filename_in_b} {filename_out} {filename_out_average_error} {filename_out_error_all}")
-    arguments = [program_path, num, i, filename_in_a, filename_in_b, filename_out, filename_out_average_error, filename_out_error_all]
+    arguments = [program_path, num, filename_in_a, filename_in_b, filename_out, filename_out_average_error, filename_out_error_all]
     arguments = [str(x) for x in arguments]
     
     try:
