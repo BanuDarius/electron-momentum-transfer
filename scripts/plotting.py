@@ -166,7 +166,7 @@ def plot_average_errors(a0_array, axis):
     plt.plot(x, y_final, c='black', linestyle='-', linewidth=1)
     plt.title(f"Average errors on {axis_text} axis")
     plt.xlabel(r"$a_0$")
-    plt.ylabel(r"<$\epsilon$> (%)")
+    plt.ylabel(rf"Average error <$\epsilon$> [%]")
     
     plt.axhline(0, color='black', linestyle='--')
     
