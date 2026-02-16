@@ -20,7 +20,7 @@ all: directories $(MAIN_BIN)
 	
 generic: CFLAGS = $(BASE_CFLAGS) -mtune=generic
 generic: directories $(MAIN_BIN)
-	@echo "Build complete (generic computer)."
+	@echo "Compilation complete (generic x86)."
 
 $(BIN_DIR)/laser_electron: $(OBJ_DIR)/laser_electron.o $(MODULE_OBJS)
 	@$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
