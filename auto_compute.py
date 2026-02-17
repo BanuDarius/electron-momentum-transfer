@@ -29,7 +29,7 @@ trajectory_until_exit = False
 thread_num = 8 #Number of threads
 
 min_a0 = 0.02
-max_a0 = 0.60 #Minimum and maximum of a0 for lasers
+max_a0 = 0.50 #Minimum and maximum of a0 for lasers
 
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
@@ -54,7 +54,7 @@ phi = np.radians(90.0)
 theta = np.radians(90.0) #Angles for the lasers
 rotate_angle = np.radians(90.0) #Angles for rotating the initial particles
 
-min_steps_pond = 16
+min_steps_pond = 128
 max_steps_pond = 512
 min_steps_electromag = 4000
 max_steps_electromag = 16000 #Simulation steps
