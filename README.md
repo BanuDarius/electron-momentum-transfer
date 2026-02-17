@@ -39,10 +39,12 @@ python3 -c "import sys; sys.path.append('scripts'); from scripts.examples import
 And replace `<num_example>` with the respective example number `(1, 2, 3)`.
 
 ## Examples
-<img width="1072" height="1078" alt="2_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/5e353c1e-afe2-46d1-8671-dda3d4f7b000" />
-<img width="1048" height="1078" alt="2_out-2d-heatmap-errors-yy" src="https://github.com/user-attachments/assets/5a4478af-e259-4b54-821d-ec557ef03e57" />
-<img width="1072" height="1078" alt="1_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/156deeb0-b06e-4a04-9105-776a7ff9369d" />
-<img width="1059" height="1076" alt="1_out-average-errors-y" src="https://github.com/user-attachments/assets/0e2f3c96-7aa8-4020-9953-cd7eece8bcb0" />
+<img width="1072" height="1078" alt="1_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/9be7793a-a5a0-4938-9984-07a3faf16b83" />
+<img width="1056" height="1078" alt="1_out-2d-heatmap-errors-yy" src="https://github.com/user-attachments/assets/50f1659c-f66d-4705-893b-606e386e63dc" />
+<img width="1061" height="1076" alt="1_out-average-errors-y" src="https://github.com/user-attachments/assets/8ee0470a-6922-493f-868e-413b8adf2fa0" />
+<img width="1072" height="1078" alt="2_out-2d-heatmap-electromag-yx" src="https://github.com/user-attachments/assets/4b71dcb1-b0bf-421e-87aa-b0fe3f7c0c73" />
+<img width="1056" height="1078" alt="2_out-2d-heatmap-errors-yx" src="https://github.com/user-attachments/assets/620599b2-ebb5-4655-aefa-204000dcdc6f" />
+<img width="1061" height="1076" alt="2_out-average-errors-x" src="https://github.com/user-attachments/assets/102a5ed2-c8e3-447c-8548-3f7b053ea589" />
 
 ## References
 [1] Higuera, Adam V., and John R. Cary. "Structure-preserving second-order integration of relativistic charged particle trajectories in electromagnetic fields." Physics of Plasmas 24.5 (2017).
