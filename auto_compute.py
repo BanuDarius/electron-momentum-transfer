@@ -26,7 +26,7 @@ trajectory_until_exit = False
 
 # ------------------------------------------------------- #
 
-core_num = 8 #Number of threads
+thread_num = 8 #Number of threads
 
 min_a0 = 0.02
 max_a0 = 0.60 #Minimum and maximum of a0 for lasers
@@ -70,11 +70,11 @@ if __name__ == "__main__":
     #Uncomment to run a quick test to showcase the program's capabilities
     #This will run a low resolution (128x128) parameter sweep
     #Will complete in ~1 minute on consumer hardware
-    #quick_example.run_quick_example(core_num)
+    #quick_example.run_quick_example(thread_num)
     
     #In the examples/ directory there are several examples
     #Uncomment this line to reproduce any of them
-    #examples.run_example(1, core_num)
+    #examples.run_example(1, thread_num)
     
     start_time = time.time()
     a0_array = np.array([]) #This array will be passed to plotting functions
@@ -98,7 +98,7 @@ if __name__ == "__main__":
         # ------------------------------------------------------- #
         
         '''sim_parameters = sim_init.SimParameters(i, r, num_full, tf,  steps_electromag, first_eighth,
-            substeps_electromag, core_num, final_states, rotate_angle, sweep_steps, full_trajectory, c)
+            substeps_electromag, thread_num, final_states, rotate_angle, sweep_steps, full_trajectory, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -110,7 +110,7 @@ if __name__ == "__main__":
         
         #Properties for the electromagneteic mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, core_num, all_states, rotate_angle, sweep_steps, trajectory_until_exit, wavelength, c) 
+            substeps_electromag, thread_num, all_states, rotate_angle, sweep_steps, trajectory_until_exit, wavelength, c) 
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -134,7 +134,7 @@ if __name__ == "__main__":
         
         #Properties for the ponderomotive mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_pond, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         

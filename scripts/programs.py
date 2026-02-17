@@ -35,7 +35,7 @@ def run_simulation(method, sim_parameters, lasers):
         file.write(f"tf {sim_parameters.tf}\n")
         file.write(f"steps {sim_parameters.steps}\n")
         file.write(f"substeps {sim_parameters.substeps}\n")
-        file.write(f"core_num {sim_parameters.core_num}\n")
+        file.write(f"thread_num {sim_parameters.thread_num}\n")
         file.write(f"output_mode {output_mode}\n")
         file.write(f"mode {mode}\n")
         file.write(f"rotate_angle {sim_parameters.rotate_angle}\n")

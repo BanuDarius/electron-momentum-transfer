@@ -42,7 +42,7 @@ struct laser {
 
 struct parameters {
 	double rotate_angle, r_min, r_max, tf, dt, h, z;
-	int num, num_lasers, steps, substeps, mode, output_mode, core_num;
+	int num, num_lasers, steps, substeps, mode, output_mode, thread_num;
 };
 
 void compute_e(double *E, double *u, const struct laser *restrict l, int i);

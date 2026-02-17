@@ -142,7 +142,7 @@ double *create_out_chunk(struct parameters *param) {
 	if(param->output_mode == 0)
 		return malloc(U_SIZE * param->steps * param->num / param->substeps * sizeof(double));
 	else
-		return malloc(2 * U_SIZE * CHUNK_SIZE * param->core_num * sizeof(double));
+		return malloc(2 * U_SIZE * CHUNK_SIZE * param->thread_num * sizeof(double));
 }
 
 //This function switched the compute_function to be either the electromagnetic method or the ponderomotive method.
@@ -192,8 +192,8 @@ void set_parameters(struct parameters *param, char *input) {
 			i = fscanf(in, "%i", &param->output_mode);
 			count++;
 		}
-		else if(!strcmp(current, "core_num")) {
-			i = fscanf(in, "%i", &param->core_num);
+		else if(!strcmp(current, "thread_num")) {
+			i = fscanf(in, "%i", &param->thread_num);
 			count++;
 		}
 		else if(!strcmp(current, "r_min")) {

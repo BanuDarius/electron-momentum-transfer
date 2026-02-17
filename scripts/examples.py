@@ -27,7 +27,7 @@ final_states = True
 full_trajectory = True
 trajectory_until_exit = False
 
-def run_example(example_num, core_num):
+def run_example(example_num, thread_num):
     if(example_num == 1):
         min_a0 = 0.02
         max_a0 = 1.00
@@ -137,7 +137,7 @@ def run_example(example_num, core_num):
         # ------------------------------------------------------- #
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_electromag, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -153,7 +153,7 @@ def run_example(example_num, core_num):
         # ------------------------------------------------------- #
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_pond, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         

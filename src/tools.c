@@ -33,8 +33,8 @@ double rand_val(double min, double max) {
 	return min + s * (max - min);
 }
 
-void print_chunk(FILE *out, double *chunk, int core_num) {
-	fwrite(chunk, sizeof(double), 2 * U_SIZE * CHUNK_SIZE * core_num, out);
+void print_chunk(FILE *out, double *chunk, int thread_num) {
+	fwrite(chunk, sizeof(double), 2 * U_SIZE * CHUNK_SIZE * thread_num, out);
 }
 
 void copy_initial(double *ch, double *u, int k, int id) {
@@ -75,12 +75,12 @@ void epsilon(double *u, double *w) {
 
 //Manual calculation of indices for stability.
 
-int initial_index(int n, int thread_num, int core_num) {
-	int index = n * thread_num / core_num;
+int initial_index(int n, int thread_idx, int thread_num) {
+	int index = n * thread_idx / thread_num;
 	return index;
 }
 
-int final_index(int n, int thread_num, int core_num) {
-	int index = n * (thread_num + 1) / core_num;
+int final_index(int n, int thread_idx, int thread_num) {
+	int index = n * (thread_idx + 1) / thread_num;
 	return index;
 }

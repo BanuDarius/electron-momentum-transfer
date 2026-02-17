@@ -36,17 +36,17 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 	int mode = param->mode;
 	int steps = param->steps;
 	int substeps = param->substeps;
-	int core_num = param->core_num;
+	int thread_num = param->thread_num;
 	int output_mode = param->output_mode;
 	
 	double dt = param->dt;
 	
-	#pragma omp parallel num_threads(core_num)
+	#pragma omp parallel num_threads(thread_num)
 	{
 		int chunk_current = 0;
 		int id = omp_get_thread_num();
-		int initial_idx = initial_index(num, id, core_num);
-		int final_idx = final_index(num, id, core_num);
+		int initial_idx = initial_index(num, id, thread_num);
+		int final_idx = final_index(num, id, thread_num);
 		
 		for(int k = initial_idx; k < final_idx; k++) {
 			if(output_mode == 1)
@@ -58,7 +58,7 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 					higuera_cary_step(&p[k].u[0], dt, l);
 				
 				if(output_mode == 0 && i % substeps == 0) {
-					unsigned long idx = (unsigned long)id * U_SIZE * steps * num / (substeps * core_num)
+					unsigned long idx = (unsigned long)id * U_SIZE * steps * num / (substeps * thread_num)
 						+ (unsigned long)(k - initial_idx) * U_SIZE * steps / substeps
 						+ (unsigned long)i * U_SIZE / substeps;
 					
@@ -66,8 +66,8 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 					#pragma omp master
 					{
 						if((k + 1) % CHUNK_SIZE == 0 && i == 0) {
-							int current = core_num * (k - initial_idx + 1);
-							int total = core_num * final_idx;
+							int current = thread_num * (k - initial_idx + 1);
+							int total = thread_num * final_idx;
 							printf("Particles processed: %i/%i.\n", current, total);
 						}
 					}
@@ -83,11 +83,11 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 					#pragma omp barrier
 					#pragma omp master
 					{
-						int current = core_num * (k - initial_idx + 1);
-						int total = core_num * final_idx;
+						int current = thread_num * (k - initial_idx + 1);
+						int total = thread_num * final_idx;
 						printf("Particles processed: %i/%i.\n", current, total);
-						print_chunk(out, out_chunk, core_num);
-						memset(out_chunk, 0, 2 * U_SIZE * CHUNK_SIZE * core_num * sizeof(double));
+						print_chunk(out, out_chunk, thread_num);
+						memset(out_chunk, 0, 2 * U_SIZE * CHUNK_SIZE * thread_num * sizeof(double));
 					}
 					chunk_current = 0;
 					#pragma omp barrier
