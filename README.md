@@ -2,15 +2,13 @@
 This is a C program that calculates the linear momentum transfer caused by multiple laser beams coming from arbitrary directions, to an assembly of electrons, producing a 2D momentum map.
 Parallelized with OpenMP.
 
-## Usage
+## Compilation
 The installation is as follows:
 ```
 git clone --depth 1 https://github.com/BanuDarius/electron-momentum-transfer/
 cd electron-momentum-transfer/
 make
-python3 auto_compute.py
 ```
-This will automatically compute and render the final momentum transfer heatmaps.
 
 If you have an older computer and the program doesn't compile, use:
 ```
@@ -19,12 +17,26 @@ make generic
 
 Which will compile for a generic x86 CPU.
 
-## Reproduce examples
-In order to reproduce the results from the examples/ directory, run this command:
+### Usage
+```
+python3 auto_compute.py
+```
+This will automatically compute and render the final momentum transfer heatmaps.
+
+### Run quick test
+To run a quick parameter sweep (1 minute on consumer hardware):
+```
+python3 -c "import sys; sys.path.append('tests'); from tests.quick_example import run_quick_example; run_quick_example(<num_threads>)
+```
+And replace `<num_threads>` with the number of threads to be used in the simulation.
+### Reproduce examples
+
+In order to reproduce the results from the examples/ directory:
 ```
 python3 -c "import sys; sys.path.append('scripts'); from scripts.examples import run_example; run_example(<num_example>, <num_threads>)"
 ```
-And replace `<num_example>` with the respective example number `(1, 2, 3...)`, and `num_threads` with the number of threads to be used in the simulation.
+
+And replace `<num_example>` with the respective example number `(1, 2, 3)`.
 
 ## Examples
 <img width="1072" height="1078" alt="2_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/5e353c1e-afe2-46d1-8671-dda3d4f7b000" />

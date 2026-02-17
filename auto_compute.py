@@ -29,7 +29,7 @@ trajectory_until_exit = False
 core_num = 8 #Number of threads
 
 min_a0 = 0.02
-max_a0 = 1.00 #Minimum and maximum of a0 for lasers
+max_a0 = 1.50 #Minimum and maximum of a0 for lasers
 
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
@@ -37,8 +37,8 @@ min_tf = 10000.0
 max_tf = 16000.0 #Final time for electromagnetic mode 
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
-num_part = 256 #Number of particles
-sweep_steps = 256 #Number of parameter sweeps
+num_part = 512 #Number of particles
+sweep_steps = 512 #Number of parameter sweeps
 num_full = 16000 #Number of particles for 2D colormaps
 
 omega = 0.057
@@ -172,7 +172,7 @@ if __name__ == "__main__":
     plotting.plot_max_p("ponderomotive", a0_array, x_axis)
     plotting.plot_max_p("ponderomotive", a0_array, y_axis)
     plotting.plot_max_p("ponderomotive", a0_array, z_axis)
-    plotting.plot_convergence("electromagnetic", a0_array, y_axis)
+    #plotting.plot_convergence("electromagnetic", a0_array, y_axis)
     #plotting.plot_convergence("ponderomotive", a0_array, y_axis)
     
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, x_axis)
