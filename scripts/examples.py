@@ -60,7 +60,7 @@ def run_example(example_num, core_num):
         zetax = 0.0
         zetay = 1.0
         min_tf = 10000.0
-        max_tf = 15000.0
+        max_tf = 16000.0
         tauf = 7000.0
         num_part = 1024
         sweep_steps = 1024
@@ -86,7 +86,7 @@ def run_example(example_num, core_num):
         zetax = 1.0 / np.sqrt(2)
         zetay = 1.0 / np.sqrt(2)
         min_tf = 10000.0
-        max_tf = 14000.0
+        max_tf = 16000.0
         tauf = 7000.0
         num_part = 1024
         sweep_steps = 1024
