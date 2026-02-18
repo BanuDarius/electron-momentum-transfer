@@ -63,9 +63,12 @@ void direction_vec(double *u, double phi, double theta) {
 
 void epsilon(double *u, double *w) {
 	double v[3];
-	v[0] = 1.0;
-	v[1] = 0.0;
-	v[2] = 0.0;
+	if (fabs(u[0]) > 0.99) { 
+		v[0] = 0.0; v[1] = 1.0; v[2] = 0.0;
+	}
+	else {
+		v[0] = 1.0; v[1] = 0.0; v[2] = 0.0;
+	}
 	cross(w, u, v);
 	double mag = magnitude(w);
 	double scale = magnitude(u);

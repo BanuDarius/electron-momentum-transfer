@@ -208,6 +208,10 @@ void set_parameters(struct parameters *param, char *input) {
 			i = fscanf(in, "%lf", &param->rotate_angle);
 			count++;
 		}
+		else if(!strcmp(current, "check_polarization")) {
+			i = fscanf(in, "%i", &param->check_polarization);
+			count++;
+		}
 	}
 	if(count != PARAMS) {
 		printf("Error: Invalid input file.\n");
@@ -217,14 +221,24 @@ void set_parameters(struct parameters *param, char *input) {
 	fclose(in);
 }
 
-void set_lasers(struct laser *l, int num_lasers, char *input) {
+void rotate_polarization(double *epsilon1, double *epsilon2, double alpha) {
+	double e1_temp[3], e2_temp[3];
+	memcpy(e1_temp, epsilon1, 3 * sizeof(double));
+	memcpy(e2_temp, epsilon2, 3 * sizeof(double));
+	for(int j = 0; j < 3; j++) {
+		epsilon1[j] = e1_temp[j] * cos(alpha) + e2_temp[j] * sin(alpha);
+		epsilon2[j] = e2_temp[j] * cos(alpha) - e1_temp[j] * sin(alpha);
+	}
+}
+
+void set_lasers(struct laser *l, struct parameters *param, char *input) {
 	FILE *in = fopen(input, "r");
 	if(!in) { perror("Cannot open input file."); abort(); }
 	char current[32];
 	int k;
 	
-	for(int i = 0; i < num_lasers; i++) {
-		l[i].num_lasers = num_lasers;
+	for(int i = 0; i < param->num_lasers; i++) {
+		l[i].num_lasers = param->num_lasers;
 		for(int j = 0; j < LASER_PARAMS; j++) {
 			k = fscanf(in, "%s", current);
 			if(!strcmp(current, "a0"))
@@ -247,13 +261,24 @@ void set_lasers(struct laser *l, int num_lasers, char *input) {
 				k = fscanf(in, "%lf", &l[i].psi);
 			else if(!strcmp(current, "pond_integrate_steps"))
 				k = fscanf(in, "%i", &l[i].pond_integrate_steps);
+			else if(!strcmp(current, "alpha"))
+				k = fscanf(in, "%lf", &l[i].alpha);
 		}
 		double epsilon1[3], epsilon2[3], nv[3];
 		direction_vec(nv, l[i].phi, l[i].theta);
 		epsilon(nv, epsilon1);
 		cross(epsilon2, nv, epsilon1);
+		rotate_polarization(epsilon1, epsilon2, l[i].alpha);
 		memcpy(l[i].n, nv, 3 * sizeof(double));
 		memcpy(l[i].epsilon1, epsilon1, 3 * sizeof(double));
 		memcpy(l[i].epsilon2, epsilon2, 3 * sizeof(double));
+	}
+	if(param->check_polarization) {
+		for(int i = 0; i < param->num_lasers; i++) {
+			printf("Propagation vector for laser %i:\n%0.2f %0.2f %0.2f\n", i, l[i].n[0], l[i].n[1], l[i].n[2]);
+			printf("Epsilon 1 polarization for laser %i:\n%0.2f %0.2f %0.2f\n", i, l[i].epsilon1[0], l[i].epsilon1[1], l[i].epsilon1[2]);
+			printf("Epsilon 2 polarization for laser %i:\n%0.2f %0.2f %0.2f\n\n", i, l[i].epsilon2[0], l[i].epsilon2[1], l[i].epsilon2[2]);
+		}
+		exit(1);
 	}
 }

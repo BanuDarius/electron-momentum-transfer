@@ -25,8 +25,8 @@
 #include <stdio.h>
 #include <stdalign.h>
 
-#define LASER_PARAMS 10 //This defines how many parameters will be read from a file for one laser
-#define PARAMS 11 //This defines how many parameters will be read from a file for the general simulation
+#define LASER_PARAMS 11 //This defines how many parameters will be read from a file for one laser
+#define PARAMS 12 //This defines how many parameters will be read from a file for the general simulation
 #define U_SIZE 8 //Number of elements of the particle struct
 #define CHUNK_SIZE 100 //Number of particles in an output chunk
 
@@ -36,13 +36,13 @@ struct particle {
 
 struct laser {
 	int num_lasers, pond_integrate_steps;
-	double sigma, zetax, zetay, omega, theta, phi, psi, xif, a0;
+	double alpha, sigma, zetax, zetay, omega, theta, phi, psi, xif, a0;
 	double epsilon1[3], epsilon2[3], n[3];
 };
 
 struct parameters {
 	double rotate_angle, r_min, r_max, tf, dt, h, z;
-	int num, num_lasers, steps, substeps, mode, output_mode, thread_num;
+	int num, num_lasers, steps, substeps, mode, output_mode, check_polarization, thread_num;
 };
 
 void compute_e(double *E, double *u, const struct laser *restrict l, int i);
@@ -56,6 +56,7 @@ void set_particles(struct particle *p, struct parameters *param, double *vi);
 double *create_out_chunk(struct parameters *param);
 void set_mode(void (**compute_function)(double *restrict, double *restrict, const struct laser *restrict), int mode);
 void set_parameters(struct parameters *param, char *input);
-void set_lasers(struct laser *l, int num_lasers, char *input);
+void rotate_polarization(double *epsilon1, double *epsilon2, double alpha);
+void set_lasers(struct laser *l, struct parameters *param, char *input);
 
 #endif

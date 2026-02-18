@@ -27,6 +27,7 @@ def run_simulation(method, sim_parameters, lasers):
     filename_lasers = f"{INPUT_DIR}/lasers.txt"
     
     output_mode = int(sim_parameters.output_mode == True)
+    check_polarization = int(sim_parameters.check_polarization == True)
     
     with open(filename_input, "w") as file:
         file.write(f"r_min {sim_parameters.r_min}\n")
@@ -38,6 +39,7 @@ def run_simulation(method, sim_parameters, lasers):
         file.write(f"thread_num {sim_parameters.thread_num}\n")
         file.write(f"output_mode {output_mode}\n")
         file.write(f"mode {mode}\n")
+        file.write(f"check_polarization {check_polarization}\n")
         file.write(f"rotate_angle {sim_parameters.rotate_angle}\n")
         file.write(f"num_lasers {len(lasers)}\n")
    
@@ -52,6 +54,7 @@ def run_simulation(method, sim_parameters, lasers):
             file.write(f"phi {lasers[i].phi}\n")
             file.write(f"theta {lasers[i].theta}\n")
             file.write(f"psi {lasers[i].psi}\n")
+            file.write(f"alpha {lasers[i].alpha}\n")
             file.write(f"pond_integrate_steps {lasers[i].pond_integrate_steps}\n")
     
     arguments = [program_path, filename_input, filename_lasers, filename_out]
@@ -81,9 +84,9 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, multipli
     filename_conv = f"{OUTPUT_DIR}/conv.bin"
     program_conv = f"{BIN_DIR}/conv_calc"
     
-    sim_parameters.check_convergence = True
     sim_parameters.steps = sim_parameters.steps * multiplier
     sim_parameters.filename_out = filename_out_conv
+    sim_parameters.check_convergence = True
     
     run_simulation(method, sim_parameters, lasers)
     find_final_p(method, sim_parameters, axis_pos, axis_p)
@@ -214,6 +217,13 @@ def calculate_errors(sim_parameters, a0_array, axis):
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         sys.exit(1)
+
+# ----------------------------------------------------------------------- #
+
+def check_laser_polarization(method, sim_parameters, lasers):
+    sim_parameters.check_polarization = True
+    run_simulation(method, sim_parameters, lasers)
+    sys.exit(0)
 
 # ----------------------------------------------------------------------- #
 

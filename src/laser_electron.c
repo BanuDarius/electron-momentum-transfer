@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
 	
 	if(!l || !p || !out_chunk) { perror("Memory allocation error."); return 1; }
 	
-	set_lasers(l, param->num_lasers, argv[2]);
+	set_lasers(l, param, argv[2]);
 	set_particles(p, param, vi);
 	set_mode(&compute_function, param->mode);
 	

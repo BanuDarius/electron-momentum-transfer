@@ -20,6 +20,7 @@ class SimParameters:
         self.thread_num = thread_num
         self.wavelength = wavelength
         self.check_convergence = False
+        self.check_polarization = False
         self.output_mode = output_mode
         self.sweep_steps = sweep_steps
         self.filename_out = filename_out
@@ -29,7 +30,7 @@ class SimParameters:
 # ------------------------------------------------------- #
 
 class LaserParameters:
-    def __init__(self, a0, sigma, omega, xif, zetax, zetay, phi, theta, psi, pond_integrate_steps):
+    def __init__(self, a0, sigma, omega, xif, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps):
         self.a0 = a0
         self.xif = xif
         self.phi = phi
@@ -37,6 +38,7 @@ class LaserParameters:
         self.sigma = sigma
         self.zetax = zetax
         self.zetay = zetay
+        self.alpha = alpha
         self.omega = omega
         self.theta = theta
         self.pond_integrate_steps = pond_integrate_steps

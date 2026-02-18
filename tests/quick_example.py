@@ -46,6 +46,7 @@ def run_quick_example(core_num):
     r_max = +1.00 * wavelength
     phi = np.radians(90.0)
     rotate_angle = np.radians(90.0)
+    alpha = np.radians(0.0)
     min_steps_pond = 128
     max_steps_pond = 512
     min_steps_electromag = 4000
@@ -67,8 +68,8 @@ def run_quick_example(core_num):
         a0_array = np.append(a0_array, a0)
         
         lasers = []
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(90.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(270.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         

@@ -53,6 +53,7 @@ r_max = 1.00 * wavelength #Minimum and maximum radius for particle positions
 phi = np.radians(90.0)
 theta = np.radians(90.0) #Angles for the lasers
 rotate_angle = np.radians(90.0) #Angles for rotating the initial particles
+alpha = np.radians(0.0) #Angle for rotating the laser polarization vectors
 
 min_steps_pond = 128
 max_steps_pond = 512
@@ -90,10 +91,10 @@ if __name__ == "__main__":
         a0_array = np.append(a0_array, a0)
         
         lasers = [] #Defines all lasers
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(90.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(135.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(225.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, phi, np.radians(270.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(135.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(225.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -111,6 +112,9 @@ if __name__ == "__main__":
         #Properties for the electromagneteic mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
             substeps_electromag, thread_num, all_states, rotate_angle, sweep_steps, trajectory_until_exit, wavelength, c) 
+        
+        #Uncomment to check the propagation vector, epsilon1, and epsilon2 for all lasers
+        #programs.check_laser_polarization("electromagnetic", sim_parameters, lasers)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
