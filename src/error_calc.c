@@ -34,6 +34,11 @@ int main(int argc, char **argv) {
 	FILE *in_a = fopen(argv[2], "rb"), *in_b = fopen(argv[3], "rb");
 	FILE *out = fopen(argv[4], "wb"), *out_average_error = fopen(argv[5], "ab");
 	FILE *out_error_all = fopen(argv[6], "ab");
+	if(!in_a || !in_b || !out || !out_average_error || !out_error_all) {
+		perror("Cannot open file.");
+		return 1;
+	}
+	
 	double sum = 0.0;
 	
 	for(int i = 0; i < num; i++) {

@@ -32,8 +32,12 @@ int main(int argc, char **argv) {
 	}
 	FILE *in = fopen(argv[1], "rb");
 	FILE *out = fopen(argv[6], "wb");
-	int num = atoi(argv[2]), steps = atoi(argv[3]), axis_pos = atoi(argv[4]), axis_p = atoi(argv[5]);
+	if(!in || !out) {
+		perror("Cannot open file.");
+		return 1;
+	}
 	
+	int num = atoi(argv[2]), steps = atoi(argv[3]), axis_pos = atoi(argv[4]), axis_p = atoi(argv[5]);
 	double velocity_data[steps], time_data[steps], v[4], first_velocity, last_velocity, initial_position;
 	
 	for(int i = 0; i < num; i++) {

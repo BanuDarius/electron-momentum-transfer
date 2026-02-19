@@ -32,6 +32,10 @@ int main(int argc, char **argv) {
 	}
 	FILE *in = fopen(argv[1], "rb");
 	FILE *out_final_p = fopen(argv[6], "wb"), *out_final_p_all = fopen(argv[7], "ab");
+	if(!in || !out_final_p || !out_final_p_all) {
+		perror("Cannot open file.");
+		return 1;
+	}
 	
 	int num = atoi(argv[2]), steps = atoi(argv[3]), axis_pos = atoi(argv[4]), axis_p = atoi(argv[5]);
 	double t[8];

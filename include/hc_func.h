@@ -64,7 +64,7 @@ static inline void hc_u_prime(double *restrict u_prime, const double *restrict u
 
 static inline double hc_gamma_new(double *restrict u_minus, const double *restrict beta, const double gamma_minus) {
 	double t1 = gamma_minus * gamma_minus - dot(beta, beta);
-	double t2 = dot(beta, beta) + fabs(dot(beta, u_minus) * dot(beta, u_minus) / (c * c));
+	double t2 = dot(beta, beta) + dot(beta, u_minus) * dot(beta, u_minus) / (m * m * c * c);
 	double t3 = 0.5 * (gamma_minus * gamma_minus - dot(beta, beta) + sqrt(t1 * t1 + 4.0 * t2));
 	double gamma_new = sqrt(t3);
 	return gamma_new;

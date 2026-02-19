@@ -33,6 +33,10 @@ int main(int argc, char **argv) {
 	int num = atoi(argv[1]);
 	FILE *in_a = fopen(argv[2], "rb"), *in_b = fopen(argv[3], "rb");
 	FILE *out = fopen(argv[4], "wb"), *out_average = fopen(argv[5], "ab");
+	if(!in_a || !in_b || !out || !out_average) {
+		perror("Cannot open file.");
+		return 1;
+	}
 	double sum = 0.0;
 	
 	for(int i = 0; i < num; i++) {

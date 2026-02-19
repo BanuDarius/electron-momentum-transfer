@@ -32,7 +32,10 @@ int main(int argc, char **argv) {
 	}
 	FILE *in = fopen(argv[1], "rb");
 	FILE *out_max_p = fopen(argv[4], "ab");
-	
+	if(!in || !out_max_p) {
+		perror("Cannot open file.");
+		return 1;
+	}
 	int num = atoi(argv[2]), steps = atoi(argv[3]);
 	double data[num], t[2];
 	

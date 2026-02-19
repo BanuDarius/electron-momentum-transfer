@@ -32,9 +32,9 @@ void higuera_cary_step(double *u, const double dt, const struct laser *restrict 
 	
 	gamma_fac = u[4] / (m * c);
 	u[0] += 0.5 * c * dt;
-	u[1] += 0.5 * u[5] * dt / gamma_fac;
-	u[2] += 0.5 * u[6] * dt / gamma_fac;
-	u[3] += 0.5 * u[7] * dt / gamma_fac;
+	u[1] += 0.5 * u[5] * dt / (gamma_fac * m);
+	u[2] += 0.5 * u[6] * dt / (gamma_fac * m);
+	u[3] += 0.5 * u[7] * dt / (gamma_fac * m);
 	
 	compute_e_b(E, B, u, l);
 	
@@ -56,9 +56,9 @@ void higuera_cary_step(double *u, const double dt, const struct laser *restrict 
 	
 	gamma_fac = comp_gamma(&u[5]);
 	u[0] += 0.5 * c * dt;
-	u[1] += 0.5 * u[5] * dt / gamma_fac;
-	u[2] += 0.5 * u[6] * dt / gamma_fac;
-	u[3] += 0.5 * u[7] * dt / gamma_fac;
+	u[1] += 0.5 * u[5] * dt / (gamma_fac * m);
+	u[2] += 0.5 * u[6] * dt / (gamma_fac * m);
+	u[3] += 0.5 * u[7] * dt / (gamma_fac * m);
 	u[4] = gamma_fac * m * c;
 }
 
