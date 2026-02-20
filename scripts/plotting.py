@@ -115,6 +115,58 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
 
 # ----------------------------------------------------------------------- #
 
+def plot_2d_convergence_heatmap(method, sim_parameters, a0_array, axis_pos, axis_p):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
+        
+    axis_text_pos = common.get_axis_text(axis_pos)
+    lowercase_text_pos = axis_text_pos.lower()
+    
+    axis_text_p = common.get_axis_text(axis_p)
+    lowercase_text_p = axis_text_p.lower()
+    
+    num = sim_parameters.num
+    r_min = sim_parameters.r_min
+    r_max = sim_parameters.r_max
+    wavelength = sim_parameters.wavelength
+    sweep_steps = sim_parameters.sweep_steps
+    
+    filename_conv_all = f"{OUTPUT_DIR}/average-conv-all-{mode}-{lowercase_text_p}.bin"
+    filename_in_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-{mode}-conv.bin"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-conv-{mode}-{lowercase_text_pos}{lowercase_text_p}.png"
+    
+    data = np.fromfile(filename_conv_all, dtype=np.float64).reshape(sweep_steps, num, 2)
+    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 1)
+    
+    max_p = data_max_p[:, 0][:, np.newaxis]
+    difference = data[:, :, 1]
+    x = data[:, :, 0] / wavelength
+    y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
+    z = difference / max_p * 100.0
+    
+    fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
+    with warnings.catch_warnings(record=True) as warn:
+        warnings.simplefilter("always")
+        pcm = ax.pcolormesh(x, y, z, cmap='inferno', shading='auto', rasterized=True, norm=LogNorm(vmin=1e-3, vmax=100.0))
+    
+    cbar = plt.colorbar(pcm, ax=ax)
+    cbar.set_label(rf"Convergence [%]")
+    
+    plt.xlim(r_min / wavelength, r_max / wavelength)
+    plt.ylim(min(a0_array), max(a0_array))
+    plt.xlabel(rf"{axis_text_pos} [$\lambda$]")
+    plt.ylabel(r"$a_0$")
+    plt.title(rf"Full convergence error heatmap for $p_{lowercase_text_p}$ ({method})")
+    
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Created 2D convergence heatmap for {method} mode.")
+
+# ----------------------------------------------------------------------- #
+
 def plot_max_p(method, a0_array, axis):
     if(method == "electromagnetic"):
         mode = "electromag"
