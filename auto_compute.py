@@ -60,7 +60,7 @@ max_steps_pond = 256
 min_steps_electromag = 4000
 max_steps_electromag = 16000 #Simulation steps
 substeps_pond = 1
-substeps_electromag = 4 #Substeps for data output
+substeps_electromag = 16 #Substeps for data output
 pond_integrate_steps = 6 #Steps used for the integrals in ponderomotive mode
 
 square_size = 1.0 #Size of squares in 2D colormaps
@@ -92,7 +92,7 @@ if __name__ == "__main__":
         
         lasers = [] #Defines all lasers
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(0.0), phi, np.radians(0.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(180), phi, np.radians(45.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(180.0), phi, np.radians(45.0), psi, pond_integrate_steps))
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(180.0), phi, np.radians(135.0), psi, pond_integrate_steps))
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(180.0), phi, np.radians(180.0), psi, pond_integrate_steps))
         
@@ -128,7 +128,7 @@ if __name__ == "__main__":
         programs.find_final_p("electromagnetic", sim_parameters, x_axis, z_axis)
         programs.find_max_p("electromagnetic", sim_parameters, z_axis)
         
-        #programs.check_convergence("electromagnetic", sim_parameters, lasers, y_axis, y_axis, 2)
+        #programs.check_convergence("electromagnetic", sim_parameters, lasers, x_axis, y_axis, 2)
         
         #plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
         #plotting.plot_enter_exit_time("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
@@ -152,7 +152,7 @@ if __name__ == "__main__":
         programs.find_final_p("ponderomotive", sim_parameters, x_axis, z_axis)
         programs.find_max_p("ponderomotive", sim_parameters, z_axis)
         
-        #programs.check_convergence("ponderomotive", sim_parameters, lasers, y_axis, y_axis, 2)
+        #programs.check_convergence("ponderomotive", sim_parameters, lasers, x_axis, y_axis, 2)
         
         #plotting.plot_time_momentum("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_enter_exit_time("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)

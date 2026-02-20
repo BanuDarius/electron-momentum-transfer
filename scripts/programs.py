@@ -80,9 +80,10 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, multipli
     filename_final_2 = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-{mode}-conv.bin"
     filename_out_conv = f"{OUTPUT_DIR}/out-data-conv-{mode}-{lowercase_text_p}.bin"
     filename_conv_average = f"{OUTPUT_DIR}/average-conv-{mode}-{lowercase_text_p}.bin"
+    filename_conv_all = f"{OUTPUT_DIR}/average-conv-all-{mode}-{lowercase_text_p}.bin"
     
     filename_conv = f"{OUTPUT_DIR}/conv.bin"
-    program_conv = f"{BIN_DIR}/conv_calc"
+    program_conv = f"{BIN_DIR}/error_calc"
     
     sim_parameters.steps = sim_parameters.steps * multiplier
     sim_parameters.filename_out = filename_out_conv
@@ -90,8 +91,9 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, multipli
     
     run_simulation(method, sim_parameters, lasers)
     find_final_p(method, sim_parameters, axis_pos, axis_p)
+    find_max_p(method, sim_parameters, axis_p)
     
-    arguments = [program_conv, num, filename_final_1, filename_final_2, filename_conv, filename_conv_average]
+    arguments = [program_conv, num, filename_final_1, filename_final_2, filename_conv, filename_conv_average, filename_conv_all]
     arguments = [str(x) for x in arguments]
     
     try:

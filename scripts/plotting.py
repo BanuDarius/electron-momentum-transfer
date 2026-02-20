@@ -187,7 +187,7 @@ def plot_convergence(method, a0_array, axis):
     lowercase_text = axis_text.lower()
     
     filename_out = f"{OUTPUT_IMAGE_DIR}/_out-conv-{mode}-{lowercase_text}.png"
-    filename_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-{mode}.bin"
+    filename_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-{mode}-conv.bin"
     filename_conv_average = f"{OUTPUT_DIR}/average-conv-{mode}-{lowercase_text}.bin"
     
     data_conv = np.fromfile(filename_conv_average, dtype=np.float64).reshape(-1, 1)

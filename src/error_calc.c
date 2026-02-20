@@ -25,7 +25,7 @@
 
 int main(int argc, char **argv) {
 	if(argc != 7) {
-		printf("This is a program which calculates convergence when increasing the number of steps.\n"); 
+		printf("This is a program which calculates the difference between 2 data sets.\n"); 
 		printf("Usage: %s <num> <filename_input_1> <filename_input_2> <filename_output> <filename_output_average> <filename_output_all>\n", argv[0]);
 		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
 		return 1;
