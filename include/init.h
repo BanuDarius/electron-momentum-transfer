@@ -35,7 +35,6 @@ void set_particles(struct particle *p, struct parameters *param, double *vi);
 double *create_out_chunk(struct parameters *param);
 void set_mode(void (**compute_function)(double *restrict, double *restrict, const struct laser *restrict), int mode);
 void set_parameters(struct parameters *param, char *input);
-void rotate_polarization(double *epsilon1, double *epsilon2, double alpha);
 void set_lasers(struct laser *l, struct parameters *param, char *input);
 
 #endif

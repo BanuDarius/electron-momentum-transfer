@@ -21,6 +21,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "init.h"
 #include "tools.h"
@@ -74,6 +75,16 @@ void epsilon(double *u, double *w) {
 	double scale = magnitude(u);
 	for (int i = 0; i < 3; i++)
 		w[i] = scale * w[i] / mag;
+}
+
+void rotate_polarization(double *epsilon1, double *epsilon2, double alpha) {
+	double e1_temp[3], e2_temp[3];
+	memcpy(e1_temp, epsilon1, 3 * sizeof(double));
+	memcpy(e2_temp, epsilon2, 3 * sizeof(double));
+	for(int j = 0; j < 3; j++) {
+		epsilon1[j] = e1_temp[j] * cos(alpha) + e2_temp[j] * sin(alpha);
+		epsilon2[j] = e2_temp[j] * cos(alpha) - e1_temp[j] * sin(alpha);
+	}
 }
 
 //Manual calculation of indices for stability.

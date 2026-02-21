@@ -221,16 +221,6 @@ void set_parameters(struct parameters *param, char *input) {
 	fclose(in);
 }
 
-void rotate_polarization(double *epsilon1, double *epsilon2, double alpha) {
-	double e1_temp[3], e2_temp[3];
-	memcpy(e1_temp, epsilon1, 3 * sizeof(double));
-	memcpy(e2_temp, epsilon2, 3 * sizeof(double));
-	for(int j = 0; j < 3; j++) {
-		epsilon1[j] = e1_temp[j] * cos(alpha) + e2_temp[j] * sin(alpha);
-		epsilon2[j] = e2_temp[j] * cos(alpha) - e1_temp[j] * sin(alpha);
-	}
-}
-
 void set_lasers(struct laser *l, struct parameters *param, char *input) {
 	FILE *in = fopen(input, "r");
 	if(!in) { perror("Cannot open input file."); abort(); }

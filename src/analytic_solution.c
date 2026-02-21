@@ -19,20 +19,13 @@
 * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
 * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
-#ifndef TOOLS_H
-#define TOOLS_H
-
 #include <stdio.h>
 
-double rand_val(double min, double max);
-void print_chunk(FILE *out, double *chunk, int thread_num);
-void copy_initial(double *ch, double *u, int k, int id);
-void rotate_around_z_axis(double *u, double angle);
-void set_spherical_coords(double *u, double phi, double theta);
-void direction_vec(double *u, double phi, double theta);
-void epsilon(double *u, double *w);
-void rotate_polarization(double *epsilon1, double *epsilon2, double alpha);
-int initial_index(int n, int thread_idx, int thread_num);
-int final_index(int n, int thread_idx, int thread_num);
+#include "init.h"
+#include "tools.h"
 
-#endif
+int main(int argc, char **argv) {
+	
+	
+	return 0;
+}

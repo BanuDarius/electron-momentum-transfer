@@ -10,7 +10,7 @@ BIN_DIR = bin
 MODULE_SRCS = $(SRC_DIR)/particle_push.c $(SRC_DIR)/tools.c $(SRC_DIR)/init.c $(SRC_DIR)/ponderomotive.c 
 MODULE_OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(MODULE_SRCS))
 
-MAIN_SRCS = $(SRC_DIR)/laser_electron.c $(SRC_DIR)/error_calc.c $(SRC_DIR)/find_enter_exit_time.c $(SRC_DIR)/find_final_p.c $(SRC_DIR)/find_max_p.c
+MAIN_SRCS = $(SRC_DIR)/laser_electron.c $(SRC_DIR)/analytic_solution.c $(SRC_DIR)/error_calc.c $(SRC_DIR)/find_enter_exit_time.c $(SRC_DIR)/find_final_p.c $(SRC_DIR)/find_max_p.c
 
 MAIN_BIN = $(patsubst $(SRC_DIR)/%.c, $(BIN_DIR)/%, $(MAIN_SRCS))
 
