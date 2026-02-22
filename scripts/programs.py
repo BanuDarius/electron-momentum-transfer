@@ -222,6 +222,61 @@ def calculate_errors(sim_parameters, a0_array, axis):
 
 # ----------------------------------------------------------------------- #
 
+def check_analytic_solution(method, sim_parameters, lasers):
+    if method == "electromagnetic":
+        mode = 0
+    elif method == "ponderomotive":
+        mode = 1
+    elif method == "electromagnetic-rk4":
+        mode = 2
+    
+    program_path = f"{BIN_DIR}/analytic_solution"
+    filename_out = sim_parameters.filename_out
+    filename_input = f"{INPUT_DIR}/input.txt"
+    filename_lasers = f"{INPUT_DIR}/lasers.txt"
+    
+    output_mode = int(sim_parameters.output_mode == True)
+    check_polarization = int(sim_parameters.check_polarization == True)
+    
+    with open(filename_input, "w") as file:
+        file.write(f"r_min {sim_parameters.r_min}\n")
+        file.write(f"r_max {sim_parameters.r_max}\n")
+        file.write(f"num {sim_parameters.num}\n")
+        file.write(f"tf {sim_parameters.tf}\n")
+        file.write(f"steps {sim_parameters.steps}\n")
+        file.write(f"substeps {sim_parameters.substeps}\n")
+        file.write(f"thread_num {sim_parameters.thread_num}\n")
+        file.write(f"output_mode {output_mode}\n")
+        file.write(f"mode {mode}\n")
+        file.write(f"check_polarization {check_polarization}\n")
+        file.write(f"rotate_angle {sim_parameters.rotate_angle}\n")
+        file.write(f"num_lasers {len(lasers)}\n")
+   
+    with open(filename_lasers, "w") as file:
+        for i in range(len(lasers)):
+            file.write(f"a0 {lasers[i].a0}\n")
+            file.write(f"sigma {lasers[i].sigma}\n")
+            file.write(f"omega {lasers[i].omega}\n")
+            file.write(f"xif {lasers[i].xif}\n")
+            file.write(f"zetax {lasers[i].zetax}\n")
+            file.write(f"zetay {lasers[i].zetay}\n")
+            file.write(f"phi {lasers[i].phi}\n")
+            file.write(f"theta {lasers[i].theta}\n")
+            file.write(f"psi {lasers[i].psi}\n")
+            file.write(f"alpha {lasers[i].alpha}\n")
+            file.write(f"pond_integrate_steps {lasers[i].pond_integrate_steps}\n")
+    
+    arguments = [program_path, filename_input, filename_lasers, filename_out]
+    
+    try:
+        res = subprocess.run(arguments, text=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Critical error: {e.returncode}")
+        sys.exit(1)
+    
+    sys.exit(0)
+# ----------------------------------------------------------------------- #
+
 def check_laser_polarization(method, sim_parameters, lasers):
     sim_parameters.check_polarization = True
     run_simulation(method, sim_parameters, lasers)

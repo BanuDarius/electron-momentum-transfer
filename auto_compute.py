@@ -26,7 +26,7 @@ trajectory_until_exit = False
 
 # ------------------------------------------------------- #
 
-thread_num = 8 #Number of threads
+thread_num = 4 #Number of threads
 
 min_a0 = 0.02
 max_a0 = 1.00 #Minimum and maximum of a0 for lasers
@@ -113,6 +113,8 @@ if __name__ == "__main__":
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
             substeps_electromag, thread_num, all_states, rotate_angle, sweep_steps, trajectory_until_exit, wavelength, c) 
         
+        programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
+        
         #Uncomment to check the propagation vector, epsilon1, and epsilon2 for all lasers
         #programs.check_laser_polarization("electromagnetic", sim_parameters, lasers)
         
@@ -128,7 +130,7 @@ if __name__ == "__main__":
         programs.find_final_p("electromagnetic", sim_parameters, x_axis, z_axis)
         programs.find_max_p("electromagnetic", sim_parameters, z_axis)
         
-        programs.check_convergence("electromagnetic", sim_parameters, lasers, x_axis, x_axis, 2)
+        #programs.check_convergence("electromagnetic", sim_parameters, lasers, x_axis, x_axis, 2)
         
         #plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
         #plotting.plot_enter_exit_time("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
@@ -179,8 +181,8 @@ if __name__ == "__main__":
     plotting.plot_max_p("ponderomotive", a0_array, y_axis)
     plotting.plot_max_p("ponderomotive", a0_array, z_axis)
     
-    plotting.plot_convergence("electromagnetic", a0_array, x_axis)
-    plotting.plot_2d_convergence_heatmap("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
+    #plotting.plot_convergence("electromagnetic", a0_array, x_axis)
+    #plotting.plot_2d_convergence_heatmap("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
     
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)

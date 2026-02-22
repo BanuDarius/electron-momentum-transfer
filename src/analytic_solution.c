@@ -20,12 +20,30 @@
 * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "init.h"
 #include "tools.h"
 
 int main(int argc, char **argv) {
+	if(argc != 4) {
+		printf("This is a program which simulates the trajectories of an electron interacting with a single laser, using an analytic solution.\n"); 
+		printf("Usage: %s <filename_input> <filename_lasers> <filename_output>\n", argv[0]);
+		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
+		return 1;
+	}
+	FILE *out = fopen(argv[3], "wb");
+	if(!out) { perror("Cannot open output file."); return 1; }
 	
+	struct parameters *param = malloc(sizeof(struct parameters));
+	set_parameters(param, argv[1]);
 	
+	struct laser *l = malloc(param->num_lasers * sizeof(struct laser));
+	
+	if(!l) { perror("Memory allocation error."); return 1; }
+	
+	set_lasers(l, param, argv[2]);
+	
+	printf("%lf BOOM!\n", l[0].sigma);
 	return 0;
 }

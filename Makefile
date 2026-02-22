@@ -26,7 +26,7 @@ $(BIN_DIR)/laser_electron: $(OBJ_DIR)/laser_electron.o $(MODULE_OBJS)
 	@$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
 	@echo "Linked $@."
 
-$(BIN_DIR)/oscillator: $(OBJ_DIR)/oscillator.o
+$(BIN_DIR)/analytic_solution: $(OBJ_DIR)/analytic_solution.o $(MODULE_OBJS)
 	@$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS)
 	@echo "Linked $@."
 
