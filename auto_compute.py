@@ -113,7 +113,7 @@ if __name__ == "__main__":
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
             substeps_electromag, thread_num, all_states, rotate_angle, sweep_steps, trajectory_until_exit, wavelength, c) 
         
-        programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
+        #programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
         
         #Uncomment to check the propagation vector, epsilon1, and epsilon2 for all lasers
         #programs.check_laser_polarization("electromagnetic", sim_parameters, lasers)
