@@ -19,11 +19,38 @@
 * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
 * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "init.h"
 #include "tools.h"
+#include "units.h"
+#include "potentials.h"
+#include "math_tools.h"
+#include "ponderomotive.h"
+
+void simulate_analytic(FILE *out, struct particle *p, struct parameters *param, struct laser *l) {
+	double r[3] = { 0.0 }, r_temp[3], a[3];
+	double dphi = param->tf * l->omega / param->steps;
+	double z = 0.0, t = 0.0, phi;
+	int i = 0;
+	while(t < param->tf) {
+		phi = i * dphi;
+		z += q * q / (2.0 * m * m * c * l->omega) * integrate_phi(phi, phi + dphi, l);
+		t = (phi + dphi) / l->omega + z / c;
+		
+		integrate_phi_vec(r_temp, phi, phi + dphi, l);
+		mult_vec(r_temp, r_temp, - q / (m * l->omega));
+		add_vec(r, r, r_temp);
+		
+		fwrite(&t, sizeof(double), 1, out);
+		fwrite(&z, sizeof(double), 1, out);
+		fwrite(r, sizeof(double), 3, out);
+		i++;
+	}
+}
 
 int main(int argc, char **argv) {
 	if(argc != 4) {
@@ -39,11 +66,19 @@ int main(int argc, char **argv) {
 	set_parameters(param, argv[1]);
 	
 	struct laser *l = malloc(param->num_lasers * sizeof(struct laser));
+	struct particle *p = aligned_alloc(64, param->num * sizeof(struct particle));
 	
-	if(!l) { perror("Memory allocation error."); return 1; }
+	if(!l || !p) { perror("Memory allocation error."); return 1; }
 	
+	double vi[3];
+	set_initial_vel(vi, 0.0, 0.0, 0.0);
 	set_lasers(l, param, argv[2]);
+	set_particles(p, param, vi);
 	
-	printf("%lf BOOM!\n", l[0].sigma);
+	printf("Simulation started.\n");
+	simulate_analytic(out, p, param, &l[0]);
+	printf("Simulation ended.\n");
+	
+	free(param); free(p); free(l);
 	return 0;
 }

@@ -407,7 +407,9 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     filename = sim_parameters.filename_out
     
     data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
-    data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
+    if(not full_trajectory):
+        data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
+        data_exit = data_exit[:subsection]
     fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
     
     colmap = plt.get_cmap('Spectral')
@@ -415,7 +417,6 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     subsection = num // divider
     
     data = data[:subsection]
-    data_exit = data_exit[:subsection]
     
     for idx in range(subsection):
         if(full_trajectory):

@@ -275,6 +275,7 @@ def check_analytic_solution(method, sim_parameters, lasers):
         sys.exit(1)
     
     sys.exit(0)
+    
 # ----------------------------------------------------------------------- #
 
 def check_laser_polarization(method, sim_parameters, lasers):

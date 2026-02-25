@@ -269,6 +269,6 @@ void set_lasers(struct laser *l, struct parameters *param, char *input) {
 			printf("Epsilon 1 polarization for laser %i:\n%0.2f %0.2f %0.2f\n", i, l[i].epsilon1[0], l[i].epsilon1[1], l[i].epsilon1[2]);
 			printf("Epsilon 2 polarization for laser %i:\n%0.2f %0.2f %0.2f\n\n", i, l[i].epsilon2[0], l[i].epsilon2[1], l[i].epsilon2[2]);
 		}
-		exit(1);
+		exit(0);
 	}
 }

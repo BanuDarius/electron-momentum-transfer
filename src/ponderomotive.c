@@ -26,43 +26,8 @@
 #include "tools.h"
 #include "init.h"
 #include "math_tools.h"
+#include "potentials.h"
 #include "ponderomotive.h"
-
-void potential_deriv_a(double *a, double *u, const struct laser *restrict l, int index, int n) {
-	double potentialA0 = l[n].a0 * m * c / fabs(q);
-	double epsilon4[4], k_vec4[4], phi, sign;
-	
-	a[0] = 0.0;
-	k_vec4[0] = 1.0;
-	epsilon4[0] = 0.0;
-	memcpy(&k_vec4[1], l[n].n, 3 * sizeof(double));
-	mult_vec4(k_vec4, k_vec4, l[n].omega / c);
-	
-	phi = dot4(k_vec4, u) + l[n].psi;
-	sign = (index > 0) ? -1.0 : +1.0;
-	for(int i = 0; i < 3; i++) {
-		double t1 = l[n].epsilon1[i] * l[n].zetax * (sin(phi)) + l[n].epsilon2[i] * l[n].zetay * (cos(phi));
-		double t2 = l[n].epsilon1[i] * l[n].zetax * (cos(phi)) + l[n].epsilon2[i] * l[n].zetay * (-sin(phi));
-		a[i+1] = sign * potentialA0 * k_vec4[index] * (env(phi, l[n].xif, l[n].sigma) * t2 + env_prime(phi, l[n].xif, l[n].sigma) * t1);
-	}
-}
-
-void potential_a(double *a, double *u, const struct laser *restrict l, int n) {
-	double potentialA0 = l[n].a0 * m * c / fabs(q);
-	double epsilon4[4], k_vec4[4], phi, A0mult;
-	
-	a[0] = 0.0;
-	k_vec4[0] = 1.0;
-	epsilon4[0] = 0.0;
-	memcpy(&k_vec4[1], l[n].n, 3 * sizeof(double));
-	mult_vec4(k_vec4, k_vec4, l[n].omega / c);
-	
-	phi = dot4(k_vec4, u) + l[n].psi;
-	A0mult = env(phi, l[n].xif, l[n].sigma) * potentialA0;
-	for(int i = 0; i < 3; i++)
-		a[i+1] = l[n].epsilon1[i] * l[n].zetax * (sin(phi)) + l[n].epsilon2[i] * l[n].zetay * cos(phi);
-	mult_vec(&a[1], &a[1], A0mult);
-}
 
 double integrate(double *u, const struct laser *restrict l) {
 	double integral = 0.0, left, center, right;
@@ -101,6 +66,75 @@ double integrate(double *u, const struct laser *restrict l) {
 		integral += (left + 4.0 * center + right) * dh / 6.0;
 		
 		u_temp[0] += dh;
+		left = right;
+	}
+	return integral;
+}
+
+void integrate_phi_vec(double *x, double phi_init, double phi_final, const struct laser *restrict l) {
+	double integral = 0.0;
+	double a1_left[3], a1_right[3], a1_center[3], a1_temp[3];
+	double domain = phi_final - phi_init, dh = domain / (double) l->pond_integrate_steps;
+	memset(x, 0, 3 * sizeof(double));
+	
+	double phi = phi_init;
+	
+	memset(a1_left, 0, 3 * sizeof(double));
+	potential_a_phi(a1_temp, phi, l, 0);
+	add_vec(a1_left, a1_left, a1_temp);
+	phi += dh / 2.0;
+	
+	for(int i = 0; i < l->pond_integrate_steps; i++) {
+		memset(a1_center, 0, 3 * sizeof(double));
+		memset(a1_right, 0, 3 * sizeof(double));
+		
+		potential_a_phi(a1_temp, phi, l, 0);
+		add_vec(a1_center, a1_center, a1_temp);
+		phi += dh / 2.0;
+		
+		potential_a_phi(a1_temp, phi, l, 0);
+		add_vec(a1_right, a1_right, a1_temp);
+		phi -= dh / 2.0;
+		
+		x[0] += (a1_left[0] + 4.0 * a1_center[0] + a1_right[0]) * dh / 6.0;
+		x[1] += (a1_left[1] + 4.0 * a1_center[1] + a1_right[1]) * dh / 6.0;
+		x[2] += (a1_left[2] + 4.0 * a1_center[2] + a1_right[2]) * dh / 6.0;
+		
+		phi += dh;
+		memcpy(a1_left, a1_right, 3 * sizeof(double));
+	}
+}
+
+double integrate_phi(double phi_init, double phi_final, const struct laser *restrict l) {
+	double integral = 0.0, left, center, right;
+	double a1_left[3], a1_right[3], a1_center[3], a1_temp[3];
+	double domain = phi_final - phi_init, dh = domain / (double) l->pond_integrate_steps;
+	
+	double phi = phi_init;
+	
+	memset(a1_left, 0, 3 * sizeof(double));
+	potential_a_phi(a1_temp, phi, l, 0);
+	add_vec(a1_left, a1_left, a1_temp);
+	left = dot(a1_left, a1_left);
+	phi += dh / 2.0;
+	
+	for(int i = 0; i < l->pond_integrate_steps; i++) {
+		memset(a1_center, 0, 3 * sizeof(double));
+		memset(a1_right, 0, 3 * sizeof(double));
+		
+		potential_a_phi(a1_temp, phi, l, 0);
+		add_vec(a1_center, a1_center, a1_temp);
+		phi += dh / 2.0;
+		
+		potential_a_phi(a1_temp, phi, l, 0);
+		add_vec(a1_right, a1_right, a1_temp);
+		phi -= dh / 2.0;
+		
+		center = dot(a1_center, a1_center);
+		right = dot(a1_right, a1_right);
+		integral += (left + 4.0 * center + right) * dh / 6.0;
+		
+		phi += dh;
 		left = right;
 	}
 	return integral;
