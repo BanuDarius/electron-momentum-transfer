@@ -115,7 +115,7 @@ if __name__ == "__main__":
         
         #Uncomment to calculate the trajectory using an analytic solution.
         #It will only use the first laser from the lasers array.
-        programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
+        #programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
         
         #Uncomment to check the propagation vector, epsilon1, and epsilon2 for all lasers
         #programs.check_laser_polarization("electromagnetic", sim_parameters, lasers)
