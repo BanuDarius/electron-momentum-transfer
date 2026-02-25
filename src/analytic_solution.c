@@ -32,8 +32,8 @@
 #include "ponderomotive.h"
 
 double z_displacement(struct parameters *param, struct laser *l) {
-	double a_0 = l->a0 * m * c / fabs(q) 
-	double delta_z = q * q * a0 * a0 / (4.0 * m * m * c) * sqrt(M_PI / 2.0) * (2.0 * pi / l->omega) * (1.20 * l->sigma) / 1.1774;
+	double A0 = l->a0 * m * c / fabs(q);
+	double delta_z = q * q * A0 * A0 / (4.0 * m * m * c) * sqrt(M_PI / 2.0) * (2.0 * M_PI / l->omega) * (1.20 * l->sigma) / 1.1774;
 	return delta_z;
 }
 
