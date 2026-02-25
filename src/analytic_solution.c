@@ -31,6 +31,12 @@
 #include "math_tools.h"
 #include "ponderomotive.h"
 
+double z_displacement(struct parameters *param, struct laser *l) {
+	double a_0 = l->a0 * m * c / fabs(q) 
+	double delta_z = q * q * a0 * a0 / (4.0 * m * m * c) * sqrt(M_PI / 2.0) * (2.0 * pi / l->omega) * (1.20 * l->sigma) / 1.1774;
+	return delta_z;
+}
+
 void simulate_analytic(FILE *out, struct particle *p, struct parameters *param, struct laser *l) {
 	double r[3] = { 0.0 }, r_temp[3], a[3];
 	double dphi = param->tf * l->omega / param->steps;
@@ -78,6 +84,9 @@ int main(int argc, char **argv) {
 	printf("Simulation started.\n");
 	simulate_analytic(out, p, param, &l[0]);
 	printf("Simulation ended.\n");
+	
+	double delta_z = z_displacement(param, l);
+	printf("%lf\n", delta_z);
 	
 	free(param); free(p); free(l);
 	return 0;

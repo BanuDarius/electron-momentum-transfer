@@ -26,10 +26,10 @@ trajectory_until_exit = False
 
 # ------------------------------------------------------- #
 
-thread_num = 1 #Number of threads
+thread_num = 4 #Number of threads
 
-min_a0 = 10.0
-max_a0 = 100.00 #Minimum and maximum of a0 for lasers
+min_a0 = 0.02
+max_a0 = 1.00 #Minimum and maximum of a0 for lasers
 
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
@@ -37,30 +37,30 @@ min_tf = 10000.0
 max_tf = 13000.0 #Final time for electromagnetic mode 
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
-num_part = 1 #Number of particless
-sweep_steps = 128 #Number of parameter sweeps
+num_part = 512 #Number of particless
+sweep_steps = 512 #Number of parameter sweeps
 num_full = 16000 #Number of particles for 2D colormaps
 
 omega = 0.057
 xif = 0.0 * np.pi
-sigma = 4.0 * np.pi
-psi = -5.0 * sigma #Laser parameters
+sigma = 19.0 * np.pi
+psi = -3.0 * sigma #Laser parameters
 
 wavelength = 2.0 * np.pi * c / omega
-r_min = -0.00 * wavelength
-r_max = +0.00 * wavelength #Minimum and maximum radius for particle positions
+r_min = -1.00 * wavelength
+r_max = +1.00 * wavelength #Minimum and maximum radius for particle positions
 
-phi = np.radians(0.0)
-theta = np.radians(90.0) #Angles for the lasers
-rotate_angle = np.radians(0.0) #Angles for rotating the initial particles
+phi = np.radians(90.0)
+theta = np.radians(0.0) #Angles for the lasers
 alpha = np.radians(0.0) #Angle for rotating the laser polarization vectors
+rotate_angle = np.radians(0.0) #Angle for rotating the initial particles
 
-min_steps_pond = 4
-max_steps_pond = 4
-min_steps_electromag = 8000
+min_steps_pond = 128
+max_steps_pond = 512
+min_steps_electromag = 4000
 max_steps_electromag = 16000 #Minimum and maximum simulation steps
 substeps_pond = 1
-substeps_electromag = 1 #Substeps for data output
+substeps_electromag = 16 #Substeps for data output
 pond_integrate_steps = 4 #Steps used for the integrals in ponderomotive mode
 
 square_size = 1.0 #Size of squares in 2D colormaps
@@ -94,7 +94,7 @@ if __name__ == "__main__":
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(0.0), phi, np.radians(0.0), psi, pond_integrate_steps))
         #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(180.0), phi, np.radians(45.0), psi, pond_integrate_steps))
         #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(180.0), phi, np.radians(135.0), psi, pond_integrate_steps))
-        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(0.0), phi, np.radians(180.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(0.0), phi, np.radians(180.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -113,6 +113,8 @@ if __name__ == "__main__":
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
             substeps_electromag, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c) 
         
+        #Uncomment to calculate the trajectory using an analytic solution.
+        #It will only use the first laser from the lasers array.
         programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
         
         #Uncomment to check the propagation vector, epsilon1, and epsilon2 for all lasers
@@ -132,9 +134,7 @@ if __name__ == "__main__":
         
         #programs.check_convergence("electromagnetic", sim_parameters, lasers, x_axis, x_axis, 2)
         
-        plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
-        plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
-        plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, x_axis, z_axis)
+        #plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
         #plotting.plot_enter_exit_time("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_phases("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
         
@@ -158,7 +158,7 @@ if __name__ == "__main__":
         
         #programs.check_convergence("ponderomotive", sim_parameters, lasers, x_axis, y_axis, 2)
         
-        plotting.plot_time_momentum("ponderomotive", sim_parameters, a0_array, x_axis, x_axis)
+        #plotting.plot_time_momentum("ponderomotive", sim_parameters, a0_array, x_axis, x_axis)
         #plotting.plot_enter_exit_time("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_phases("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)'
         
@@ -200,9 +200,7 @@ if __name__ == "__main__":
     #Uncomment to render videos using ffmpeg
     #create_video.create_2d_colormap_video("electromagnetic", framerate, y_axis, z_axis, y_axis)
     #create_video.create_phase_video("electromagnetic", framerate, x_axis, y_axis)
-    create_video.create_time_momentum_video("electromagnetic", framerate, x_axis, x_axis)
-    create_video.create_time_momentum_video("electromagnetic", framerate, x_axis, y_axis)
-    create_video.create_time_momentum_video("electromagnetic", framerate, x_axis, z_axis)
+    #create_video.create_time_momentum_video("electromagnetic", framerate, x_axis, y_axis)
     
     #Uncomment to remove images if you created a video
     #programs.clean_image_folder()
