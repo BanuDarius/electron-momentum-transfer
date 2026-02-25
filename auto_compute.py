@@ -37,8 +37,8 @@ min_tf = 10000.0
 max_tf = 13000.0 #Final time for electromagnetic mode 
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
-num_part = 512 #Number of particless
-sweep_steps = 512 #Number of parameter sweeps
+num_part = 256 #Number of particless
+sweep_steps = 256 #Number of parameter sweeps
 num_full = 16000 #Number of particles for 2D colormaps
 
 omega = 0.057
@@ -60,7 +60,7 @@ max_steps_pond = 512
 min_steps_electromag = 4000
 max_steps_electromag = 16000 #Minimum and maximum simulation steps
 substeps_pond = 1
-substeps_electromag = 16 #Substeps for data output
+substeps_electromag = 1 #Substeps for data output
 pond_integrate_steps = 4 #Steps used for the integrals in ponderomotive mode
 
 square_size = 1.0 #Size of squares in 2D colormaps
