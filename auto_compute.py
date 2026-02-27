@@ -37,14 +37,14 @@ min_tf = 10000.0
 max_tf = 13000.0 #Final time for electromagnetic mode 
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
-num_part = 256 #Number of particless
-sweep_steps = 256 #Number of parameter sweeps
+num_part = 128 #Number of particless
+sweep_steps = 128 #Number of parameter sweeps
 num_full = 16000 #Number of particles for 2D colormaps
 
 omega = 0.057
 xif = 0.0 * np.pi
 sigma = 19.0 * np.pi
-psi = -3.0 * sigma #Laser parameters
+psi = -4.0 * sigma #Laser parameters
 
 wavelength = 2.0 * np.pi * c / omega
 r_min = -1.00 * wavelength

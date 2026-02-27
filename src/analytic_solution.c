@@ -38,22 +38,28 @@ double z_displacement(struct parameters *param, struct laser *l) {
 }
 
 void simulate_analytic(FILE *out, struct particle *p, struct parameters *param, struct laser *l) {
-	double r[3] = { 0.0 }, r_temp[3], a[3];
-	double dphi = param->tf * l->omega / param->steps;
-	double z = 0.0, t = 0.0, phi;
+	double u_i[4], u_c[4], d = 0.0, r_1[3], r_2[3], r_tot[3], r_temp[3];
+	double dphi = param->tf * l->omega / param->steps, phi;
 	int i = 0;
-	while(t < param->tf) {
+	
+	memcpy(u_i, p->u, 4 * sizeof(double));
+	memcpy(u_c, p->u, 4 * sizeof(double));
+	
+	while(u_c[0] / c < param->tf) {
 		phi = i * dphi;
-		z += q * q / (2.0 * m * m * c * l->omega) * integrate_phi(phi, phi + dphi, l);
-		t = (phi + dphi) / l->omega + z / c;
+		d += q * q / (2.0 * m * m * c * l->omega) * integrate_phi(phi, phi + dphi, l);
+		u_c[0] = c * ((phi + dphi) / l->omega + d / c);
+		
+		mult_vec(r_1, l->n, d);
 		
 		integrate_phi_vec(r_temp, phi, phi + dphi, l);
 		mult_vec(r_temp, r_temp, - q / (m * l->omega));
-		add_vec(r, r, r_temp);
+		add_vec(r_2, r_2, r_temp);
 		
-		fwrite(&t, sizeof(double), 1, out);
-		fwrite(&z, sizeof(double), 1, out);
-		fwrite(r, sizeof(double), 3, out);
+		add_vec(r_tot, r_1, r_2);
+		add_vec(&u_c[1], &u_i[1], r_tot);
+		
+		fwrite(u_c, sizeof(double), 4, out);
 		i++;
 	}
 }
