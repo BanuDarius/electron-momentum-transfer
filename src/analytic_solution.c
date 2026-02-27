@@ -31,10 +31,10 @@
 #include "math_tools.h"
 #include "ponderomotive.h"
 
-double z_displacement(struct parameters *param, struct laser *l) {
+double displacement(struct parameters *param, struct laser *l) {
 	double A0 = l->a0 * m * c / fabs(q);
-	double delta_z = q * q * A0 * A0 / (4.0 * m * m * c) * sqrt(M_PI / 2.0) * l->sigma / l->omega;
-	return delta_z;
+	double delta_x = q * q * A0 * A0 / (4.0 * m * m * c) * sqrt(M_PI / 2.0) * l->sigma / l->omega;
+	return delta_x;
 }
 
 void simulate_analytic(FILE *out, struct particle *p, struct parameters *param, struct laser *l) {
@@ -73,6 +73,8 @@ int main(int argc, char **argv) {
 	}
 	FILE *out = fopen(argv[3], "wb");
 	if(!out) { perror("Cannot open output file."); return 1; }
+	FILE *out_displacement = fopen(argv[4], "ab");
+	if(!out_displacement) { perror("Cannot open output displacement file."); return 1; }
 	
 	struct parameters *param = malloc(sizeof(struct parameters));
 	set_parameters(param, argv[1]);
@@ -91,9 +93,10 @@ int main(int argc, char **argv) {
 	simulate_analytic(out, p, param, &l[0]);
 	printf("Simulation ended.\n");
 	
-	double delta_z = z_displacement(param, l);
-	printf("%lf\n", delta_z);
+	double delta_x = displacement(param, l);
+	fwrite(&delta_x, sizeof(double), 1, out_displacement);
 	
+	fclose(out_displacement); fclose(out);
 	free(param); free(p); free(l);
 	return 0;
 }

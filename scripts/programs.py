@@ -232,6 +232,7 @@ def check_analytic_solution(method, sim_parameters, lasers):
     
     program_path = f"{BIN_DIR}/analytic_solution"
     filename_out = sim_parameters.filename_out
+    filename_out_displacement = f"{OUTPUT_DIR}/out-displacement.bin"
     filename_input = f"{INPUT_DIR}/input.txt"
     filename_lasers = f"{INPUT_DIR}/lasers.txt"
     
@@ -266,7 +267,7 @@ def check_analytic_solution(method, sim_parameters, lasers):
             file.write(f"alpha {lasers[i].alpha}\n")
             file.write(f"pond_integrate_steps {lasers[i].pond_integrate_steps}\n")
     
-    arguments = [program_path, filename_input, filename_lasers, filename_out]
+    arguments = [program_path, filename_input, filename_lasers, filename_out, filename_out_displacement]
     
     try:
         res = subprocess.run(arguments, text=True)
