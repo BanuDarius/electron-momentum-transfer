@@ -1,6 +1,7 @@
 from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
+INPUT_DIR = PROJECT_ROOT / "input"
 OUTPUT_DIR = PROJECT_ROOT / "output"
 filename_out = f"{OUTPUT_DIR}/out-data.bin"
 
@@ -27,8 +28,8 @@ class SimParameters:
         self.filename_out = filename_out
         self.rotate_angle = rotate_angle
         self.full_trajectory = full_trajectory
-        self.filename_parameters = ""
-        self.filename_lasers = ""
+        self.filename_lasers = f"{INPUT_DIR}/lasers.txt"
+        self.filename_parameters = f"{INPUT_DIR}/input.txt"
 
 # ------------------------------------------------------- #
 

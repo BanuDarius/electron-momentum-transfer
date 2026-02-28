@@ -5,7 +5,7 @@ def get_axis_text(axis):
         axis_text = "X"
     elif(axis == 1):
         axis_text = "Y"
-    else:
+    elif(axis == 2):
         axis_text = "Z"
     return axis_text
 

@@ -69,10 +69,6 @@ square_size = 1.0 #Size of squares in 2D colormaps
 # ------------------------------------------------------- #
 
 if __name__ == "__main__":
-    start_time = time.time()
-    a0_array = np.array([]) #This array will be passed to plotting functions
-    programs.clean_output_folder() #Remove output data from previous run
-    
     #Uncomment to run a quick test to showcase the program's capabilities
     #This will run a low resolution (128x128) parameter sweep
     #Will complete in ~1 minute on consumer hardware
@@ -82,8 +78,11 @@ if __name__ == "__main__":
     #Uncomment this line to reproduce any of them
     #examples.run_example(1, thread_num)
     
-    #Uncomment this line to run a quick parameter sweep test, comparing the Higuera-Cary integrator with an analytical solution for one laser
-    #analytic_test.run_complete_test()
+    analytic_test.run_complete_test()
+    
+    start_time = time.time()
+    a0_array = np.array([]) #This array will be passed to plotting functions
+    programs.clean_output_folder() #Remove output data from previous run
     
     for i in range(0, sweep_steps):
         tf = common.interpolate(min_tf, max_tf, i, sweep_steps)
@@ -95,10 +94,10 @@ if __name__ == "__main__":
         a0_array = np.append(a0_array, a0)
         
         lasers = [] #Defines all lasers
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
-        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(45.0), psi, pond_integrate_steps))
-        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(135.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(180.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(0.0), phi, np.radians(0.0), psi, pond_integrate_steps))
+        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(180.0), phi, np.radians(45.0), psi, pond_integrate_steps))
+        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(180.0), phi, np.radians(135.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, np.radians(0.0), phi, np.radians(180.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -120,9 +119,10 @@ if __name__ == "__main__":
         #Uncomment to calculate the trajectory using an analytic solution
         #It will only use the first laser from the lasers array
         #programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
-        #plotting.plot_trajectory_comparison(sim_parameters, lasers, x_axis)
-        #plotting.plot_trajectory_comparison(sim_parameters, lasers, y_axis)
-        #plotting.plot_trajectory_comparison(sim_parameters, lasers, z_axis)
+        #plotting.plot_trajectory_comparison("electromagnetic", sim_parameters, lasers, x_axis)
+        #plotting.plot_trajectory_comparison("electromagnetic", sim_parameters, lasers, y_axis)
+        #plotting.plot_trajectory_comparison("electromagnetic", sim_parameters, lasers, z_axis)
+        #exit()
         
         #Uncomment to check the propagation vector, epsilon1, and epsilon2 for all lasers
         #programs.check_laser_polarization("electromagnetic", sim_parameters, lasers)

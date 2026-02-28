@@ -13,6 +13,8 @@ INPUT_DIR = PROJECT_ROOT / "input"
 OUTPUT_DIR = PROJECT_ROOT / "output"
 OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
+# ----------------------------------------------------------------------- #
+
 def run_simulation(method, sim_parameters, lasers):
     if method == "electromagnetic":
         mode = 0
@@ -20,13 +22,10 @@ def run_simulation(method, sim_parameters, lasers):
         mode = 1
     elif method == "electromagnetic-rk4":
         mode = 2
-    
+
+    sim_parameters.mode = mode    
     program_path = f"{BIN_DIR}/laser_electron"
     filename_out = sim_parameters.filename_out
-    
-    sim_parameters.filename_parameters = f"{INPUT_DIR}/input.txt"
-    sim_parameters.filename_lasers = f"{INPUT_DIR}/lasers.txt"
-    sim_parameters.mode = mode
     
     common.output_all_parameters(sim_parameters, lasers)
     
@@ -140,26 +139,36 @@ def find_max_p(method, sim_parameters, axis):
 # ----------------------------------------------------------------------- #
 
 def find_final_p(method, sim_parameters, axis_pos, axis_p):
+    read_num = 8
+    filename = sim_parameters.filename_out
+    
     if(method == "electromagnetic"):
         mode = "electromag"
-    else:
+    elif(method == "ponderomotive"):
         mode = "pond"
+    else:
+        mode = "analytic"
+        filename = f"{OUTPUT_DIR}/out-data-analytic.bin"
+        read_num = 4
     
     if(sim_parameters.check_convergence):
         mode = mode + "-conv"
-        
-    axis_text_p = common.get_axis_text(axis_p)
+    
+    if(axis_p < 0):
+        axis_text_p = common.get_axis_text(axis_p + 4)
+    else:
+        axis_text_p = common.get_axis_text(axis_p)
+    
     lowercase_text_p = axis_text_p.lower()
     filename_out = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-{mode}.bin"
     filename_out_all = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-{mode}.bin"
     
-    filename = sim_parameters.filename_out
     program_path = f"{BIN_DIR}/find_final_p"
     
     num = sim_parameters.num
     steps_final = sim_parameters.steps // sim_parameters.substeps
     
-    arguments = [program_path, filename, num, steps_final, axis_pos, axis_p, filename_out, filename_out_all]
+    arguments = [program_path, filename, num, steps_final, axis_pos, axis_p, read_num, filename_out, filename_out_all]
     arguments = [str(x) for x in arguments]
     
     try:
@@ -206,6 +215,7 @@ def check_analytic_solution(method, sim_parameters, lasers):
     sim_parameters.num = 1
     sim_parameters.substeps = 1
     sim_parameters.thread_num = 1
+    sim_parameters.mode = mode
     lasers = [lasers[0]]
     
     run_simulation(method, sim_parameters, lasers)
@@ -213,8 +223,6 @@ def check_analytic_solution(method, sim_parameters, lasers):
     program_path = f"{BIN_DIR}/analytic_solution"
     filename_out = f"{OUTPUT_DIR}/out-data-analytic.bin"
     filename_out_displacement = f"{OUTPUT_DIR}/out-displacement.bin"
-    sim_parameters.filename_parameters = f"{INPUT_DIR}/input.txt"
-    sim_parameters.filename_lasers = f"{INPUT_DIR}/lasers.txt"
     
     common.output_all_parameters(sim_parameters, lasers)
     
@@ -226,6 +234,49 @@ def check_analytic_solution(method, sim_parameters, lasers):
         print(f"Critical error: {e.returncode}")
         sys.exit(1)
     
+# ----------------------------------------------------------------------- #
+
+def spherical_coordinates(r, phi, theta):
+    x = r * np.cos(theta) * np.sin(phi)
+    y = r * np.sin(theta) * np.sin(phi)
+    z = r * np.cos(phi)
+    pos = np.array([x, y, z])
+    return pos
+
+# ----------------------------------------------------------------------- #
+
+def calculate_displacement_error(sim_parameters, pos_i, phi, theta):
+    i = sim_parameters.i
+    
+    filename_displacement_analytic = f"{OUTPUT_DIR}/out-displacement.bin"
+    filename_final_pos_numeric_x = f"{OUTPUT_DIR}/out-final-px-electromag.bin"
+    filename_final_pos_numeric_y = f"{OUTPUT_DIR}/out-final-py-electromag.bin"
+    filename_final_pos_numeric_z = f"{OUTPUT_DIR}/out-final-pz-electromag.bin"
+    
+    data_analytic = np.fromfile(filename_displacement_analytic, dtype=np.float64).reshape(-1, 1)
+    data_x = np.fromfile(filename_final_pos_numeric_x, dtype=np.float64).reshape(1, 2)
+    data_y = np.fromfile(filename_final_pos_numeric_y, dtype=np.float64).reshape(1, 2)
+    data_z = np.fromfile(filename_final_pos_numeric_z, dtype=np.float64).reshape(1, 2)
+    
+    x = data_x[0, 1]
+    y = data_y[0, 1]
+    z = data_z[0, 1]
+    pos_f_numeric = np.array([x, y, z])
+    
+    displacement = data_analytic[i, 0]
+    pos_f_analytic = pos_i + spherical_coordinates(displacement, phi, theta)
+    
+    #print(pos_f_numeric)
+    #print(pos_f_analytic)
+    #print(np.linalg.norm(pos_f_analytic - pos_f_numeric))
+
+# ----------------------------------------------------------------------- #
+
+def calculate_errors_analytic(method, sim_parameters, axis):
+    axis_text = common.get_axis_text(axis)
+    lowercase_text = axis_text.lower()
+    
+
 # ----------------------------------------------------------------------- #
 
 def check_laser_polarization(method, sim_parameters, lasers):

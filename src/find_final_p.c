@@ -24,25 +24,25 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
-	if(argc != 8) {
+	if(argc != 9) {
 		printf("This is a program which calculates the final momentum of particles interacting with lasers.\n"); 
-		printf("Usage: %s <filename_input> <num> <steps> <axis_pos> <axis_p> <filename_output> <filename_output_all>\n", argv[0]);
+		printf("Usage: %s <filename_input> <num> <steps> <axis_pos> <axis_p> <read_num> <filename_output> <filename_output_all>\n", argv[0]);
 		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
 		return 1;
 	}
 	FILE *in = fopen(argv[1], "rb");
-	FILE *out_final_p = fopen(argv[6], "wb"), *out_final_p_all = fopen(argv[7], "ab");
+	FILE *out_final_p = fopen(argv[7], "wb"), *out_final_p_all = fopen(argv[8], "ab");
 	if(!in || !out_final_p || !out_final_p_all) {
 		perror("Cannot open file.");
 		return 1;
 	}
 	
-	int num = atoi(argv[2]), steps = atoi(argv[3]), axis_pos = atoi(argv[4]), axis_p = atoi(argv[5]);
+	int num = atoi(argv[2]), steps = atoi(argv[3]), axis_pos = atoi(argv[4]), axis_p = atoi(argv[5]), read_num = atoi(argv[6]);
 	double t[8];
 	
 	for(int i = 0; i < num; i++) {
 		for(int j = 0; j < steps; j++) {
-			int x = fread(t, sizeof(double), 8, in);
+			int x = fread(t, sizeof(double), read_num, in);
 			if(j == 0) {
 				double pos = t[axis_pos + 1];
 				fwrite(&pos, sizeof(double), 1, out_final_p);

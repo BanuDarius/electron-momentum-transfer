@@ -51,7 +51,7 @@ void simulate_analytic(FILE *out, struct particle *p, struct parameters *param, 
 	
 	while(u_c[0] / c < param->tf) {
 		phi_rel = phi_0 + i * dphi;
-		phi_abs = i * dphi;
+		phi_abs = (i + 1) * dphi;
 		d += q * q / (2.0 * m * m * c * l->omega) * integrate_phi(phi_rel, phi_rel + dphi, l);
 		u_c[0] = c * (phi_abs / l->omega + d / c);
 		
