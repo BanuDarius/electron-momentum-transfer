@@ -65,7 +65,7 @@ void simulate_analytic(FILE *out, struct particle *p, struct parameters *param, 
 }
 
 int main(int argc, char **argv) {
-	if(argc != 4) {
+	if(argc != 5) {
 		printf("This is a program which simulates the trajectories of an electron interacting with a single laser, using an analytic solution.\n"); 
 		printf("Usage: %s <filename_input> <filename_lasers> <filename_output>\n", argv[0]);
 		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");

@@ -10,6 +10,7 @@ class SimParameters:
     def __init__(self, i, r_min, r_max, num, tf, steps, divider, substeps, thread_num, output_mode, rotate_angle, sweep_steps, full_trajectory, wavelength, c_value):
         self.i = i
         self.tf = tf
+        self.mode = 0
         self.num = num
         self.steps = steps
         self.r_min = r_min
@@ -26,6 +27,8 @@ class SimParameters:
         self.filename_out = filename_out
         self.rotate_angle = rotate_angle
         self.full_trajectory = full_trajectory
+        self.filename_parameters = ""
+        self.filename_lasers = ""
 
 # ------------------------------------------------------- #
 

@@ -373,7 +373,7 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
     
     plt.xlim(r_min / wavelength - abs(r_min / wavelength), r_max / wavelength + abs(r_max / wavelength))
     
-    plt.savefig(filename_out, bbox_inches='tight')
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
     
     print(f"Created phase plot.")
@@ -437,7 +437,7 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     ax.set_xlabel(r"$t$")
     ax.set_ylabel(rf"$p_{lowercase_text_p}$ [a.u.]")
     
-    plt.savefig(filename_out, bbox_inches='tight')
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
     
     print(f"Created time-momentum plot.")
@@ -490,4 +490,48 @@ def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
 
     print(f"Created enter exit time plot.")
     
+# ----------------------------------------------------------------------- #
+
+def plot_trajectory_comparison(method, sim_parameters, lasers, axis_pos):
+    if(method == "electromagnetic"):
+        mode = "electromag"
+    else:
+        mode = "pond"
+    axis_text_pos = common.get_axis_text(axis_pos)
+    lowercase_text_pos = axis_text_pos.lower()
+    
+    i = sim_parameters.i
+    num = sim_parameters.num
+    r_min = sim_parameters.r_min
+    r_max = sim_parameters.r_min
+    c_value = sim_parameters.c_value
+    wavelength = sim_parameters.wavelength
+    steps = sim_parameters.steps // sim_parameters.substeps
+    
+    filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-comparison-{mode}-{lowercase_text_pos}.png"
+    filename = sim_parameters.filename_out
+    filename_analytic = f"{OUTPUT_DIR}/out-data-analytic.bin"
+    
+    data = np.fromfile(filename, dtype=np.float64).reshape(steps, 8)
+    data_analytic = np.fromfile(filename_analytic, dtype=np.float64).reshape(-1, 4)
+    
+    x_a = data_analytic[:, 0] / c_value
+    y_a = data_analytic[:, axis_pos + 1]
+    x = data[:, 0] / c_value
+    y = data[:, axis_pos + 1]
+    
+    plt.figure(figsize=(10,10))
+    plt.plot(x_a, y_a, c='black', linestyle='-', linewidth=1, label='Analytic solution')
+    plt.plot(x, y, c='red', linestyle='-', linewidth=1, label='Numeric solution')
+    
+    plt.title(f"Trajectory comparison on {axis_text_pos} axis")
+    plt.xlabel(f"t [a.u.]")
+    plt.ylabel(f"{axis_text_pos} [a.u.]")
+    plt.legend()
+    
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Created trajectory comparison plot.")
+
 # ----------------------------------------------------------------------- #

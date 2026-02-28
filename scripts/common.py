@@ -21,3 +21,41 @@ def modulo_steps(s, substep):
     return s
 
 # ----------------------------------------------------------------------- #
+
+def output_all_parameters(sim_parameters, lasers):
+    filename_parameters = sim_parameters.filename_parameters
+    filename_lasers = sim_parameters.filename_lasers
+    
+    mode = sim_parameters.mode
+    output_mode = int(sim_parameters.output_mode == True)
+    check_polarization = int(sim_parameters.check_polarization == True)
+    
+    with open(filename_parameters, "w") as file:
+        file.write(f"r_min {sim_parameters.r_min}\n")
+        file.write(f"r_max {sim_parameters.r_max}\n")
+        file.write(f"num {sim_parameters.num}\n")
+        file.write(f"tf {sim_parameters.tf}\n")
+        file.write(f"steps {sim_parameters.steps}\n")
+        file.write(f"substeps {sim_parameters.substeps}\n")
+        file.write(f"thread_num {sim_parameters.thread_num}\n")
+        file.write(f"output_mode {output_mode}\n")
+        file.write(f"mode {mode}\n")
+        file.write(f"check_polarization {check_polarization}\n")
+        file.write(f"rotate_angle {sim_parameters.rotate_angle}\n")
+        file.write(f"num_lasers {len(lasers)}\n")
+    
+    with open(filename_lasers, "w") as file:
+        for i in range(len(lasers)):
+            file.write(f"a0 {lasers[i].a0}\n")
+            file.write(f"sigma {lasers[i].sigma}\n")
+            file.write(f"omega {lasers[i].omega}\n")
+            file.write(f"xif {lasers[i].xif}\n")
+            file.write(f"zetax {lasers[i].zetax}\n")
+            file.write(f"zetay {lasers[i].zetay}\n")
+            file.write(f"phi {lasers[i].phi}\n")
+            file.write(f"theta {lasers[i].theta}\n")
+            file.write(f"psi {lasers[i].psi}\n")
+            file.write(f"alpha {lasers[i].alpha}\n")
+            file.write(f"pond_integrate_steps {lasers[i].pond_integrate_steps}\n")
+
+# ----------------------------------------------------------------------- #

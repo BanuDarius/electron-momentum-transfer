@@ -34,11 +34,11 @@ max_a0 = 1.00 #Minimum and maximum of a0 for lasers
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
 min_tf = 10000.0
-max_tf = 13000.0 #Final time for electromagnetic mode 
+max_tf = 14000.0 #Final time for electromagnetic mode 
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
-num_part = 256 #Number of particless
-sweep_steps = 256 #Number of parameter sweeps
+num_part = 128 #Number of particless
+sweep_steps = 128 #Number of parameter sweeps
 num_full = 16000 #Number of particles for 2D colormaps
 
 omega = 0.057
@@ -55,8 +55,8 @@ theta = np.radians(0.0) #Angles for the lasers
 alpha = np.radians(0.0) #Angle for rotating the laser polarization vectors
 rotate_angle = np.radians(0.0) #Angle for rotating the initial particles
 
-min_steps_pond = 1
-max_steps_pond = 1
+min_steps_pond = 128
+max_steps_pond = 256
 min_steps_electromag = 4000
 max_steps_electromag = 16000 #Minimum and maximum simulation steps
 substeps_pond = 1
@@ -113,9 +113,13 @@ if __name__ == "__main__":
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
             substeps_electromag, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c) 
         
-        #Uncomment to calculate the trajectory using an analytic solution.
-        #It will only use the first laser from the lasers array.
+        #Uncomment to calculate the trajectory using an analytic solution
+        #It will only use the first laser from the lasers array
         #programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
+        #plotting.plot_trajectory_comparison("electromagnetic", sim_parameters, lasers, x_axis)
+        #plotting.plot_trajectory_comparison("electromagnetic", sim_parameters, lasers, y_axis)
+        #plotting.plot_trajectory_comparison("electromagnetic", sim_parameters, lasers, z_axis)
+        #exit()
         
         #Uncomment to check the propagation vector, epsilon1, and epsilon2 for all lasers
         #programs.check_laser_polarization("electromagnetic", sim_parameters, lasers)
