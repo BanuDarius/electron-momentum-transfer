@@ -66,9 +66,9 @@ void potential_a_phi(double *a, double phi, const struct laser *restrict l, int 
 	double potentialA0 = l[n].a0 * m * c / fabs(q);
 	double epsilon4[3], k_vec[3], A0mult;
 	
-	memcpy(&k_vec, l[n].n, 3 * sizeof(double));
+	memcpy(k_vec, l[n].n, 3 * sizeof(double));
 	mult_vec(k_vec, k_vec, l[n].omega / c);
-	phi += l->psi;
+	phi += l[n].psi;
 	
 	A0mult = env(phi, l[n].xif, l[n].sigma) * potentialA0;
 	for(int i = 0; i < 3; i++)

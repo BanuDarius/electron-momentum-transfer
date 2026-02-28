@@ -522,7 +522,7 @@ def plot_trajectory_comparison(method, sim_parameters, lasers, axis_pos):
     
     plt.figure(figsize=(10,10))
     plt.plot(x_a, y_a, c='black', linestyle='-', linewidth=1, label='Analytic solution')
-    plt.plot(x, y, c='red', linestyle='-', linewidth=1, label='Numeric solution')
+    plt.plot(x, y, c='red', linestyle='--', linewidth=1, label='Numeric solution')
     
     plt.title(f"Trajectory comparison on {axis_text_pos} axis")
     plt.xlabel(f"t [a.u.]")
