@@ -33,7 +33,7 @@
 
 double displacement(struct parameters *param, struct laser *l) {
 	double A0 = l->a0 * m * c / fabs(q);
-	double delta_x = q * q * A0 * A0 / (4.0 * m * m * c) * sqrt(M_PI / 2.0) * l->sigma / l->omega;
+	double delta_x = (q * q * A0 * A0) / (4.0 * m * m * c * l->omega) * (2.0 * l->xif + l->sigma * sqrt(M_PI / 2.0));
 	return delta_x;
 }
 

@@ -574,3 +574,26 @@ def plot_final_position_comparison(a0_array, sim_parameters, axis_pos):
     print(f"Created trajectory comparison plot.")
 
 # ----------------------------------------------------------------------- #
+
+def plot_analytic_errors(a0_array, sim_parameters):
+    sweep_steps = sim_parameters.sweep_steps
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-analytic-errors.png"
+    filename = f"{OUTPUT_DIR}/analytic_error.bin"
+    
+    data = np.fromfile(filename, dtype=np.float64).reshape(sweep_steps, 1)
+    
+    y = data[:, 0]
+    
+    plt.figure(figsize=(10,10))
+    plt.plot(a0_array, y, c='black', linestyle='-', linewidth=1)
+    
+    plt.title(f"Errors between analytic and numeric solutions")
+    plt.xlabel(rf"$a_0$ [a.u.]")
+    plt.ylabel(f"Displacement error [%]")
+    
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Created analytic test error plot.")
+
+# ----------------------------------------------------------------------- #

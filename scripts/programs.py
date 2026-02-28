@@ -266,16 +266,27 @@ def calculate_displacement_error(sim_parameters, pos_i, phi, theta):
     displacement = data_analytic[i, 0]
     pos_f_analytic = pos_i + spherical_coordinates(displacement, phi, theta)
     
-    #print(pos_f_numeric)
-    #print(pos_f_analytic)
-    #print(np.linalg.norm(pos_f_analytic - pos_f_numeric))
+    analytic_error = np.linalg.norm(pos_f_analytic - pos_f_numeric) / np.linalg.norm(pos_f_analytic) * 100.0
+    
+    filename_error = f"{OUTPUT_DIR}/analytic_error.bin"
+    with open(filename_error, "ab") as file:
+        analytic_error.tofile(file)
 
 # ----------------------------------------------------------------------- #
 
-def calculate_errors_analytic(method, sim_parameters, axis):
-    axis_text = common.get_axis_text(axis)
-    lowercase_text = axis_text.lower()
+def check_passed_comparison_test(sim_parameters):
+    i = sim_parameters.i
     
+    filename = f"{OUTPUT_DIR}/analytic_error.bin"
+    data = np.fromfile(filename, dtype=np.float64).reshape(-1, 1)
+    final_error = data[i, 0]
+    
+    if(final_error < 1.0):
+        print(f"PASSED!")
+    else:
+        print(f"FAILED!")
+    
+    print(f"Last relative error between analytic and numeric methods: {final_error:0.3f}%.")
 
 # ----------------------------------------------------------------------- #
 

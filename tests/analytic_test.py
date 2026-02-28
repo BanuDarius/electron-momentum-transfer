@@ -29,19 +29,19 @@ trajectory_until_exit = False
 
 thread_num = 1
 min_a0 = 0.02
-max_a0 = 5.00
-zetax = 0.0
-zetay = 1.0
-tf = 20000.0
+max_a0 = 1.00
+zetax = 1.0
+zetay = 0.0
+tf = 10000.0
 num_part = 1
 sweep_steps = 128
 omega = 0.057
-xif = 8.0 * np.pi
+xif = 2.0 * np.pi
 sigma = 19.0 * np.pi
 psi = -4.0 * sigma
 wavelength = 2.0 * np.pi * c / omega
 r = 1.00 * wavelength
-phi = np.radians(60.0)
+phi = np.radians(90.0)
 theta = np.radians(0.0)
 alpha = np.radians(0.0)
 rotate_angle = np.radians(0.0)
@@ -74,17 +74,13 @@ def run_complete_test():
         programs.find_final_p("analytic", sim_parameters, x_axis, y_pos_axis)
         programs.find_final_p("analytic", sim_parameters, x_axis, z_pos_axis)
         
-        #pos_i = programs.spherical_coordinates(r, np.radians(90.0), rotate_angle)
-        #programs.calculate_displacement_error(sim_parameters, pos_i, phi, theta)
+        pos_i = programs.spherical_coordinates(r, np.radians(90.0), rotate_angle)
+        programs.calculate_displacement_error(sim_parameters, pos_i, phi, theta)
         
         if(i % 8 == 0):
             plotting.plot_trajectory_comparison(sim_parameters, lasers, x_axis)
             plotting.plot_trajectory_comparison(sim_parameters, lasers, y_axis)
             plotting.plot_trajectory_comparison(sim_parameters, lasers, z_axis)
-        
-        #programs.calculate_errors_analytic("electromagnetic", sim_parameters, x_axis)
-        #programs.calculate_errors_analytic("electromagnetic", sim_parameters, y_axis)
-        #programs.calculate_errors_analytic("electromagnetic", sim_parameters, z_axis)
         
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
         
@@ -93,6 +89,8 @@ def run_complete_test():
     plotting.plot_final_position_comparison(a0_array, sim_parameters, x_axis)
     plotting.plot_final_position_comparison(a0_array, sim_parameters, y_axis)
     plotting.plot_final_position_comparison(a0_array, sim_parameters, z_axis)
+    plotting.plot_analytic_errors(a0_array, sim_parameters)
     
+    programs.check_passed_comparison_test(sim_parameters)
     print(f"Completed analytical comparison test.")
     exit()
