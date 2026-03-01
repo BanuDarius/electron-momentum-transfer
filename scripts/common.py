@@ -43,6 +43,9 @@ def output_all_parameters(sim_parameters, lasers):
         file.write(f"check_polarization {check_polarization}\n")
         file.write(f"rotate_angle {sim_parameters.rotate_angle}\n")
         file.write(f"num_lasers {len(lasers)}\n")
+        file.write(f"v0_mag {sim_parameters.v0_mag}")
+        file.write(f"phi_v0 {sim_parameters.phi_v0}")
+        file.write(f"theta_v0 {sim_parameters.theta_v0}")
     
     with open(filename_lasers, "w") as file:
         for i in range(len(lasers)):

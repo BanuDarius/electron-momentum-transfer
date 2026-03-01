@@ -108,13 +108,15 @@ int main(int argc, char **argv) {
 		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
 		return 1;
 	}
+	
 	FILE *out = fopen(argv[3], "wb");
 	if(!out) { perror("Cannot open output file."); return 1; }
 	
-	double vi[3];
-	set_initial_vel(vi, 0.0, 0.0, 0.0);
 	struct parameters *param = malloc(sizeof(struct parameters));
 	set_parameters(param, argv[1]);
+	
+	double vi[3];
+	set_initial_vel(vi, param->v0_mag, param->theta_v0, param->phi_v0);
 	
 	struct laser *l = malloc(param->num_lasers * sizeof(struct laser));
 	struct particle *p = aligned_alloc(64, param->num * sizeof(struct particle));

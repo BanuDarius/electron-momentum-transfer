@@ -48,6 +48,9 @@ rotate_angle = np.radians(0.0)
 steps_electromag = 100000
 substeps_electromag = 1
 pond_integrate_steps = 4
+v0_mag = 0.0 * c
+phi_v0 = np.radians(0.0)
+theta_v0 = np.radians(0.0)
 
 # ------------------------------------------------------- #
 
@@ -62,7 +65,7 @@ def run_complete_test():
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps))
         
         sim_parameters = sim_init.SimParameters(i, r, r, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c) 
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c) 
             
         programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
         

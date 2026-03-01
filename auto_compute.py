@@ -64,6 +64,10 @@ substeps_pond = 1
 substeps_electromag = 16 #Substeps for data output
 pond_integrate_steps = 4 #Steps used for the integrals in ponderomotive mode
 
+v0_mag = 0.0 * c #Magnitude of initial velocity vector
+phi_v0 = np.radians(0.0)
+theta_v0 = np.radians(0.0) #Angles for the initial velocity vector
+
 square_size = 1.0 #Size of squares in 2D colormaps
 
 # ------------------------------------------------------- #
@@ -82,7 +86,8 @@ if __name__ == "__main__":
     #Uncomment this line to reproduce any of them
     #examples.run_example(1, thread_num)
     
-    #Uncomment this line to run a quick parameter sweep test, comparing the Higuera-Cary integrator with an analytical solution for one laser
+    #Uncomment this line to run a quick parameter sweep test for a0 = 0.02 to 10.00,
+    #Comparing the Higuera-Cary integrator with an analytical solution for one laser
     #analytic_test.run_complete_test()
     
     for i in range(0, sweep_steps):
@@ -115,7 +120,7 @@ if __name__ == "__main__":
         
         #Properties for the electromagneteic mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c) 
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c) 
         
         #Uncomment to calculate the trajectory using an analytic solution
         #It will only use the first laser from the lasers array
@@ -149,7 +154,7 @@ if __name__ == "__main__":
         
         #Properties for the ponderomotive mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         

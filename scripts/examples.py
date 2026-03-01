@@ -55,6 +55,9 @@ def run_example(example_num, thread_num):
         substeps_pond = 1
         substeps_electromag = 16
         pond_integrate_steps = 4
+        v0_mag = 0.0 * c
+        phi_v0 = np.radians(0.0)
+        theta_v0 = np.radians(0.0)
     elif(example_num == 2):
         min_a0 = 0.02
         max_a0 = 0.50
@@ -82,6 +85,9 @@ def run_example(example_num, thread_num):
         substeps_pond = 1
         substeps_electromag = 16
         pond_integrate_steps = 4
+        v0_mag = 0.0 * c
+        phi_v0 = np.radians(0.0)
+        theta_v0 = np.radians(0.0)
     elif(example_num == 3):
         min_a0 = 0.02
         max_a0 = 0.50
@@ -109,6 +115,9 @@ def run_example(example_num, thread_num):
         substeps_pond = 1
         substeps_electromag = 16
         pond_integrate_steps = 4
+        v0_mag = 0.0 * c
+        phi_v0 = np.radians(0.0)
+        theta_v0 = np.radians(0.0)
     else:
         print("Error: Example number not found.")
         sys.exit(1)
@@ -139,7 +148,7 @@ def run_example(example_num, thread_num):
         # ------------------------------------------------------- #
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -155,7 +164,7 @@ def run_example(example_num, thread_num):
         # ------------------------------------------------------- #
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         

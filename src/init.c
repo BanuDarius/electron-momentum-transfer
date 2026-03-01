@@ -167,49 +167,47 @@ void set_parameters(struct parameters *param, char *input) {
 		if(!strcmp(current, "num")) {
 			i = fscanf(in, "%i", &param->num);
 			count++;
-		}
-		else if(!strcmp(current, "num_lasers")) {
+		} else if(!strcmp(current, "num_lasers")) {
 			i = fscanf(in, "%i", &param->num_lasers);
 			count++;
-		}
-		else if(!strcmp(current, "steps")) {
+		} else if(!strcmp(current, "steps")) {
 			i = fscanf(in, "%i", &param->steps);
 			count++;
-		}
-		else if(!strcmp(current, "substeps")) {
+		} else if(!strcmp(current, "substeps")) {
 			i = fscanf(in, "%i", &param->substeps);
 			count++;
-		}
-		else if(!strcmp(current, "mode")) {
+		} else if(!strcmp(current, "mode")) {
 			i = fscanf(in, "%i", &param->mode);
 			count++;
-		}
-		else if(!strcmp(current, "tf")) {
+		} else if(!strcmp(current, "tf")) {
 			i = fscanf(in, "%lf", &param->tf);
 			count++;
-		}
-		else if(!strcmp(current, "output_mode")) {
+		} else if(!strcmp(current, "output_mode")) {
 			i = fscanf(in, "%i", &param->output_mode);
 			count++;
-		}
-		else if(!strcmp(current, "thread_num")) {
+		} else if(!strcmp(current, "thread_num")) {
 			i = fscanf(in, "%i", &param->thread_num);
 			count++;
-		}
-		else if(!strcmp(current, "r_min")) {
+		} else if(!strcmp(current, "r_min")) {
 			i = fscanf(in, "%lf", &param->r_min);
 			count++;
-		}
-		else if(!strcmp(current, "r_max")) {
+		} else if(!strcmp(current, "r_max")) {
 			i = fscanf(in, "%lf", &param->r_max);
 			count++;
-		}
-		else if(!strcmp(current, "rotate_angle")) {
+		} else if(!strcmp(current, "rotate_angle")) {
 			i = fscanf(in, "%lf", &param->rotate_angle);
 			count++;
-		}
-		else if(!strcmp(current, "check_polarization")) {
+		} else if(!strcmp(current, "check_polarization")) {
 			i = fscanf(in, "%i", &param->check_polarization);
+			count++;
+		} else if(!strcmp(current, "v0_mag")) {
+			i = fscanf(in, "%lf", &param->v0_mag);
+			count++;
+		} else if(!strcmp(current, "phi_v0")) {
+			i = fscanf(in, "%lf", &param->phi_v0);
+			count++;
+		} else if(!strcmp(current, "theta_v0")) {
+			i = fscanf(in, "%lf", &param->theta_v0);
 			count++;
 		}
 	}

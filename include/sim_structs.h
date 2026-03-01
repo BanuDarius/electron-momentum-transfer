@@ -5,7 +5,7 @@
 #include <stdalign.h>
 
 #define LASER_PARAMS 11 //This defines how many parameters will be read from a file for one laser
-#define PARAMS 12 //This defines how many parameters will be read from a file for the general simulation
+#define PARAMS 15 //This defines how many parameters will be read from a file for the general simulation
 #define U_SIZE 8 //Number of elements of the particle struct
 #define CHUNK_SIZE 100 //Number of particles in an output chunk
 
@@ -20,7 +20,7 @@ struct laser {
 };
 
 struct parameters {
-	double rotate_angle, r_min, r_max, tf, dt, h, z;
+	double rotate_angle, theta_v0, phi_v0, v0_mag, r_min, r_max, tf, dt, h, z;
 	int num, num_lasers, steps, substeps, mode, output_mode, check_polarization, thread_num;
 };
 

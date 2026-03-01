@@ -27,7 +27,7 @@ final_states = True
 full_trajectory = True
 trajectory_until_exit = False
 
-def run_quick_example(core_num):
+def run_quick_example(thread_num):
     min_a0 = 0.02
     max_a0 = 1.00
     zetax = 0.0
@@ -40,7 +40,7 @@ def run_quick_example(core_num):
     omega = 0.057
     xif = 0.0 * np.pi
     sigma = 19.0 * np.pi
-    psi = -3.0 * sigma
+    psi = -4.0 * sigma
     wavelength = 2.0 * np.pi * c / omega
     r_min = -1.00 * wavelength
     r_max = +1.00 * wavelength
@@ -54,6 +54,10 @@ def run_quick_example(core_num):
     substeps_pond = 1
     substeps_electromag = 16
     pond_integrate_steps = 4
+    v0_mag = 0.0 * c
+    phi_v0 = np.radians(0.0)
+    theta_v0 = np.radians(0.0)
+    
     start_time = time.time()
     a0_array = np.array([])
     programs.clean_output_folder()
@@ -74,7 +78,7 @@ def run_quick_example(core_num):
         # ------------------------------------------------------- #
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -90,7 +94,7 @@ def run_quick_example(core_num):
         # ------------------------------------------------------- #
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, core_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         

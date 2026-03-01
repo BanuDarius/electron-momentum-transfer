@@ -8,7 +8,7 @@ filename_out = f"{OUTPUT_DIR}/out-data.bin"
 # ----------------------------------------------------------------------- #
 
 class SimParameters:
-    def __init__(self, i, r_min, r_max, num, tf, steps, divider, substeps, thread_num, output_mode, rotate_angle, sweep_steps, full_trajectory, wavelength, c_value):
+    def __init__(self, i, r_min, r_max, num, tf, steps, divider, substeps, v0_mag, phi_v0, theta_v0, thread_num, output_mode, rotate_angle, sweep_steps, full_trajectory, wavelength, c_value):
         self.i = i
         self.tf = tf
         self.mode = 0
@@ -16,8 +16,11 @@ class SimParameters:
         self.steps = steps
         self.r_min = r_min
         self.r_max = r_max
+        self.v0_mag = v0_mag
+        self.phi_v0 = phi_v0
         self.divider = divider
         self.c_value = c_value
+        self.theta_v0 = theta_v0
         self.substeps = substeps
         self.thread_num = thread_num
         self.wavelength = wavelength
