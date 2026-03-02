@@ -65,7 +65,7 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
     plt.close()
     
     print(f"Created 2D heatmap of full {method} parameter sweep.")
-
+    
 # ----------------------------------------------------------------------- #
 
 def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
@@ -112,7 +112,7 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     plt.close()
     
     print(f"Created 2D error heatmap.")
-
+    
 # ----------------------------------------------------------------------- #
 
 def plot_2d_convergence_heatmap(method, sim_parameters, a0_array, axis_pos, axis_p):
@@ -164,7 +164,7 @@ def plot_2d_convergence_heatmap(method, sim_parameters, a0_array, axis_pos, axis
     plt.close()
     
     print(f"Created 2D convergence heatmap for {method} mode.")
-
+    
 # ----------------------------------------------------------------------- #
 
 def plot_max_p(method, a0_array, axis):
@@ -311,7 +311,7 @@ def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, ax
     plt.close()
         
     print(f"Created colormap.")
-
+    
 # ----------------------------------------------------------------------- #
 
 def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
@@ -441,7 +441,7 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     plt.close()
     
     print(f"Created time-momentum plot.")
-
+    
 # ----------------------------------------------------------------------- #
 
 def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
@@ -516,10 +516,6 @@ def plot_trajectory_comparison(sim_parameters, lasers, axis_pos):
     x = data[:, 0] / c_value
     y = data[:, axis_pos + 1]
     
-    #initial_position = y_a[0]
-    #error = np.average(np.abs(y_a - y - initial_position) / np.max(y_a - initial_position))
-    #print(error)
-    
     plt.figure(figsize=(10,10))
     plt.plot(x_a, y_a, c='black', linestyle='-', linewidth=1, label='Analytic solution')
     plt.plot(x, y, c='red', linestyle='--', linewidth=1, label='Numeric solution')
@@ -533,7 +529,7 @@ def plot_trajectory_comparison(sim_parameters, lasers, axis_pos):
     plt.close()
     
     print(f"Created trajectory comparison plot.")
-
+    
 # ----------------------------------------------------------------------- #
 
 def plot_final_position_comparison(a0_array, sim_parameters, axis_pos):
@@ -572,7 +568,7 @@ def plot_final_position_comparison(a0_array, sim_parameters, axis_pos):
     plt.close()
     
     print(f"Created trajectory comparison plot.")
-
+    
 # ----------------------------------------------------------------------- #
 
 def plot_analytic_errors(a0_array, sim_parameters):
@@ -595,5 +591,30 @@ def plot_analytic_errors(a0_array, sim_parameters):
     plt.close()
     
     print(f"Created analytic test error plot.")
+    
+# ----------------------------------------------------------------------- #
 
+def plot_performance():
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-performance.png"
+    filename = f"{OUTPUT_DIR}/performance.bin"
+    
+    data = np.fromfile(filename, dtype=np.float64).reshape(-1, 2)
+    
+    x = data[:, 0]
+    y = data[:, 1]
+    y_final = y[0] / y * 100.0
+    
+    plt.figure(figsize=(10,10))
+    plt.plot(x, y_final, c='black', linestyle='-', marker='s', linewidth=1)
+    
+    plt.title(f"Performance graph")
+    plt.xlabel(f"Number of threads")
+    plt.ylabel(rf"Relative speedup [%]")
+    plt.xticks(x, x.astype(int))
+    
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
+    plt.close()
+    
+    print(f"Created performance plot.")
+    
 # ----------------------------------------------------------------------- #

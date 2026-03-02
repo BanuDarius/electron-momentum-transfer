@@ -91,6 +91,9 @@ if __name__ == "__main__":
     #Comparing the Higuera-Cary integrator with an analytical solution for one laser
     #analytic_test.run_complete_test()
     
+    #Uncomment to create a relative performance speedrup analysis for a pre-defined scenario
+    #performance_test.run_example_performance_test(thread_num)
+    
     for i in range(0, sweep_steps):
         tf = common.interpolate(min_tf, max_tf, i, sweep_steps)
         a0 = common.interpolate(min_a0, max_a0, i, sweep_steps)
@@ -102,8 +105,7 @@ if __name__ == "__main__":
         
         lasers = [] #Defines all lasers
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
-        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(45.0), psi, pond_integrate_steps))
-        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(135.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps))
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(180.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
@@ -121,7 +123,7 @@ if __name__ == "__main__":
         
         #Properties for the electromagneteic mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c) 
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         #Uncomment to calculate the trajectory using an analytic solution
         #It will only use the first laser from the lasers array
@@ -130,6 +132,7 @@ if __name__ == "__main__":
         #plotting.plot_trajectory_comparison(sim_parameters, lasers, y_axis)
         #plotting.plot_trajectory_comparison(sim_parameters, lasers, z_axis)
         
+        #Uncomment to run a performance test on this scenario
         #performance_test.run_performance_test("electromagnetic", sim_parameters, lasers, thread_num)
         
         #Uncomment to check the propagation vector, epsilon1, and epsilon2 for all lasers
