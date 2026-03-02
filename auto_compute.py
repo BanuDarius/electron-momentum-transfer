@@ -31,7 +31,7 @@ trajectory_until_exit = False
 thread_num = 4 #Number of threads
 
 min_a0 = 0.02
-max_a0 = 1.00 #Minimum and maximum of a0 for lasers
+max_a0 = 0.50 #Minimum and maximum of a0 for lasers
 
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
@@ -39,8 +39,8 @@ min_tf = 10000.0
 max_tf = 14000.0 #Final time for electromagnetic mode 
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
-num_part = 128 #Number of particless
-sweep_steps = 128 #Number of parameter sweeps
+num_part = 256 #Number of particless
+sweep_steps = 256 #Number of parameter sweeps
 num_full = 16000 #Number of particles for 2D colormaps
 
 omega = 0.057
@@ -66,7 +66,7 @@ substeps_electromag = 16 #Substeps for data output
 pond_integrate_steps = 4 #Steps used for the integrals in ponderomotive mode
 
 v0_mag = 0.0 * c #Magnitude of initial velocity vector
-phi_v0 = np.radians(0.0)
+phi_v0 = np.radians(90.0)
 theta_v0 = np.radians(0.0) #Angles for the initial velocity vector
 
 square_size = 1.0 #Size of squares in 2D colormaps
@@ -106,12 +106,12 @@ if __name__ == "__main__":
         lasers = [] #Defines all lasers
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(180.0), psi, pond_integrate_steps))
+        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(240.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
         '''sim_parameters = sim_init.SimParameters(i, r, num_full, tf,  steps_electromag, first_eighth,
-            substeps_electromag, thread_num, final_states, rotate_angle, sweep_steps, full_trajectory, c)
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, final_states, rotate_angle, sweep_steps, full_trajectory, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
