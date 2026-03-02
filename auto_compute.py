@@ -9,7 +9,8 @@ import scripts.examples as examples
 import scripts.create_video as create_video
 import tests.quick_example as quick_example
 import tests.analytic_test as analytic_test
-    
+import tests.performance_test as performance_test
+
 c = 137.036
 
 x_axis = 0
@@ -128,6 +129,8 @@ if __name__ == "__main__":
         #plotting.plot_trajectory_comparison(sim_parameters, lasers, x_axis)
         #plotting.plot_trajectory_comparison(sim_parameters, lasers, y_axis)
         #plotting.plot_trajectory_comparison(sim_parameters, lasers, z_axis)
+        
+        #performance_test.run_performance_test("electromagnetic", sim_parameters, lasers, thread_num)
         
         #Uncomment to check the propagation vector, epsilon1, and epsilon2 for all lasers
         #programs.check_laser_polarization("electromagnetic", sim_parameters, lasers)
