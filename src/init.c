@@ -140,9 +140,9 @@ void set_particles(struct particle *p, struct parameters *param, double *vi) {
 
 double *create_out_chunk(struct parameters *param) {
 	if(param->output_mode == 0)
-		return malloc(U_SIZE * param->steps * param->num / param->substeps * sizeof(double));
+		return malloc((size_t)U_SIZE * param->steps * param->num / param->substeps * sizeof(double));
 	else
-		return malloc(2 * U_SIZE * CHUNK_SIZE * param->thread_num * sizeof(double));
+		return malloc(2 * (size_t)U_SIZE * CHUNK_SIZE * param->thread_num * sizeof(double));
 }
 
 //This function switched the compute_function to be either the electromagnetic method or the ponderomotive method.

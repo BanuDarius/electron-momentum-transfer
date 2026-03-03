@@ -58,9 +58,9 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 					higuera_cary_step(&p[k].u[0], dt, l);
 				
 				if(output_mode == 0 && i % substeps == 0) {
-					unsigned long idx = (unsigned long)id * U_SIZE * steps * num / (substeps * thread_num)
-						+ (unsigned long)(k - initial_idx) * U_SIZE * steps / substeps
-						+ (unsigned long)i * U_SIZE / substeps;
+					size_t idx = (size_t)id * U_SIZE * steps * num / (substeps * thread_num)
+						+ (size_t)(k - initial_idx) * U_SIZE * steps / substeps
+						+ (size_t)i * U_SIZE / substeps;
 					
 					memcpy(&out_chunk[idx], &p[k].u[0], U_SIZE * sizeof(double));
 					#pragma omp master

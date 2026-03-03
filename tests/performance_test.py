@@ -51,7 +51,7 @@ def run_example_performance_test(thread_num_final):
     zetax = 0.0
     zetay = 1.0
     tf = 10000.0
-    num_part = 16000
+    num_part = 32000
     omega = 0.057
     xif = 0.0 * np.pi
     sigma = 19.0 * np.pi

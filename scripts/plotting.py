@@ -605,14 +605,21 @@ def plot_performance():
     y_final = y[0] / y * 100.0
     y_ideal = x * 100.0
     
-    plt.figure(figsize=(10,10))
-    plt.plot(x, y_final, c='black', linestyle='-', marker='s', linewidth=1, label='Speedup')
+    plt.figure(figsize=(10, 8))
+    plt.plot(x, y_final, c='black', linestyle='-', marker='s', markersize=2, linewidth=1, label='Speedup')
     plt.plot(x, y_ideal, c='red', linestyle='--', linewidth=1, label='Ideal Speedup')
     
     plt.title(f"Performance graph")
     plt.xlabel(f"Number of threads")
     plt.ylabel(rf"Relative speedup [%]")
     plt.xticks(x, x.astype(int))
+    
+    max_threads = np.max(x)
+    all_ticks = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
+    ticks = [t for t in all_ticks if t <= max_threads]
+    plt.xticks(ticks, ticks)
+    
+    plt.grid(True, which="both", ls="-", alpha=0.2)
     plt.legend()
     
     plt.savefig(filename_out, dpi=250, bbox_inches='tight')
