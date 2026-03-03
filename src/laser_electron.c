@@ -96,7 +96,7 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 		}
 	}
 	if(output_mode == 0)
-		fwrite(out_chunk, sizeof(double), U_SIZE * steps * num / substeps, out);
+		fwrite(out_chunk, sizeof(double), (size_t)U_SIZE * steps * num / substeps, out);
 }
 
 int main(int argc, char **argv) {
