@@ -106,16 +106,16 @@ void ponderomotive(double *restrict u, double *restrict up, const struct laser *
 	mult_vec4(&up[4], &up[4], 1.0 / mass);
 }
 
-void set_position(double *u, double r_min, double r_max, double h, double z, int i, int num, int output_mode) {
+void set_position(double *u, double r_min, double r_max, int i, int num, int output_mode) {
 	if(output_mode == 0) {
 		u[0] = r_min + i * (r_max - r_min) / num;
 		u[1] = 0.0;
 		u[2] = 0.0;
 	}
 	else {
-		u[0] = rand_val(h + r_min, h + r_max);
+		u[0] = rand_val(r_min, r_max);
 		u[1] = 0.0;
-		u[2] = rand_val(h + r_min, h + r_max);
+		u[2] = rand_val(r_min, r_max);
 	}
 }
 
@@ -127,7 +127,7 @@ void set_initial_vel(double *vi, double m, double phi, double theta) {
 void set_particles(struct particle *p, struct parameters *param, double *vi) {
 	for(int i = 0; i < param->num; i++) {
 		p[i].u[0] = 0.0;
-		set_position(&p[i].u[1], param->r_min, param->r_max, param->h, param->z, i, param->num, param->output_mode);
+		set_position(&p[i].u[1], param->r_min, param->r_max, i, param->num, param->output_mode);
 		rotate_around_z_axis(&p[i].u[1], param->rotate_angle);
 		double gamma = comp_gamma_v(vi);
 		p[i].u[4] = gamma * c;
@@ -158,8 +158,6 @@ void set_mode(void (**compute_function)(double *, double *, const struct laser *
 void set_parameters(struct parameters *param, char *input) {
 	FILE *in = fopen(input, "r");
 	if(!in) { perror("Cannot open input file."); exit(1); }
-	param->h = 0.0;
-	param->z = 0.0;
 	
 	char current[32];
 	int i, count = 0;

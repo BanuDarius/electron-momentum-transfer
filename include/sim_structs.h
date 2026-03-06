@@ -20,7 +20,7 @@ struct laser {
 };
 
 struct parameters {
-	double rotate_angle, theta_v0, phi_v0, v0_mag, r_min, r_max, tf, dt, h, z;
+	double rotate_angle, theta_v0, phi_v0, v0_mag, r_min, r_max, tf, dt;
 	int num, num_lasers, steps, substeps, mode, output_mode, check_polarization, thread_num;
 };
 

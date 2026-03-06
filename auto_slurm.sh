@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=electron-momentum-transfer
-#SBATCH --output=output-%j.txt
+#SBATCH --output=log-%j.txt
 #SBATCH --error=errors-%j.txt
 #SBATCH --nodes=1
 #SBATCH --ntasks=1

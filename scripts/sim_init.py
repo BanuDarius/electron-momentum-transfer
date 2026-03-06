@@ -18,6 +18,7 @@ class SimParameters:
         self.r_max = r_max
         self.v0_mag = v0_mag
         self.phi_v0 = phi_v0
+        self.square_size = 1
         self.divider = divider
         self.c_value = c_value
         self.theta_v0 = theta_v0

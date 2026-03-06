@@ -81,7 +81,7 @@ if __name__ == "__main__":
     #Uncomment to run a quick test to showcase the program's capabilities
     #This will run a low resolution (256x256) parameter sweep
     #Will complete in ~1 minute on consumer hardware
-    #quick_example.run_quick_example(thread_num)
+    quick_example.run_quick_example(thread_num)
     
     #In the examples/ directory there are several examples
     #Uncomment this line to reproduce any of them
@@ -110,14 +110,13 @@ if __name__ == "__main__":
         
         # ------------------------------------------------------- #
         
-        '''sim_parameters = sim_init.SimParameters(i, r, num_full, tf,  steps_electromag, first_eighth,
-            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, final_states, rotate_angle, sweep_steps, full_trajectory, c)
+        '''sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_full, tf, steps_electromag, first_eighth,
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, final_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
-        plotting.plot_2d_colormap("electromagnetic", sim_parameters, a0_array, y_axis, z_axis, x_axis)
-        plotting.plot_2d_colormap("electromagnetic", sim_parameters, a0_array, y_axis, z_axis, y_axis)
-        plotting.plot_2d_colormap("electromagnetic", sim_parameters, a0_array, y_axis, z_axis, z_axis)'''
+        sim_parameters.square_size = square_size
+        plotting.plot_2d_colormap("electromagnetic", sim_parameters, a0_array, x_axis, z_axis, y_axis)'''
         
         # ------------------------------------------------------- #
         
@@ -216,7 +215,7 @@ if __name__ == "__main__":
     plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, z_axis)
     
     #Uncomment to render videos using ffmpeg
-    #create_video.create_2d_colormap_video("electromagnetic", framerate, y_axis, z_axis, y_axis)
+    #create_video.create_2d_colormap_video("electromagnetic", framerate, x_axis, z_axis, x_axis)
     #create_video.create_phase_video("electromagnetic", framerate, x_axis, y_axis)
     #create_video.create_time_momentum_video("electromagnetic", framerate, x_axis, y_axis)
     

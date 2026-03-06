@@ -284,7 +284,7 @@ def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, ax
     a0 = a0_array[i]
     num = sim_parameters.num
     r_min = sim_parameters.r_min
-    r_max = sim_parameters.r_min
+    r_max = sim_parameters.r_max
     wavelength = sim_parameters.wavelength
     square_size = sim_parameters.square_size
     
@@ -294,8 +294,8 @@ def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, ax
     
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 16)
     
-    x = data[:, axis_horiz + 1] / r
-    y = data[:, axis_vert + 1] / r
+    x = data[:, axis_horiz + 1] / wavelength
+    y = data[:, axis_vert + 1] / wavelength
     c = data[:, axis_p + 13]
     
     plt.figure(figsize=(10,10))
