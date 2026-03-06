@@ -5,7 +5,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=128
-#SBATCH --mem=4G
+#SBATCH --mem=16G
 #SBATCH --hint=nomultithread
 #SBATCH --time=2:00:00
 
