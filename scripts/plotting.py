@@ -615,7 +615,7 @@ def plot_performance():
     plt.xticks(x, x.astype(int))
     
     max_threads = np.max(x)
-    all_ticks = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
+    all_ticks = [1, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
     ticks = [t for t in all_ticks if t <= max_threads]
     plt.xticks(ticks, ticks)
     
