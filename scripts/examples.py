@@ -89,7 +89,7 @@ def run_example(example_num, thread_num):
         phi_v0 = np.radians(0.0)
         theta_v0 = np.radians(0.0)
     elif(example_num == 3):
-        min_a0 = 0.02
+        min_a0 = 0.05
         max_a0 = 0.50
         zetax = 1.0 / np.sqrt(2)
         zetay = 1.0 / np.sqrt(2)
