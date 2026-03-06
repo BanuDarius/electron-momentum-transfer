@@ -46,5 +46,9 @@ And replace `<num_example>` with the respective example number `(1, 2, 3)`.
 <img width="1056" height="1078" alt="2_out-2d-heatmap-errors-yx" src="https://github.com/user-attachments/assets/620599b2-ebb5-4655-aefa-204000dcdc6f" />
 <img width="1061" height="1076" alt="2_out-average-errors-x" src="https://github.com/user-attachments/assets/102a5ed2-c8e3-447c-8548-3f7b053ea589" />
 
+## Performance
+<img width="2147" height="1771" alt="_out-performance" src="https://github.com/user-attachments/assets/a207fe88-fa66-461f-9d62-b21125465cea" />
+This performance test was made on a system consisting of 2x AMD EPYC 7713 64-core processors.
+
 ## References
 [1] Higuera, Adam V., and John R. Cary. "Structure-preserving second-order integration of relativistic charged particle trajectories in electromagnetic fields." Physics of Plasmas 24.5 (2017).
