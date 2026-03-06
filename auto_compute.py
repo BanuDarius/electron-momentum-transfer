@@ -31,7 +31,7 @@ trajectory_until_exit = False
 thread_num = 4 #Number of threads
 
 min_a0 = 0.02
-max_a0 = 0.50 #Minimum and maximum of a0 for lasers
+max_a0 = 0.40 #Minimum and maximum of a0 for lasers
 
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
@@ -39,9 +39,9 @@ min_tf = 10000.0
 max_tf = 14000.0 #Final time for electromagnetic mode 
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
-num_part = 512 #Number of particless
-sweep_steps = 512 #Number of parameter sweeps
-num_full = 16000 #Number of particles for 2D colormaps
+num_part = 256 #Number of particless
+sweep_steps = 256 #Number of parameter sweeps
+num_full = 32000 #Number of particles for 2D colormaps
 
 omega = 0.057
 xif = 0.0 * np.pi
@@ -105,9 +105,7 @@ if __name__ == "__main__":
         
         lasers = [] #Array for all the lasers
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
-        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(240.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0/2.0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(140.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
