@@ -69,10 +69,16 @@ static inline double magnitude(const double *a) {
 	return x;
 }
 
-static inline double comp_gamma(const double *p) {
-	double mag = magnitude(p);
+static inline double comp_gamma_v(const double *v) {
+	double mag = magnitude(v);
+	double gamma = 1.0 / sqrt(1.0 - (mag * mag) / (c * c));
+	return gamma; //This uses the laboratory velocity
+}
+
+static inline double comp_gamma(const double *u) {
+	double mag = magnitude(u);
 	double gamma = sqrt(1.0 + (mag * mag) / (c * c));
-	return gamma;
+	return gamma; //This uses the proper velocity
 }
 
 //These functions are for the envelope

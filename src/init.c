@@ -129,7 +129,7 @@ void set_particles(struct particle *p, struct parameters *param, double *vi) {
 		p[i].u[0] = 0.0;
 		set_position(&p[i].u[1], param->r_min, param->r_max, param->h, param->z, i, param->num, param->output_mode);
 		rotate_around_z_axis(&p[i].u[1], param->rotate_angle);
-		double gamma = comp_gamma(vi);
+		double gamma = comp_gamma_v(vi);
 		p[i].u[4] = gamma * c;
 		p[i].u[5] = gamma * vi[0];
 		p[i].u[6] = gamma * vi[1];

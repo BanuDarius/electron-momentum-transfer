@@ -67,7 +67,7 @@ pond_integrate_steps = 4 #Steps used for the integrals in ponderomotive mode
 
 v0_mag = 0.0 * c #Magnitude of initial velocity vector
 phi_v0 = np.radians(90.0)
-theta_v0 = np.radians(0.0) #Angles for the initial velocity vector
+theta_v0 = np.radians(180.0) #Angles for the initial velocity vector
 
 square_size = 1.0 #Size of squares in 2D colormaps
 
@@ -103,10 +103,10 @@ if __name__ == "__main__":
         steps_pond = common.modulo_steps(steps_pond, substeps_pond)
         a0_array = np.append(a0_array, a0)
         
-        lasers = [] #Defines all lasers
+        lasers = [] #Array for all the lasers
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps))
-        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(240.0), psi, pond_integrate_steps))
+        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(240.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -128,8 +128,8 @@ if __name__ == "__main__":
         #Uncomment to calculate the trajectory using an analytic solution
         #It will only use the first laser from the lasers array
         #programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
-        #plotting.plot_trajectory_comparison(sim_parameters, lasers, x_axis)
         #plotting.plot_trajectory_comparison(sim_parameters, lasers, y_axis)
+        #plotting.plot_trajectory_comparison(sim_parameters, lasers, x_axis)
         #plotting.plot_trajectory_comparison(sim_parameters, lasers, z_axis)
         
         #Uncomment to run a performance test on this scenario

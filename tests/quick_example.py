@@ -141,4 +141,4 @@ def run_quick_example(thread_num):
     print(f"Program executed successfully.")
     print(f"Total time taken: {total_time:0.3f}s.\a")
     print(f"Ended quick example parameter sweep.")
-    sys.exit(0)
+    exit()

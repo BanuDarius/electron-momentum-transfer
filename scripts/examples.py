@@ -41,7 +41,7 @@ def run_example(example_num, thread_num):
         omega = 0.057
         xif = 0.0 * np.pi
         sigma = 19.0 * np.pi
-        psi = -3.0 * sigma
+        psi = -4.0 * sigma
         wavelength = 2.0 * np.pi * c / omega
         r_min = -1.00 * wavelength
         r_max = +1.00 * wavelength
@@ -71,7 +71,7 @@ def run_example(example_num, thread_num):
         omega = 0.057
         xif = 0.0 * np.pi
         sigma = 19.0 * np.pi
-        psi = -3.0 * sigma
+        psi = -4.0 * sigma
         wavelength = 2.0 * np.pi * c / omega
         r_min = -1.00 * wavelength
         r_max = +1.00 * wavelength
@@ -101,7 +101,7 @@ def run_example(example_num, thread_num):
         omega = 0.057
         xif = 0.0 * np.pi
         sigma = 19.0 * np.pi
-        psi = -3.0 * sigma
+        psi = -4.0 * sigma
         wavelength = 2.0 * np.pi * c / omega
         r_min = 0.00 * wavelength
         r_max = 1.00 * wavelength
@@ -120,7 +120,7 @@ def run_example(example_num, thread_num):
         theta_v0 = np.radians(0.0)
     else:
         print("Error: Example number not found.")
-        sys.exit(1)
+        exit()
         
     start_time = time.time()
     a0_array = np.array([])
@@ -211,4 +211,4 @@ def run_example(example_num, thread_num):
     print(f"Program executed successfully.")
     print(f"Total time taken: {total_time:0.3f}s.\a")
     print(f"Ended reproducing example {example_num}.")
-    sys.exit(0)
+    exit()
