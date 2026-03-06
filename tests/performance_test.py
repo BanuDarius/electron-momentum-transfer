@@ -69,7 +69,6 @@ def run_example_performance_test(thread_num_final):
     v0_mag = 0.0 * c
     phi_v0 = np.radians(0.0)
     theta_v0 = np.radians(0.0)
-    square_size = 1.0
     steps_electromag = common.modulo_steps(steps_electromag, substeps_electromag)
 
     programs.clean_output_folder()
@@ -99,5 +98,5 @@ def run_example_performance_test(thread_num_final):
     
     plotting.plot_performance()
     
-    print(f"Performance test executed successfully.\a")
+    print(f"Example performance test executed successfully.\a")
     exit()
