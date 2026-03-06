@@ -79,7 +79,7 @@ if __name__ == "__main__":
     programs.clean_output_folder() #Remove output data from previous run
     
     #Uncomment to run a quick test to showcase the program's capabilities
-    #This will run a low resolution (128x128) parameter sweep
+    #This will run a low resolution (256x256) parameter sweep
     #Will complete in ~1 minute on consumer hardware
     #quick_example.run_quick_example(thread_num)
     

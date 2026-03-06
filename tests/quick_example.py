@@ -35,8 +35,8 @@ def run_quick_example(thread_num):
     min_tf = 10000.0
     max_tf = 16000.0
     tauf = 7000.0
-    num_part = 128
-    sweep_steps = 128
+    num_part = 256
+    sweep_steps = 256
     omega = 0.057
     xif = 0.0 * np.pi
     sigma = 19.0 * np.pi
@@ -48,7 +48,7 @@ def run_quick_example(thread_num):
     rotate_angle = np.radians(90.0)
     alpha = np.radians(0.0)
     min_steps_pond = 128
-    max_steps_pond = 512
+    max_steps_pond = 256
     min_steps_electromag = 4000
     max_steps_electromag = 16000
     substeps_pond = 1
