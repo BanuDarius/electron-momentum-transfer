@@ -71,7 +71,7 @@ static inline double magnitude(const double *a) {
 
 static inline double comp_gamma(const double *p) {
 	double mag = magnitude(p);
-	double gamma = sqrt(1.0 + (mag * mag) / (m * m * c * c));
+	double gamma = sqrt(1.0 + (mag * mag) / (c * c));
 	return gamma;
 }
 

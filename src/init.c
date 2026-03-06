@@ -33,13 +33,14 @@
 
 void compute_e(double *E, double *u, const struct laser *restrict l, int i) {
 	double E0 = l[i].omega * c * l[i].a0;
-	double k = l[i].omega / c;
-	double t = u[0] / c;
+	double k = l[i].omega / c, t = u[0] / c;
 	double xif = l[i].xif, sigma = l[i].sigma;
 	double alpha = l[i].omega * t - k * dot(l[i].n, &u[1]);
+	
+	double E1[3], E2[3];
 	double Ec1 = env(alpha + l[i].psi, xif, sigma);
 	double Ec2 = env_prime(alpha + l[i].psi, xif, sigma);
-	double E1[3], E2[3];
+	
 	for(int j = 0; j < 3; j++) {
 		E1[j] = l[i].epsilon1[j] * l[i].zetax * (-cos(alpha)) + l[i].epsilon2[j] * l[i].zetay * sin(alpha);
 		E2[j] = l[i].epsilon1[j] * l[i].zetax * (-sin(alpha)) + l[i].epsilon2[j] * l[i].zetay * (-cos(alpha));
@@ -86,9 +87,9 @@ void electromag(double *restrict u, double *restrict up, const struct laser *res
 }
 
 void ponderomotive(double *restrict u, double *restrict up, const struct laser *restrict l) {
+	double dmdx[4];
 	double a = compute_a(u, l);
 	double mass = m * sqrt(1.0 + a);
-	double dmdx[4];
 	
 	double m_sqrt_a = 0.5 * m / sqrt(1.0 + a);
 	for(int i = 0; i < 4; i++)
@@ -129,10 +130,10 @@ void set_particles(struct particle *p, struct parameters *param, double *vi) {
 		set_position(&p[i].u[1], param->r_min, param->r_max, param->h, param->z, i, param->num, param->output_mode);
 		rotate_around_z_axis(&p[i].u[1], param->rotate_angle);
 		double gamma = comp_gamma(vi);
-		p[i].u[4] = gamma * m * c;
-		p[i].u[5] = gamma * m * vi[0];
-		p[i].u[6] = gamma * m * vi[1];
-		p[i].u[7] = gamma * m * vi[2];
+		p[i].u[4] = gamma * c;
+		p[i].u[5] = gamma * vi[0];
+		p[i].u[6] = gamma * vi[1];
+		p[i].u[7] = gamma * vi[2];
 	}
 }
 

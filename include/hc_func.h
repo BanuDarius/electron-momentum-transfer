@@ -42,7 +42,7 @@ static inline void hc_beta(double *restrict beta, const double *restrict B, cons
 
 static inline void hc_epsilon(double *restrict epsilon, const double *restrict E, const double dt) {
 	for(int i = 0; i < 3; i++)
-		epsilon[i] = E[i] * q * dt / 2.0;
+		epsilon[i] = E[i] * q * dt / (2.0 * m);
 }
 
 static inline void hc_t_rot(double *restrict t_rot, const double *restrict beta, const double gamma_new) {
@@ -64,7 +64,7 @@ static inline void hc_u_prime(double *restrict u_prime, const double *restrict u
 
 static inline double hc_gamma_new(double *restrict u_minus, const double *restrict beta, const double gamma_minus) {
 	double t1 = gamma_minus * gamma_minus - dot(beta, beta);
-	double t2 = dot(beta, beta) + dot(beta, u_minus) * dot(beta, u_minus) / (m * m * c * c);
+	double t2 = dot(beta, beta) + dot(beta, u_minus) * dot(beta, u_minus) / (c * c);
 	double t3 = 0.5 * (gamma_minus * gamma_minus - dot(beta, beta) + sqrt(t1 * t1 + 4.0 * t2));
 	double gamma_new = sqrt(t3);
 	return gamma_new;
