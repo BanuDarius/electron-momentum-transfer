@@ -1,6 +1,5 @@
 import time
 import numpy as np
-from pathlib import Path
 import scripts.common as common
 import scripts.sim_init as sim_init
 import scripts.programs as programs

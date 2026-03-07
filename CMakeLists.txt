@@ -55,9 +55,9 @@ endforeach()
 
 add_custom_target(clean-output
     COMMAND ${CMAKE_COMMAND} -E rm -rf
-        ${CMAKE_CURRENT_SOURCE_DIR}/output
-        ${CMAKE_CURRENT_SOURCE_DIR}/output-image
-        ${CMAKE_CURRENT_SOURCE_DIR}/output-video
-        ${CMAKE_CURRENT_SOURCE_DIR}/input
+        ${CMAKE_CURRENT_SOURCE_DIR}/output/*
+        ${CMAKE_CURRENT_SOURCE_DIR}/output-image/*
+        ${CMAKE_CURRENT_SOURCE_DIR}/output-video/*
+        ${CMAKE_CURRENT_SOURCE_DIR}/input/*
     COMMENT "Removed output directories."
 )
