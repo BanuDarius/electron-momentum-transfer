@@ -43,8 +43,8 @@ And replace `<num_example>` with the respective example number `(1, 2, 3)`.
 ## Gallery
 <img width="1072" height="1078" alt="1_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/9be7793a-a5a0-4938-9984-07a3faf16b83" />
 <img width="1056" height="1078" alt="1_out-2d-heatmap-errors-yy" src="https://github.com/user-attachments/assets/50f1659c-f66d-4705-893b-606e386e63dc" />
-<img width="1061" height="1076" alt="1_out-average-errors-y" src="https://github.com/user-attachments/assets/8ee0470a-6922-493f-868e-413b8adf2fa0" />
-<img width="1072" height="1078" alt="2_out-2d-heatmap-electromag-yx" src="https://github.com/user-attachments/assets/4b71dcb1-b0bf-421e-87aa-b0fe3f7c0c73" />
+<img width="2147" height="2158" alt="_out-2d-heatmap-electromag-xy" src="https://github.com/user-attachments/assets/6848d32b-2676-467e-9d53-9f75aa6dd72b" />
+<img width="2115" height="2158" alt="_out-2d-heatmap-errors-xy" src="https://github.com/user-attachments/assets/d5495d2d-7e0f-4479-8370-483b5ef522cd" />
 <img width="2115" height="2158" alt="_out-2d-heatmap-errors-xx" src="https://github.com/user-attachments/assets/492e1f95-70cb-448c-a0cf-85e120a8e6ab" />
 <img width="2124" height="2156" alt="_out-average-errors-x" src="https://github.com/user-attachments/assets/7417622b-7c2f-4ba3-b2c0-84dd7edfa005" />
 
