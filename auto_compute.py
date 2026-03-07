@@ -104,7 +104,8 @@ if __name__ == "__main__":
         
         lasers = [] #Array for all the lasers
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(140.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0 / 4.0, sigma, omega, xif, zetax, zetay, np.radians(90.0), phi, np.radians(210.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         

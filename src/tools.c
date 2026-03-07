@@ -35,7 +35,7 @@ double rand_val(double min, double max) {
 }
 
 void print_chunk(FILE *out, double *chunk, int thread_num) {
-	fwrite(chunk, sizeof(double), 2 * U_SIZE * CHUNK_SIZE * thread_num, out);
+	fwrite(chunk, sizeof(double), 2 * (size_t)U_SIZE * CHUNK_SIZE * thread_num, out);
 }
 
 void copy_initial(double *ch, double *u, int k, int id) {
@@ -66,8 +66,7 @@ void epsilon(double *u, double *w) {
 	double v[3];
 	if (fabs(u[0]) > 0.99) { 
 		v[0] = 0.0; v[1] = 1.0; v[2] = 0.0;
-	}
-	else {
+	} else {
 		v[0] = 1.0; v[1] = 0.0; v[2] = 0.0;
 	}
 	cross(w, u, v);
