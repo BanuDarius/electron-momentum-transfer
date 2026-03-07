@@ -19,4 +19,5 @@ srun python3 auto_compute.py
 
 deactivate
 
+
 #An example SLURM script for running the program on a single compute cluster node
