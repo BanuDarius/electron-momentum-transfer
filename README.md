@@ -5,14 +5,16 @@ Parallelized with OpenMP.
 ## Compilation
 The installation is as follows:
 ```
-git clone --depth 1 https://github.com/BanuDarius/electron-momentum-transfer/
+git clone --depth 1 https://github.com/BanuDarius/electron-momentum-transfer
 cd electron-momentum-transfer/
-make
+cmake -B build -S .
+cmake --build build
 ```
 
 If you have an older computer and the program doesn't compile, use:
 ```
-make generic
+cmake -B build -S . -DGENERIC=ON
+cmake --build build
 ```
 
 Which will compile for a generic x86 CPU.
