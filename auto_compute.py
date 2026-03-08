@@ -30,12 +30,12 @@ trajectory_until_exit = False
 thread_num = 4 #Number of threads
 
 min_a0 = 0.02
-max_a0 = 0.50 #Minimum and maximum of a0 for lasers
+max_a0 = 0.80 #Minimum and maximum of a0 for lasers
 
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
-min_tf = 10000.0
-max_tf = 14000.0 #Final time for electromagnetic mode 
+min_tf = 8000.0
+max_tf = 10000.0 #Final time for electromagnetic mode 
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
 num_part = 256 #Number of particless
@@ -57,14 +57,14 @@ alpha = np.radians(0.0) #Angle for rotating the laser polarization vectors
 rotate_angle = np.radians(0.0) #Angle for rotating the initial particles
 
 min_steps_pond = 128
-max_steps_pond = 256
+max_steps_pond = 128
 min_steps_electromag = 4000
 max_steps_electromag = 16000 #Minimum and maximum simulation steps
 substeps_pond = 1
 substeps_electromag = 16 #Substeps for data output
 pond_integrate_steps = 4 #Steps used for the integrals in ponderomotive mode
 
-v0_mag = 0.0 * c #Magnitude of initial velocity vector
+v0_mag = 0.00 * c #Magnitude of initial velocity vector
 phi_v0 = np.radians(0.0)
 theta_v0 = np.radians(0.0) #Angles for the initial velocity vector
 
@@ -104,8 +104,8 @@ if __name__ == "__main__":
         
         lasers = [] #Array for all the lasers
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(240.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(180.0), psi, pond_integrate_steps))
+        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(240.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -140,10 +140,10 @@ if __name__ == "__main__":
         
         programs.find_final_p("electromagnetic", sim_parameters, x_axis, x_axis)
         programs.find_max_p("electromagnetic", sim_parameters, x_axis)
+        #programs.find_enter_exit_time("electromagnetic", sim_parameters, x_axis, x_axis)
         
         programs.find_final_p("electromagnetic", sim_parameters, x_axis, y_axis)
         programs.find_max_p("electromagnetic", sim_parameters, y_axis)
-        #programs.find_enter_exit_time("electromagnetic", sim_parameters, x_axis, y_axis)
         
         programs.find_final_p("electromagnetic", sim_parameters, x_axis, z_axis)
         programs.find_max_p("electromagnetic", sim_parameters, z_axis)
@@ -152,7 +152,7 @@ if __name__ == "__main__":
         
         #plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
         #plotting.plot_enter_exit_time("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
-        #plotting.plot_phases("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
+        #plotting.plot_phases("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
         
         # ------------------------------------------------------- #
         
@@ -176,7 +176,7 @@ if __name__ == "__main__":
         
         #plotting.plot_time_momentum("ponderomotive", sim_parameters, a0_array, x_axis, x_axis)
         #plotting.plot_enter_exit_time("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
-        #plotting.plot_phases("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)'
+        #plotting.plot_phases("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         
         # ------------------------------------------------------- #
         

@@ -35,15 +35,15 @@ void compute_e(double *E, double *u, const struct laser *restrict l, int i) {
 	double E0 = l[i].omega * c * l[i].a0;
 	double k = l[i].omega / c, t = u[0] / c;
 	double xif = l[i].xif, sigma = l[i].sigma;
-	double alpha = l[i].omega * t - k * dot(l[i].n, &u[1]);
+	double eta = l[i].omega * t - k * dot(l[i].n, &u[1]);
 	
 	double E1[3], E2[3];
-	double Ec1 = env(alpha + l[i].psi, xif, sigma);
-	double Ec2 = env_prime(alpha + l[i].psi, xif, sigma);
+	double Ec1 = env(eta + l[i].psi, xif, sigma);
+	double Ec2 = env_prime(eta + l[i].psi, xif, sigma);
 	
 	for(int j = 0; j < 3; j++) {
-		E1[j] = l[i].epsilon1[j] * l[i].zetax * (-cos(alpha)) + l[i].epsilon2[j] * l[i].zetay * sin(alpha);
-		E2[j] = l[i].epsilon1[j] * l[i].zetax * (-sin(alpha)) + l[i].epsilon2[j] * l[i].zetay * (-cos(alpha));
+		E1[j] = l[i].epsilon1[j] * l[i].zetax * (-cos(eta)) + l[i].epsilon2[j] * l[i].zetay * sin(eta);
+		E2[j] = l[i].epsilon1[j] * l[i].zetax * (-sin(eta)) + l[i].epsilon2[j] * l[i].zetay * (-cos(eta));
 	}
 	mult_vec(E1, E1, Ec1);
 	mult_vec(E2, E2, Ec2);

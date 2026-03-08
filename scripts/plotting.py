@@ -330,7 +330,7 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
     a0 = a0_array[i]
     num = sim_parameters.num
     r_min = sim_parameters.r_min
-    r_max = sim_parameters.r_min
+    r_max = sim_parameters.r_max
     wavelength = sim_parameters.wavelength
     steps = sim_parameters.steps // sim_parameters.substeps
     full_trajectory = sim_parameters.full_trajectory
@@ -371,7 +371,7 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
     ax.set_xlabel(rf"${axis_text_pos}$ [$\lambda$]")
     ax.set_ylabel(rf"$p_{axis_text_p}$ [a.u.]")
     
-    plt.xlim(r_min / wavelength - abs(r_min / wavelength), r_max / wavelength + abs(r_max / wavelength))
+    plt.xlim(1.5 * r_min / wavelength, 1.5 * r_max / wavelength)
     
     plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
@@ -394,13 +394,12 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     i = sim_parameters.i
     a0 = a0_array[i]
     num = sim_parameters.num
-    r_min = sim_parameters.r_min
-    r_max = sim_parameters.r_min
     divider = sim_parameters.divider
     c_value = sim_parameters.c_value
     wavelength = sim_parameters.wavelength
     full_trajectory = sim_parameters.full_trajectory
     steps = sim_parameters.steps // sim_parameters.substeps
+    subsection = num // divider
     
     filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-{mode}-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
     filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-{mode}-{lowercase_text_pos}{lowercase_text_p}.bin"
@@ -413,8 +412,6 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
     
     colmap = plt.get_cmap('Spectral')
-    
-    subsection = num // divider
     
     data = data[:subsection]
     
@@ -455,7 +452,6 @@ def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
     axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
-    r = sim_parameters.r
     num = sim_parameters.num
     i = sim_parameters.i
     a0 = a0_array[i]
@@ -538,8 +534,6 @@ def plot_final_position_comparison(a0_array, sim_parameters, axis_pos):
     
     i = sim_parameters.i
     num = sim_parameters.num
-    r_min = sim_parameters.r_min
-    r_max = sim_parameters.r_min
     c_value = sim_parameters.c_value
     wavelength = sim_parameters.wavelength
     sweep_steps = sim_parameters.sweep_steps
