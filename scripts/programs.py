@@ -35,7 +35,7 @@ def run_simulation(method, sim_parameters, lasers):
         res = subprocess.run(arguments, text=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
-        sys.exit(1)
+        exit()
 
 # ----------------------------------------------------------------------- #
 
@@ -72,7 +72,7 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, multipli
         res = subprocess.run(arguments, text=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
-        sys.exit(1)
+        exit()
         
 # ----------------------------------------------------------------------- #
 
@@ -102,7 +102,7 @@ def find_enter_exit_time(method, sim_parameters, axis_pos, axis_p):
         res = subprocess.run(arguments, text=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
-        sys.exit(1)
+        exit()
         
 # ----------------------------------------------------------------------- #
 
@@ -134,7 +134,7 @@ def find_max_p(method, sim_parameters, axis):
         res = subprocess.run(arguments, text=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
-        sys.exit(1)
+        exit()
     
 # ----------------------------------------------------------------------- #
 
@@ -175,7 +175,7 @@ def find_final_p(method, sim_parameters, axis_pos, axis_p):
         res = subprocess.run(arguments, text=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
-        sys.exit(1)
+        exit()
 
 # ----------------------------------------------------------------------- #
 
@@ -200,7 +200,7 @@ def calculate_errors(sim_parameters, a0_array, axis):
         res = subprocess.run(arguments, text=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
-        sys.exit(1)
+        exit()
 
 # ----------------------------------------------------------------------- #
 
@@ -232,7 +232,7 @@ def check_analytic_solution(method, sim_parameters, lasers):
         res = subprocess.run(arguments, text=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
-        sys.exit(1)
+        exit()
     
 # ----------------------------------------------------------------------- #
 
@@ -293,7 +293,7 @@ def check_passed_comparison_test(sim_parameters):
 def check_laser_polarization(method, sim_parameters, lasers):
     sim_parameters.check_polarization = True
     run_simulation(method, sim_parameters, lasers)
-    sys.exit(0)
+    exit()
 
 # ----------------------------------------------------------------------- #
 

@@ -57,7 +57,7 @@ alpha = np.radians(0.0) #Angle for rotating the laser polarization vectors
 rotate_angle = np.radians(0.0) #Angle for rotating the initial particles
 
 min_steps_pond = 128
-max_steps_pond = 128
+max_steps_pond = 256
 min_steps_electromag = 4000
 max_steps_electromag = 16000 #Minimum and maximum simulation steps
 substeps_pond = 1
@@ -65,8 +65,8 @@ substeps_electromag = 16 #Substeps for data output
 pond_integrate_steps = 4 #Steps used for the integrals in ponderomotive mode
 
 v0_mag = 0.0 * c #Magnitude of initial velocity vector
-phi_v0 = np.radians(90.0)
-theta_v0 = np.radians(180.0) #Angles for the initial velocity vector
+phi_v0 = np.radians(0.0)
+theta_v0 = np.radians(0.0) #Angles for the initial velocity vector
 
 square_size = 1.0 #Size of squares in 2D colormaps
 
@@ -104,8 +104,8 @@ if __name__ == "__main__":
         
         lasers = [] #Array for all the lasers
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(140.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0 / 4.0, sigma, omega, xif, zetax, zetay, np.radians(90.0), phi, np.radians(210.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(240.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -216,7 +216,7 @@ if __name__ == "__main__":
     #Uncomment to render videos using ffmpeg
     #create_video.create_2d_colormap_video("electromagnetic", framerate, x_axis, z_axis, x_axis)
     #create_video.create_phase_video("electromagnetic", framerate, x_axis, y_axis)
-    #create_video.create_time_momentum_video("electromagnetic", framerate, x_axis, y_axis)
+    #create_video.create_time_momentum_video("electromagnetic", framerate, x_axis, x_axis)
     
     #Uncomment to remove images if you created a video
     #programs.clean_image_folder()
