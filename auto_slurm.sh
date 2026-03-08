@@ -7,7 +7,6 @@
 #SBATCH --cpus-per-task=128
 #SBATCH --mem=16G
 #SBATCH --hint=nomultithread
-#SBATCH --cpu-bind=cores
 #SBATCH --time=2:00:00
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
@@ -16,7 +15,7 @@ export OMP_PROC_BIND=true
 
 source $HOME/python-env/bin/activate
 
-srun python3 auto_compute.py
+srun --cpu-bind=cores python3 auto_compute.py
 
 deactivate
 
