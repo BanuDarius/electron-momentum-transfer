@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
 	double average = sum / ((double) num);
 	fwrite(&average, sizeof(double), 1, out_average_error);
 	
-	printf("Ended error calculation.\n");
+	printf("Ended calculating errors.\n");
 	fclose(out_average_error); fclose(out_error_all);
 	fclose(in_a); fclose(in_b); fclose(out);
 	return 0;

@@ -54,6 +54,6 @@ int main(int argc, char **argv) {
 	fwrite(&max_p, sizeof(double), 1, out_max_p);
 	
 	fclose(out_max_p); fclose(in);
-	printf("Ended calculating max(p).\n");
+	printf("Ended calculating maximum momentum.\n");
 	return 0;
 }

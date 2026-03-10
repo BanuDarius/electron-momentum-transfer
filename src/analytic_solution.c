@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 	if(!l || !p) { perror("Memory allocation error."); return 1; }
 	
 	double vi[3];
-	set_initial_vel(vi, 0.0, 0.0, 0.0);
+	set_initial_vel(vi, param->v0_mag, param->phi_v0, param->theta_v0);
 	set_lasers(l, param, argv[2]);
 	set_particles(p, param, vi);
 	

@@ -262,9 +262,9 @@ void set_lasers(struct laser *l, struct parameters *param, char *input) {
 	}
 	if(param->check_polarization) {
 		for(int i = 0; i < param->num_lasers; i++) {
-			printf("Propagation vector for laser %i:\n%0.2f %0.2f %0.2f\n", i, l[i].n[0], l[i].n[1], l[i].n[2]);
-			printf("Epsilon 1 polarization for laser %i:\n%0.2f %0.2f %0.2f\n", i, l[i].epsilon1[0], l[i].epsilon1[1], l[i].epsilon1[2]);
-			printf("Epsilon 2 polarization for laser %i:\n%0.2f %0.2f %0.2f\n\n", i, l[i].epsilon2[0], l[i].epsilon2[1], l[i].epsilon2[2]);
+			printf("Propagation vector for laser %i:\n%0.3f %0.3f %0.3f\n", i, l[i].n[0], l[i].n[1], l[i].n[2]);
+			printf("Epsilon 1 polarization for laser %i:\n%0.3f %0.3f %0.3f\n", i, l[i].epsilon1[0], l[i].epsilon1[1], l[i].epsilon1[2]);
+			printf("Epsilon 2 polarization for laser %i:\n%0.3f %0.3f %0.3f\n\n", i, l[i].epsilon2[0], l[i].epsilon2[1], l[i].epsilon2[2]);
 		}
 		exit(0);
 	}
