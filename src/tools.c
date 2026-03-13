@@ -26,11 +26,15 @@
 #include "init.h"
 #include "tools.h"
 #include "math_tools.h"
+#define RANXOSHI256_IMPLEMENTATION
+#include "ranxoshi256.h"
 
 //This is a helper library which includes several simple functions
 
+struct ranxoshi256 global_rng;
+
 double rand_val(double min, double max) {
-	double s = rand() / (double) RAND_MAX;
+	double s = ranxoshi256DoubleCO(&global_rng);
 	return min + s * (max - min);
 }
 

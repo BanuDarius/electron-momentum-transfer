@@ -29,6 +29,8 @@
 #include "init.h"
 #include "tools.h"
 #include "particle_push.h"
+#define RANXOSHI256_EXTERN
+#include "ranxoshi256.h"
 
 void simulate(struct parameters *param, void (*compute_function)(double *restrict, double *restrict, const struct laser *restrict), FILE *out,
 	double *out_chunk, struct laser *l, struct particle *p) {
@@ -100,7 +102,9 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 }
 
 int main(int argc, char **argv) {
-	srand(128);
+	unsigned char seed[32];
+	memset(seed, 0, 32 * sizeof(char));
+	ranxoshi256Seed(&global_rng, seed);
 	double start_time = omp_get_wtime();
 	if(argc != 4) {
 		printf("This is a program which simulates laser-electron interactions.\n"); 

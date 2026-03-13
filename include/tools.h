@@ -23,6 +23,8 @@
 #define TOOLS_H
 
 #include <stdio.h>
+struct ranxoshi256;
+extern struct ranxoshi256 global_rng;
 
 double rand_val(double min, double max);
 void print_chunk(FILE *out, double *chunk, int thread_num);
