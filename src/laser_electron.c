@@ -103,7 +103,7 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 
 int main(int argc, char **argv) {
 	unsigned char seed[32];
-	memset(seed, 0, 32 * sizeof(char));
+	memset(seed, 128, 32 * sizeof(char));
 	ranxoshi256Seed(&global_rng, seed);
 	double start_time = omp_get_wtime();
 	if(argc != 4) {

@@ -30,7 +30,7 @@ trajectory_until_exit = False
 thread_num = 4 #Number of threads
 
 min_a0 = 0.02
-max_a0 = 0.50 #Minimum and maximum of a0 for lasers
+max_a0 = 0.99 #Minimum and maximum of a0 for lasers
 
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
@@ -40,7 +40,7 @@ tauf = 7000.0 #Final proper time for ponderomotive mode
 
 num_part = 256 #Number of particless
 sweep_steps = 256 #Number of parameter sweeps
-num_full = 32000 #Number of particles for 2D colormaps
+num_full = 128000 #Number of particles for 2D colormaps
 
 omega = 0.057
 xif = 0.0 * np.pi
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
         sim_parameters.square_size = square_size
-        plotting.plot_2d_colormap("electromagnetic", sim_parameters, a0_array, x_axis, z_axis, y_axis)'''
+        plotting.plot_2d_colormap("electromagnetic", sim_parameters, a0_array, x_axis, z_axis, x_axis)'''
         
         # ------------------------------------------------------- #
         
