@@ -22,7 +22,7 @@ def run_simulation(method, sim_parameters, lasers):
         mode = 1
     elif method == "electromagnetic-rk4":
         mode = 2
-    else
+    else:
         print("Invalid simulation mode.")
         exit()
 

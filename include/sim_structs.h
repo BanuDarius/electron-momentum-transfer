@@ -10,7 +10,7 @@
 #define CHUNK_SIZE 100 //Number of particles in an output chunk
 
 struct particle {
-	alignas(64) double u[U_SIZE];
+	alignas(64) double u[U_SIZE]; //u[0] = ct, u[1-3] = x, y, z, u[4] = gamma * c, u[5-7] = gamma * v
 }; //This struct has sizeof(struct particle) = 64 bytes, which is conveniently equal to a standard cache line
 
 struct laser {

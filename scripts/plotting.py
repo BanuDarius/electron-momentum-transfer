@@ -251,7 +251,7 @@ def plot_convergence(method, a0_array, axis):
     y_final = y / y_max * 100.0
     
     plt.figure(figsize=(10,10))
-    plt.plot(x, y, c='black', linestyle='-', linewidth=1)
+    plt.plot(x, y_final, c='black', linestyle='-', linewidth=1)
     plt.title(rf"Convergence on {axis_text} axis ({method})")
     plt.xlabel(rf"$a_0$")
     plt.ylabel(rf"Average error of convergence [%]")
@@ -455,6 +455,7 @@ def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
     num = sim_parameters.num
     i = sim_parameters.i
     a0 = a0_array[i]
+    wavelength = sim_parameters.wavelength
     steps = sim_parameters.steps // sim_parameters.substeps
     
     filename_enter_exit_time = f"{OUTPUT_DIR}/out-enter-exit-time-{mode}-{lowercase_text_pos}{lowercase_text_p}.bin"
@@ -462,7 +463,7 @@ def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
     
     data = np.fromfile(filename_enter_exit_time, dtype=np.float64).reshape(-1, 4)
     
-    x = data[:, 0] / r
+    x = data[:, 0] / wavelength
     y1 = data[:, 1] / 137.036
     y2 = data[:, 2] / 137.036
     
@@ -493,11 +494,7 @@ def plot_trajectory_comparison(sim_parameters, lasers, axis_pos):
     lowercase_text_pos = axis_text_pos.lower()
     
     i = sim_parameters.i
-    num = sim_parameters.num
-    r_min = sim_parameters.r_min
-    r_max = sim_parameters.r_min
     c_value = sim_parameters.c_value
-    wavelength = sim_parameters.wavelength
     steps = sim_parameters.steps // sim_parameters.substeps
     
     filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-comparison-{lowercase_text_pos}-{i}.png"
@@ -606,7 +603,6 @@ def plot_performance():
     plt.title(f"Performance graph")
     plt.xlabel(f"Number of threads")
     plt.ylabel(rf"Relative speedup")
-    plt.xticks(x, x.astype(int))
     
     max_threads = np.max(x)
     all_ticks = [1, 4, 8, 16, 32, 64, 128, 256, 512, 1024]

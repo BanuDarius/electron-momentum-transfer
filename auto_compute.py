@@ -30,7 +30,7 @@ trajectory_until_exit = False
 thread_num = 4 #Number of threads
 
 min_a0 = 0.02
-max_a0 = 0.60 #Minimum and maximum of a0 for lasers
+max_a0 = 0.99 #Minimum and maximum of a0 for lasers
 
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
