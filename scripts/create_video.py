@@ -31,7 +31,7 @@ def create_2d_colormap_video(method, framerate, axis_horiz, axis_vert, axis_p):
     arguments = [str(x) for x in arguments]
     
     try:
-        res = subprocess.run(arguments, text=True)
+        res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         exit()
@@ -58,7 +58,7 @@ def create_phase_video(method, framerate, axis_pos, axis_p):
     arguments = [str(x) for x in arguments]
     
     try:
-        res = subprocess.run(arguments, text=True)
+        res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         exit()
@@ -85,7 +85,7 @@ def create_time_momentum_video(method, framerate, axis_pos, axis_p):
     arguments = [str(x) for x in arguments]
     
     try:
-        res = subprocess.run(arguments, text=True)
+        res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         exit()

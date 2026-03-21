@@ -7,13 +7,13 @@ The installation is as follows:
 ```
 git clone --depth 1 https://github.com/BanuDarius/electron-momentum-transfer
 cd electron-momentum-transfer/
-cmake -B build -S .
+cmake -B build
 cmake --build build
 ```
 
 If you have an older computer and the program doesn't compile, use:
 ```
-cmake -B build -S . -DGENERIC=ON
+cmake -B build -DGENERIC=ON
 cmake --build build
 ```
 

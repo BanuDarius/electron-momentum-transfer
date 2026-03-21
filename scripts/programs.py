@@ -22,6 +22,9 @@ def run_simulation(method, sim_parameters, lasers):
         mode = 1
     elif method == "electromagnetic-rk4":
         mode = 2
+    else
+        print("Invalid simulation mode.")
+        exit()
 
     sim_parameters.mode = mode    
     program_path = f"{BIN_DIR}/laser_electron"
@@ -32,7 +35,7 @@ def run_simulation(method, sim_parameters, lasers):
     arguments = [program_path, sim_parameters.filename_parameters, sim_parameters.filename_lasers, filename_out]
     
     try:
-        res = subprocess.run(arguments, text=True)
+        res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         exit()
@@ -69,7 +72,7 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, multipli
     arguments = [str(x) for x in arguments]
     
     try:
-        res = subprocess.run(arguments, text=True)
+        res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         exit()
@@ -99,7 +102,7 @@ def find_enter_exit_time(method, sim_parameters, axis_pos, axis_p):
     arguments = [str(x) for x in arguments]
     
     try:
-        res = subprocess.run(arguments, text=True)
+        res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         exit()
@@ -131,7 +134,7 @@ def find_max_p(method, sim_parameters, axis):
     arguments = [str(x) for x in arguments]
     
     try:
-        res = subprocess.run(arguments, text=True)
+        res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         exit()
@@ -172,7 +175,7 @@ def find_final_p(method, sim_parameters, axis_pos, axis_p):
     arguments = [str(x) for x in arguments]
     
     try:
-        res = subprocess.run(arguments, text=True)
+        res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         exit()
@@ -197,7 +200,7 @@ def calculate_errors(sim_parameters, a0_array, axis):
     arguments = [str(x) for x in arguments]
     
     try:
-        res = subprocess.run(arguments, text=True)
+        res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         exit()
@@ -229,7 +232,7 @@ def check_analytic_solution(method, sim_parameters, lasers):
     arguments = [program_path, sim_parameters.filename_parameters, sim_parameters.filename_lasers, filename_out, filename_out_displacement]
     
     try:
-        res = subprocess.run(arguments, text=True)
+        res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         exit()
