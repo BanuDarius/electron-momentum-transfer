@@ -119,9 +119,9 @@ void set_position(double *u, double r_min, double r_max, int i, int num, int out
 	}
 }
 
-void set_initial_vel(double *vi, double m, double phi, double theta) {
+void set_initial_vel(double *vi, double v_mag, double phi, double theta) {
 	direction_vec(vi, phi, theta);
-	mult_vec(vi, vi, m);
+	mult_vec(vi, vi, v_mag);
 }
 
 void set_particles(struct particle *p, struct parameters *param, double *vi) {
