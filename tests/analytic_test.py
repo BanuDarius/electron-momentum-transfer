@@ -32,7 +32,6 @@ min_a0 = 0.02
 max_a0 = 10.00
 zetax = 1.0
 zetay = 0.0
-tf = 65000.0
 num_part = 1
 sweep_steps = 128
 omega = 0.057
@@ -48,13 +47,12 @@ rotate_angle = np.radians(0.0)
 steps_electromag = 100000
 substeps_electromag = 1
 pond_integrate_steps = 4
-v0_mag = 0.0 * c
-phi_v0 = np.radians(0.0)
+phi_v0 = np.radians(90.0)
 theta_v0 = np.radians(0.0)
 
 # ------------------------------------------------------- #
 
-def run_complete_test():
+def run_complete_test(v0_mag, tf):
     a0_array = np.array([])
     
     for i in range(0, sweep_steps):
@@ -77,8 +75,9 @@ def run_complete_test():
         programs.find_final_p("analytic", sim_parameters, x_axis, y_pos_axis)
         programs.find_final_p("analytic", sim_parameters, x_axis, z_pos_axis)
         
-        pos_i = programs.spherical_coordinates(r, np.radians(90.0), rotate_angle)
-        programs.calculate_displacement_error(sim_parameters, pos_i, phi, theta)
+        if(v0_mag < 1e-3):
+            pos_i = programs.spherical_coordinates(r, np.radians(90.0), rotate_angle)
+            programs.calculate_displacement_error(sim_parameters, pos_i, phi, theta)
         
         if(i % 8 == 0):
             plotting.plot_trajectory_comparison(sim_parameters, lasers, x_axis)
@@ -92,8 +91,8 @@ def run_complete_test():
     plotting.plot_final_position_comparison(a0_array, sim_parameters, x_axis)
     plotting.plot_final_position_comparison(a0_array, sim_parameters, y_axis)
     plotting.plot_final_position_comparison(a0_array, sim_parameters, z_axis)
-    plotting.plot_analytic_errors(a0_array, sim_parameters)
-    
-    programs.check_passed_comparison_test(sim_parameters)
+    if(v0_mag < 1e-3):
+        plotting.plot_analytic_errors(a0_array, sim_parameters)
+        programs.check_passed_comparison_test(sim_parameters)
     print(f"Completed analytical comparison test.")
     exit()

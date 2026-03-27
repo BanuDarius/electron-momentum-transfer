@@ -35,7 +35,7 @@ max_a0 = 0.50 #Minimum and maximum of a0 for lasers
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
 min_tf = 8000.0
-max_tf = 10000.0 #Final time for electromagnetic mode 
+max_tf = 10000.0 #Final time for electromagnetic mode
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
 num_part = 256 #Number of particless
@@ -65,7 +65,7 @@ substeps_electromag = 16 #Substeps for data output
 pond_integrate_steps = 4 #Steps used for the integrals in ponderomotive mode
 
 v0_mag = 0.00 * c #Magnitude of initial velocity vector
-phi_v0 = np.radians(0.0)
+phi_v0 = np.radians(90.0)
 theta_v0 = np.radians(0.0) #Angles for the initial velocity vector
 
 square_size = 1.0 #Size of squares in 2D colormaps
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     
     #Uncomment this line to run a quick parameter sweep test for a0 = 0.02 to 10.00,
     #Comparing the Higuera-Cary integrator with an analytical solution for one laser
-    #analytic_test.run_complete_test()
+    #analytic_test.run_complete_test(v0_mag, max_tf)
     
     #Uncomment to create a relative performance speedrup analysis for a pre-defined scenario
     #performance_test.run_example_performance_test(thread_num)
@@ -126,9 +126,7 @@ if __name__ == "__main__":
         #Uncomment to calculate the trajectory using an analytic solution
         #It will only use the first laser from the lasers array
         #programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
-        #plotting.plot_trajectory_comparison(sim_parameters, lasers, y_axis)
         #plotting.plot_trajectory_comparison(sim_parameters, lasers, x_axis)
-        #plotting.plot_trajectory_comparison(sim_parameters, lasers, z_axis)
         
         #Uncomment to run a performance test on this scenario
         #performance_test.run_performance_test("electromagnetic", sim_parameters, lasers, thread_num)

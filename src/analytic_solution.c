@@ -69,6 +69,59 @@ void simulate_analytic(FILE *out, struct particle *p, struct parameters *param, 
 	}
 }
 
+void simulate_analytic_v0(FILE *out, struct particle *p, struct parameters *param, struct laser *l) {
+	double u_i[4], u_c[4], u0[4], u0_perp[3];
+	double d = 0.0, r_1[3], r_tot[3], r_temp[3], k_vec[3], int_A[3];
+	double r_perp_tot[3] = { 0.0 }, temp_vec[3] = { 0.0 };
+	double dphi = param->tf * l->omega / param->steps, phi_rel, phi_abs, int_A2, delta_d;
+	int i = 0;
+	
+	memcpy(u_i, p->u, 4 * sizeof(double));
+	memcpy(u_c, p->u, 4 * sizeof(double));
+	memcpy(u0, &p->u[4], 4 * sizeof(double));
+	
+	double u0_dot_n = dot(l->n, &u0[1]);
+	double lambda = u0[0] - u0_dot_n;
+	
+	memcpy(temp_vec, l->n, 3 * sizeof(double));
+	mult_vec(temp_vec, temp_vec, - u0_dot_n);
+	memcpy(u0_perp, &u0[1], 3 * sizeof(double));
+	add_vec(u0_perp, u0_perp, temp_vec);
+	
+	memcpy(k_vec, l->n, 3 * sizeof(double));
+	mult_vec(k_vec, k_vec, l->omega / c);
+	double phi_0 = l->omega * (u_i[0] / c) - dot(k_vec, &u_i[1]);
+	
+	while(u_c[0] / c < param->tf) {
+		phi_rel = phi_0 + i * dphi;
+		phi_abs = (i + 1) * dphi;
+		
+		int_A2 = integrate_phi(phi_rel, phi_rel + dphi, l);
+		integrate_phi_vec(int_A, phi_rel, phi_rel + dphi, l);
+		
+		delta_d = (q * q / (2.0 * m * m * lambda * lambda)) * (c / l->omega) * int_A2;
+		delta_d -= (q / (m * lambda * lambda)) * (c / l->omega) * dot(u0_perp, int_A);
+		delta_d += (u0_dot_n / lambda) * (c / l->omega) * dphi;
+		d += delta_d;
+		
+		mult_vec(r_temp, int_A, -q / (m * lambda) * (c / l->omega));
+		memcpy(temp_vec, u0_perp, 3 * sizeof(double));
+		mult_vec(temp_vec, temp_vec, (1.0 / lambda) * (c / l->omega) * dphi);
+		
+		add_vec(r_temp, r_temp, temp_vec);
+		add_vec(r_perp_tot, r_perp_tot, r_temp);
+		
+		mult_vec(r_1, l->n, d);
+		add_vec(r_tot, r_1, r_perp_tot);
+		add_vec(&u_c[1], &u_i[1], r_tot);
+		
+		u_c[0] = u_i[0] + c * (phi_abs / l->omega) + d;
+		
+		fwrite(u_c, sizeof(double), 4, out);
+		i++;
+	}
+}
+
 int main(int argc, char **argv) {
 	if(argc != 5) {
 		printf("This is a program which simulates the trajectories of an electron interacting with a single laser, using an analytic solution.\n"); 
@@ -95,7 +148,10 @@ int main(int argc, char **argv) {
 	set_particles(p, param, vi);
 	
 	printf("Simulation started.\n");
-	simulate_analytic(out, p, param, &l[0]);
+	if(magnitude(vi) < 1e-3)
+		simulate_analytic(out, p, param, &l[0]);
+	else
+		simulate_analytic_v0(out, p, param, &l[0]);
 	printf("Simulation ended.\n");
 	
 	double delta_x = displacement(param, l);
