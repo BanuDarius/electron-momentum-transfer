@@ -53,7 +53,7 @@ def run_example_performance_test(thread_num_final):
     tf = 10000.0
     num_part = 32000
     omega = 0.057
-    xif = 0.0 * np.pi
+    etaf = 0.0 * np.pi
     sigma = 19.0 * np.pi
     psi = -4.0 * sigma
     wavelength = 2.0 * np.pi * c / omega
@@ -74,8 +74,8 @@ def run_example_performance_test(thread_num_final):
     programs.clean_output_folder()
     
     lasers = []
-    lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
-    lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(180.0), psi, pond_integrate_steps))
+    lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
+    lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(180.0), psi, pond_integrate_steps))
 
     sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
         substeps_electromag, v0_mag, phi_v0, theta_v0, i, all_states, rotate_angle, i, full_trajectory, wavelength, c)

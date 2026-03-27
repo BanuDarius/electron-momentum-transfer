@@ -52,7 +52,7 @@ def output_all_parameters(sim_parameters, lasers):
             file.write(f"a0 {lasers[i].a0}\n")
             file.write(f"sigma {lasers[i].sigma}\n")
             file.write(f"omega {lasers[i].omega}\n")
-            file.write(f"xif {lasers[i].xif}\n")
+            file.write(f"etaf {lasers[i].etaf}\n")
             file.write(f"zetax {lasers[i].zetax}\n")
             file.write(f"zetay {lasers[i].zetay}\n")
             file.write(f"phi {lasers[i].phi}\n")

@@ -38,7 +38,7 @@ def run_quick_example(thread_num):
     num_part = 256
     sweep_steps = 256
     omega = 0.057
-    xif = 0.0 * np.pi
+    etaf = 0.0 * np.pi
     sigma = 19.0 * np.pi
     psi = -4.0 * sigma
     wavelength = 2.0 * np.pi * c / omega
@@ -72,8 +72,8 @@ def run_quick_example(thread_num):
         a0_array = np.append(a0_array, a0)
         
         lasers = []
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         

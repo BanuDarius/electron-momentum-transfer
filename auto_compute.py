@@ -30,43 +30,34 @@ trajectory_until_exit = False
 thread_num = 4 #Number of threads
 
 min_a0 = 0.02
-max_a0 = 0.50 #Minimum and maximum of a0 for lasers
-
+max_a0 = 1.00
 zetax = 0.0
-zetay = 1.0 #Polarization parameters
-min_tf = 8000.0
-max_tf = 10000.0 #Final time for electromagnetic mode
-tauf = 7000.0 #Final proper time for ponderomotive mode
-
-num_part = 256 #Number of particless
-sweep_steps = 256 #Number of parameter sweeps
-num_full = 128000 #Number of particles for 2D colormaps
-
+zetay = 1.0
+min_tf = 400.0
+max_tf = 400.0
+tauf = 7000.0
+num_part = 1024
+sweep_steps = 1024
 omega = 0.057
-xif = 0.0 * np.pi
-sigma = 19.0 * np.pi
-psi = -4.0 * sigma #Laser parameters
-
+etaf = 50000.0 * np.pi
+sigma = 0.1 * np.pi
+psi = 0.0 * sigma
 wavelength = 2.0 * np.pi * c / omega
-r_min = -1.00 * wavelength
-r_max = +1.00 * wavelength #Minimum and maximum radius for particle positions
-
+r_min = -0.25 * wavelength
+r_max = +0.25 * wavelength
 phi = np.radians(90.0)
-theta = np.radians(0.0) #Angles for the lasers
-alpha = np.radians(0.0) #Angle for rotating the laser polarization vectors
-rotate_angle = np.radians(0.0) #Angle for rotating the initial particles
-
-min_steps_pond = 128
-max_steps_pond = 128
+rotate_angle = np.radians(0.0)
+alpha = np.radians(0.0)
+min_steps_pond = 1
+max_steps_pond = 1
 min_steps_electromag = 4000
-max_steps_electromag = 16000 #Minimum and maximum simulation steps
+max_steps_electromag = 8000
 substeps_pond = 1
-substeps_electromag = 16 #Substeps for data output
-pond_integrate_steps = 4 #Steps used for the integrals in ponderomotive mode
-
-v0_mag = 0.00 * c #Magnitude of initial velocity vector
-phi_v0 = np.radians(90.0)
-theta_v0 = np.radians(0.0) #Angles for the initial velocity vector
+substeps_electromag = 16
+pond_integrate_steps = 4
+v0_mag = 0.0 * c
+phi_v0 = np.radians(0.0)
+theta_v0 = np.radians(0.0)
 
 square_size = 1.0 #Size of squares in 2D colormaps
 
@@ -86,6 +77,10 @@ if __name__ == "__main__":
     #Uncomment this line to reproduce any of them
     #examples.run_example(2, thread_num)
     
+    #Uncomment to replicate the results obtained in the Physical Review Letters paper
+    #"Relativistic Ponderomotive Force, Uphill Acceleration, and Transition to Chaos", D. Bauer et al. (1995)
+    #examples.replicate_prl_results(thread_num)
+    
     #Uncomment this line to run a quick parameter sweep test for a0 = 0.02 to 10.00,
     #Comparing the Higuera-Cary integrator with an analytical solution for one laser
     #analytic_test.run_complete_test(v0_mag, max_tf)
@@ -103,9 +98,8 @@ if __name__ == "__main__":
         a0_array = np.append(a0_array, a0)
         
         lasers = [] #Array for all the lasers
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(45.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(315.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, np.radians(180.0), phi, np.radians(180.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -148,9 +142,11 @@ if __name__ == "__main__":
         
         #programs.check_convergence("electromagnetic", sim_parameters, lasers, x_axis, x_axis, 2)
         
-        #plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
+        #plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
         #plotting.plot_enter_exit_time("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_phases("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
+        #plotting.plot_phases("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
+        #plotting.plot_phases("electromagnetic", sim_parameters, a0_array, x_axis, z_axis)
         
         # ------------------------------------------------------- #
         

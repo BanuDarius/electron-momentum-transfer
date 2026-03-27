@@ -39,7 +39,7 @@ def run_example(example_num, thread_num):
         num_part = 1024
         sweep_steps = 1024
         omega = 0.057
-        xif = 0.0 * np.pi
+        etaf = 0.0 * np.pi
         sigma = 19.0 * np.pi
         psi = -4.0 * sigma
         wavelength = 2.0 * np.pi * c / omega
@@ -69,7 +69,7 @@ def run_example(example_num, thread_num):
         num_part = 1024
         sweep_steps = 1024
         omega = 0.057
-        xif = 0.0 * np.pi
+        etaf = 0.0 * np.pi
         sigma = 19.0 * np.pi
         psi = -4.0 * sigma
         wavelength = 2.0 * np.pi * c / omega
@@ -99,7 +99,7 @@ def run_example(example_num, thread_num):
         num_part = 1024
         sweep_steps = 1024
         omega = 0.057
-        xif = 0.0 * np.pi
+        etaf = 0.0 * np.pi
         sigma = 19.0 * np.pi
         psi = -4.0 * sigma
         wavelength = 2.0 * np.pi * c / omega
@@ -110,6 +110,36 @@ def run_example(example_num, thread_num):
         alpha = np.radians(0.0)
         min_steps_pond = 128
         max_steps_pond = 512
+        min_steps_electromag = 4000
+        max_steps_electromag = 16000
+        substeps_pond = 1
+        substeps_electromag = 16
+        pond_integrate_steps = 4
+        v0_mag = 0.0 * c
+        phi_v0 = np.radians(0.0)
+        theta_v0 = np.radians(0.0)
+    elif(example_num == 4):
+        min_a0 = 0.02
+        max_a0 = 1.00
+        zetax = 0.0
+        zetay = 1.0
+        min_tf = 500.0
+        max_tf = 500.0
+        tauf = 7000.0
+        num_part = 256
+        sweep_steps = 256
+        omega = 0.057
+        etaf = 50000.0 * np.pi
+        sigma = 0.1 * np.pi
+        psi = 0.0 * sigma
+        wavelength = 2.0 * np.pi * c / omega
+        r_min = -0.25 * wavelength
+        r_max = +0.25 * wavelength
+        phi = np.radians(90.0)
+        rotate_angle = np.radians(90.0)
+        alpha = np.radians(0.0)
+        min_steps_pond = 1
+        max_steps_pond = 1
         min_steps_electromag = 4000
         max_steps_electromag = 16000
         substeps_pond = 1
@@ -136,14 +166,14 @@ def run_example(example_num, thread_num):
         a0_array = np.append(a0_array, a0)
         
         lasers = []
-        if(example_num == 1):
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
+        if(example_num == 1 or example_num == 4):
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
         elif(example_num == 2 or example_num == 3):
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(135.0), psi, pond_integrate_steps))
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(225.0), psi, pond_integrate_steps))
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(135.0), psi, pond_integrate_steps))
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(225.0), psi, pond_integrate_steps))
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -212,3 +242,6 @@ def run_example(example_num, thread_num):
     print(f"Total time taken: {total_time:0.3f}s.\a")
     print(f"Ended reproducing example {example_num}.")
     exit()
+    
+def replicate_prl_results(thread_num):
+    run_example(4, thread_num)

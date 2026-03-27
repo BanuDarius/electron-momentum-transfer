@@ -38,9 +38,9 @@ class SimParameters:
 # ------------------------------------------------------- #
 
 class LaserParameters:
-    def __init__(self, a0, sigma, omega, xif, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps):
+    def __init__(self, a0, sigma, omega, etaf, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps):
         self.a0 = a0
-        self.xif = xif
+        self.etaf = etaf
         self.phi = phi
         self.psi = psi
         self.sigma = sigma

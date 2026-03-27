@@ -34,12 +34,12 @@
 void compute_e(double *E, double *u, const struct laser *restrict l, int i) {
 	double E0 = l[i].omega * c * l[i].a0;
 	double k = l[i].omega / c, t = u[0] / c;
-	double xif = l[i].xif, sigma = l[i].sigma;
+	double etaf = l[i].etaf, sigma = l[i].sigma;
 	double eta = l[i].omega * t - k * dot(l[i].n, &u[1]);
 	
 	double E1[3], E2[3];
-	double Ec1 = env(eta + l[i].psi, xif, sigma);
-	double Ec2 = env_prime(eta + l[i].psi, xif, sigma);
+	double Ec1 = env(eta + l[i].psi, etaf, sigma);
+	double Ec2 = env_prime(eta + l[i].psi, etaf, sigma);
 	
 	for(int j = 0; j < 3; j++) {
 		E1[j] = l[i].epsilon1[j] * l[i].zetax * (-cos(eta)) + l[i].epsilon2[j] * l[i].zetay * sin(eta);
@@ -234,8 +234,8 @@ void set_lasers(struct laser *l, struct parameters *param, char *input) {
 				k = fscanf(in, "%lf", &l[i].sigma);
 			else if(!strcmp(current, "omega"))
 				k = fscanf(in, "%lf", &l[i].omega);
-			else if(!strcmp(current, "xif"))
-				k = fscanf(in, "%lf", &l[i].xif);
+			else if(!strcmp(current, "etaf"))
+				k = fscanf(in, "%lf", &l[i].etaf);
 			else if(!strcmp(current, "zetax"))
 				k = fscanf(in, "%lf", &l[i].zetax);
 			else if(!strcmp(current, "zetay"))

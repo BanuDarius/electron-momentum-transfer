@@ -35,7 +35,7 @@ zetay = 0.0
 num_part = 1
 sweep_steps = 128
 omega = 0.057
-xif = 8.0 * np.pi
+etaf = 8.0 * np.pi
 sigma = 19.0 * np.pi
 psi = -6.0 * sigma
 wavelength = 2.0 * np.pi * c / omega
@@ -60,7 +60,7 @@ def run_complete_test(v0_mag, tf):
         a0_array = np.append(a0_array, a0)
         
         lasers = []
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, xif, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps))
         
         sim_parameters = sim_init.SimParameters(i, r, r, num_part, tf, steps_electromag, first_eighth,
             substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c) 

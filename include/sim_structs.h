@@ -15,7 +15,7 @@ struct particle {
 
 struct laser {
 	int num_lasers, pond_integrate_steps;
-	double alpha, sigma, zetax, zetay, omega, theta, phi, psi, xif, a0;
+	double alpha, sigma, zetax, zetay, omega, theta, phi, psi, etaf, a0;
 	double epsilon1[3], epsilon2[3], n[3];
 };
 

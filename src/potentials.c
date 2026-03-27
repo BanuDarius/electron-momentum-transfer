@@ -37,7 +37,7 @@ void potential_a(double *a, double *u, const struct laser *restrict l, int n) {
 	mult_vec4(k_vec4, k_vec4, l[n].omega / c);
 	
 	eta = dot4(k_vec4, u) + l[n].psi;
-	A0mult = env(eta, l[n].xif, l[n].sigma) * potentialA0;
+	A0mult = env(eta, l[n].etaf, l[n].sigma) * potentialA0;
 	for(int i = 0; i < 3; i++)
 		a[i+1] = l[n].epsilon1[i] * l[n].zetax * (sin(eta)) + l[n].epsilon2[i] * l[n].zetay * cos(eta);
 	mult_vec(&a[1], &a[1], A0mult);
@@ -58,7 +58,7 @@ void potential_deriv_a(double *a, double *u, const struct laser *restrict l, int
 	for(int i = 0; i < 3; i++) {
 		double t1 = l[n].epsilon1[i] * l[n].zetax * (sin(eta)) + l[n].epsilon2[i] * l[n].zetay * (cos(eta));
 		double t2 = l[n].epsilon1[i] * l[n].zetax * (cos(eta)) + l[n].epsilon2[i] * l[n].zetay * (-sin(eta));
-		a[i+1] = sign * potentialA0 * k_vec4[index] * (env(eta, l[n].xif, l[n].sigma) * t2 + env_prime(eta, l[n].xif, l[n].sigma) * t1);
+		a[i+1] = sign * potentialA0 * k_vec4[index] * (env(eta, l[n].etaf, l[n].sigma) * t2 + env_prime(eta, l[n].etaf, l[n].sigma) * t1);
 	}
 }
 
@@ -70,7 +70,7 @@ void potential_a_phi(double *a, double eta, const struct laser *restrict l, int 
 	mult_vec(k_vec, k_vec, l[n].omega / c);
 	eta += l[n].psi;
 	
-	A0mult = env(eta, l[n].xif, l[n].sigma) * potentialA0;
+	A0mult = env(eta, l[n].etaf, l[n].sigma) * potentialA0;
 	for(int i = 0; i < 3; i++)
 		a[i] = l[n].epsilon1[i] * l[n].zetax * (sin(eta)) + l[n].epsilon2[i] * l[n].zetay * cos(eta);
 	mult_vec(a, a, A0mult);
