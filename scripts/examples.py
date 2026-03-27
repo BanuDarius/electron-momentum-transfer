@@ -6,6 +6,7 @@ import scripts.common as common
 import scripts.sim_init as sim_init
 import scripts.programs as programs
 import scripts.plotting as plotting
+import scripts.create_video as create_video
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
@@ -21,6 +22,7 @@ z_axis = 2
 framerate = 3
 first_eighth = 8
 first_quarter = 4
+all_particles = 1
 
 all_states = False
 final_states = True
@@ -123,11 +125,11 @@ def run_example(example_num, thread_num):
         max_a0 = 1.00
         zetax = 0.0
         zetay = 1.0
-        min_tf = 500.0
-        max_tf = 500.0
-        tauf = 7000.0
-        num_part = 256
-        sweep_steps = 256
+        min_tf = 1000.0
+        max_tf = 1000.0
+        tauf = 1000.0
+        num_part = 1024
+        sweep_steps = 1024
         omega = 0.057
         etaf = 50000.0 * np.pi
         sigma = 0.1 * np.pi
@@ -138,8 +140,8 @@ def run_example(example_num, thread_num):
         phi = np.radians(90.0)
         rotate_angle = np.radians(90.0)
         alpha = np.radians(0.0)
-        min_steps_pond = 1
-        max_steps_pond = 1
+        min_steps_pond = 128
+        max_steps_pond = 256
         min_steps_electromag = 4000
         max_steps_electromag = 16000
         substeps_pond = 1
@@ -166,7 +168,7 @@ def run_example(example_num, thread_num):
         a0_array = np.append(a0_array, a0)
         
         lasers = []
-        if(example_num == 1 or example_num == 4):
+        if(example_num == 1):
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
         elif(example_num == 2 or example_num == 3):
@@ -174,10 +176,13 @@ def run_example(example_num, thread_num):
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(135.0), psi, pond_integrate_steps))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(225.0), psi, pond_integrate_steps))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
+        elif(example_num == 4):
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, np.radians(180.0), phi, np.radians(270.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
-        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, all_particles,
             substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
@@ -240,7 +245,10 @@ def run_example(example_num, thread_num):
     total_time = time.time() - start_time
     print(f"Program executed successfully.")
     print(f"Total time taken: {total_time:0.3f}s.\a")
-    print(f"Ended reproducing example {example_num}.")
+    if(example_num != 4):
+        print(f"Ended reproducing example {example_num}.")
+    else:
+        print("Ended reproducing PRL paper results.")
     exit()
     
 def replicate_prl_results(thread_num):
