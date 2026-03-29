@@ -51,7 +51,7 @@ def run_example_performance_test(thread_num_final):
     zetax = 0.0
     zetay = 1.0
     tf = 10000.0
-    num_part = 32000
+    num_part = 8000
     omega = 0.057
     etaf = 0.0 * np.pi
     sigma = 19.0 * np.pi
@@ -63,7 +63,7 @@ def run_example_performance_test(thread_num_final):
     theta = np.radians(0.0)
     alpha = np.radians(0.0)
     rotate_angle = np.radians(0.0)
-    steps_electromag = 16000
+    steps_electromag = 64000
     substeps_electromag = 320
     pond_integrate_steps = 4
     v0_mag = 0.0 * c
@@ -76,6 +76,8 @@ def run_example_performance_test(thread_num_final):
     lasers = []
     lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
     lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(180.0), psi, pond_integrate_steps))
+    lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(60.0), psi, pond_integrate_steps))
+    lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(300.0), psi, pond_integrate_steps))
 
     sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
         substeps_electromag, v0_mag, phi_v0, theta_v0, i, all_states, rotate_angle, i, full_trajectory, wavelength, c)

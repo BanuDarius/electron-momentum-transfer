@@ -270,6 +270,8 @@ def replicate_prl_results(thread_num):
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
+        programs.check_laser_polarization("electromagnetic", sim_parameters, lasers)
+        
         programs.find_final_p("electromagnetic", sim_parameters, x_axis, x_axis)
         programs.find_max_p("electromagnetic", sim_parameters, x_axis)
         
