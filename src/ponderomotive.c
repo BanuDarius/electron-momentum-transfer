@@ -29,6 +29,8 @@
 #include "potentials.h"
 #include "ponderomotive.h"
 
+//This file contains functions needed for the ponderomotive approximation method
+
 double integrate(double *u, const struct laser *restrict l) {
 	double integral = 0.0, left, center, right;
 	double a1_left[4], a1_right[4], a1_center[4], a1_temp[4], u_temp[4];
@@ -36,6 +38,10 @@ double integrate(double *u, const struct laser *restrict l) {
 	
 	memcpy(u_temp, u, 4 * sizeof(double));
 	u_temp[0] -= lambda / 2.0;
+	
+	//The integration is done using Simpson's 1/3 rule
+	//It uses a trick for exchanging the left and right boundaries of each integral subsection to avoid computing them multiple times
+	//This trick is used multiple times
 	
 	memset(a1_left, 0, 4 * sizeof(double));
 	for(int j = 0; j < l[0].num_lasers; j++) {
@@ -138,7 +144,7 @@ double integrate_phi(double phi_init, double phi_final, const struct laser *rest
 		left = right;
 	}
 	return integral;
-}
+} //This function uses the dimensionless parameter phi = omega*t - k*x instead of the four-position u^mu
 
 double integrate_dmuda(double *u, const struct laser *restrict l, int index) {
 	double integral = 0.0, left, center, right;
@@ -186,7 +192,7 @@ double integrate_dmuda(double *u, const struct laser *restrict l, int index) {
 		left = right;
 	}
 	return integral;
-}
+} //This represents d^mu(M(x))
 
 double compute_a(double *u, const struct laser *restrict l) {
 	double lambda = 2.0 * M_PI * c / l[0].omega;
@@ -200,4 +206,4 @@ double derivative_a(double *u, const struct laser *restrict l, int index) {
 	double dmuda = - 2.0 * (q * q) / (m * m * c * c ) * (1.0 / lambda);
 	dmuda *= integrate_dmuda(u, l, index);
 	return dmuda;
-}
+} //This represents d^mu(a(x))

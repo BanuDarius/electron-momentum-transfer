@@ -62,12 +62,13 @@ static inline void hc_u_prime(double *restrict u_prime, const double *restrict u
 		u_prime[i] = u_minus[i] + t1[i];
 }
 
-static inline double hc_gamma_new(double *restrict u_minus, const double *restrict beta, const double gamma_minus) {
-	double t1 = gamma_minus * gamma_minus - dot(beta, beta);
-	double t2 = dot(beta, beta) + dot(beta, u_minus) * dot(beta, u_minus) / (c * c);
-	double t3 = 0.5 * (gamma_minus * gamma_minus - dot(beta, beta) + sqrt(t1 * t1 + 4.0 * t2));
-	double gamma_new = sqrt(t3);
-	return gamma_new;
+static inline double hc_gamma_new(const double *restrict u_minus, const double *restrict beta, const double gamma_minus) {
+    double t1 = gamma_minus * gamma_minus - dot(beta, beta);
+    double beta_dot_u = dot(beta, u_minus);
+    double t2 = dot(beta, beta) + (beta_dot_u * beta_dot_u) / (c * c);
+	//Dividing by c^2 here is necessary as t2 (and the Lorentz factor itself) is dimensionless, beta is dimensionless, and u_minus has units of velocity, so u_minus^2 has units of velocity squared	
+    double t3 = sqrt(0.5 * (t1 + sqrt(t1 * t1 + 4.0 * t2)));
+    return t3;
 }
 
 static inline void hc_u_plus(double *restrict u_plus, const double *restrict u_minus, const double *restrict u_prime, const double s_factor, const double *restrict t_rot) {

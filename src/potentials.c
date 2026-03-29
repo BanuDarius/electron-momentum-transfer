@@ -26,6 +26,8 @@
 #include "math_tools.h"
 #include "potentials.h"
 
+//This helper library contains functions for the electromagnetic potentials
+
 void potential_a(double *a, double *u, const struct laser *restrict l, int n) {
 	double potentialA0 = l[n].a0 * m * c / fabs(q);
 	double epsilon4[4], k_vec4[4], eta, A0mult;

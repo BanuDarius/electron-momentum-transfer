@@ -49,9 +49,10 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 		int id = omp_get_thread_num();
 		int initial_idx = initial_index(num, id, thread_num);
 		int final_idx = final_index(num, id, thread_num);
+		//Distribute N / thread_num particles to each thread
 		
 		for(int k = initial_idx; k < final_idx; k++) {
-			if(output_mode == 1)
+			if(output_mode == 1) //Copy the particle's initial state to out_chunk
 				copy_initial(out_chunk, p[k].u, (k - initial_idx) % CHUNK_SIZE, id);
 			for(int i = 0; i < steps; i++) {
 				if(mode > 0)
@@ -62,7 +63,7 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 				if(output_mode == 0 && i % substeps == 0) {
 					size_t idx = (size_t)id * U_SIZE * steps * num / (substeps * thread_num)
 						+ (size_t)(k - initial_idx) * U_SIZE * steps / substeps
-						+ (size_t)i * U_SIZE / substeps;
+						+ (size_t)i * U_SIZE / substeps; //Offset necessary for out_chunk
 					
 					memcpy(&out_chunk[idx], &p[k].u[0], U_SIZE * sizeof(double));
 					#pragma omp master
@@ -71,7 +72,7 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 							int current = thread_num * (k - initial_idx + 1);
 							int total = thread_num * final_idx;
 							printf("Particles processed: %i/%i.\n", current, total);
-						}
+						} //The master thread prints the progress
 					}
 				}
 			}
@@ -79,7 +80,7 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 			if(output_mode == 1) {
 				for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
 					out_chunk[id * 2 * U_SIZE * CHUNK_SIZE + chunk_current + j] = p[k].u[j - U_SIZE];
-				}
+				} //Copy the particle final state to out_chunk
 				chunk_current += 2 * U_SIZE;
 				if((k + 1) % CHUNK_SIZE == 0 && k - initial_idx != 0) {
 					#pragma omp barrier
@@ -97,7 +98,7 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 			}
 		}
 	}
-	if(output_mode == 0)
+	if(output_mode == 0) //The master thread outputs all the particle states
 		fwrite(out_chunk, sizeof(double), (size_t)U_SIZE * steps * num / substeps, out);
 }
 
@@ -124,8 +125,10 @@ int main(int argc, char **argv) {
 	
 	struct laser *l = malloc(param->num_lasers * sizeof(struct laser));
 	struct particle *p = aligned_alloc(64, param->num * sizeof(struct particle));
+	//Aligned memory allocation to avoid false sharing
 	double *out_chunk = create_out_chunk(param);
 	void (*compute_function)(double *restrict, double *restrict, const struct laser *restrict);
+	//Initialize all the simulation structures
 	
 	if(!l || !p || !out_chunk) { perror("Memory allocation error."); return 1; }
 	

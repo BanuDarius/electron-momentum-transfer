@@ -61,7 +61,7 @@ static inline double dot(const double *a, const double *b) {
 
 static inline double dot4(const double *a, const double *b) {
 	double x = a[0] * b[0] - a[1] * b[1] - a[2] * b[2] - a[3] * b[3];
-	return x;
+	return x; //The Minkowski metric used in this program is (+, -, -, -)
 }
 
 static inline double magnitude(const double *a) {

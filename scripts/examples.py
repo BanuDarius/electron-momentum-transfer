@@ -51,7 +51,7 @@ def run_example(example_num, thread_num):
         rotate_angle = np.radians(90.0)
         alpha = np.radians(0.0)
         min_steps_pond = 128
-        max_steps_pond = 1024
+        max_steps_pond = 512
         min_steps_electromag = 4000
         max_steps_electromag = 16000
         substeps_pond = 1
@@ -81,7 +81,7 @@ def run_example(example_num, thread_num):
         rotate_angle = np.radians(90.0)
         alpha = np.radians(0.0)
         min_steps_pond = 128
-        max_steps_pond = 1024
+        max_steps_pond = 512
         min_steps_electromag = 4000
         max_steps_electromag = 16000
         substeps_pond = 1

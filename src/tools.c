@@ -90,7 +90,7 @@ void rotate_polarization(double *epsilon1, double *epsilon2, double alpha) {
 	}
 }
 
-//Manual calculation of indices for stability.
+//Manual calculation of indices for stability
 
 int initial_index(int n, int thread_idx, int thread_num) {
 	int index = n * thread_idx / thread_num;
