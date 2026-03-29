@@ -49,8 +49,8 @@ And replace `<num_example>` with the respective example number `(1, 2, 3)`.
 <img width="2124" height="2156" alt="_out-average-errors-x" src="https://github.com/user-attachments/assets/7417622b-7c2f-4ba3-b2c0-84dd7edfa005" />
 
 ## Performance
-<img width="2147" height="1771" alt="_out-performance" src="https://github.com/user-attachments/assets/a207fe88-fa66-461f-9d62-b21125465cea" />
-This performance test was made on a system consisting of 2x AMD EPYC 7713 64-core processors.
+<img width="2120" height="1771" alt="_out-performance" src="https://github.com/user-attachments/assets/d44f3ffa-875a-4e94-b633-403938971564" />
+This performance test was made on a system consisting of an AMD EPYC 7713 64-core processor.
 
 ## References
 [1] Higuera, Adam V., and John R. Cary. "Structure-preserving second-order integration of relativistic charged particle trajectories in electromagnetic fields." Physics of Plasmas 24.5 (2017).
