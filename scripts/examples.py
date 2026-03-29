@@ -120,36 +120,6 @@ def run_example(example_num, thread_num):
         v0_mag = 0.0 * c
         phi_v0 = np.radians(0.0)
         theta_v0 = np.radians(0.0)
-    elif(example_num == 4):
-        min_a0 = 0.02
-        max_a0 = 1.00
-        zetax = 0.0
-        zetay = 1.0
-        min_tf = 1000.0
-        max_tf = 1000.0
-        tauf = 1000.0
-        num_part = 1024
-        sweep_steps = 1024
-        omega = 0.057
-        etaf = 50000.0 * np.pi
-        sigma = 0.1 * np.pi
-        psi = 0.0 * sigma
-        wavelength = 2.0 * np.pi * c / omega
-        r_min = -0.25 * wavelength
-        r_max = +0.25 * wavelength
-        phi = np.radians(90.0)
-        rotate_angle = np.radians(90.0)
-        alpha = np.radians(0.0)
-        min_steps_pond = 128
-        max_steps_pond = 256
-        min_steps_electromag = 4000
-        max_steps_electromag = 16000
-        substeps_pond = 1
-        substeps_electromag = 16
-        pond_integrate_steps = 4
-        v0_mag = 0.0 * c
-        phi_v0 = np.radians(0.0)
-        theta_v0 = np.radians(0.0)
     else:
         print("Error: Example number not found.")
         exit()
@@ -176,9 +146,6 @@ def run_example(example_num, thread_num):
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(135.0), psi, pond_integrate_steps))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(225.0), psi, pond_integrate_steps))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
-        elif(example_num == 4):
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
-            lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, np.radians(180.0), phi, np.radians(270.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -245,11 +212,126 @@ def run_example(example_num, thread_num):
     total_time = time.time() - start_time
     print(f"Program executed successfully.")
     print(f"Total time taken: {total_time:0.3f}s.\a")
-    if(example_num != 4):
-        print(f"Ended reproducing example {example_num}.")
-    else:
-        print("Ended reproducing PRL paper results.")
+    print(f"Ended reproducing example {example_num}.")
     exit()
     
 def replicate_prl_results(thread_num):
-    run_example(4, thread_num)
+    min_a0 = 0.02
+    max_a0 = 1.00
+    zetax = 0.0
+    zetay = 1.0
+    min_tf = 1500.0
+    max_tf = 1500.0
+    tauf = 1000.0
+    num_part = 1024
+    sweep_steps = 1024
+    omega = 0.057
+    etaf = 50000.0 * np.pi
+    sigma = 0.1 * np.pi
+    psi = 0.0 * sigma
+    wavelength = 2.0 * np.pi * c / omega
+    r_min = -0.50 * wavelength
+    r_max = +0.50 * wavelength
+    phi = np.radians(90.0)
+    rotate_angle = np.radians(0.0)
+    alpha = np.radians(0.0)
+    min_steps_pond = 128
+    max_steps_pond = 256
+    min_steps_electromag = 4000
+    max_steps_electromag = 16000
+    substeps_pond = 1
+    substeps_electromag = 16
+    pond_integrate_steps = 4
+    v0_mag = 0.0 * c
+    phi_v0 = np.radians(0.0)
+    theta_v0 = np.radians(0.0)
+    
+    start_time = time.time()
+    a0_array = np.array([])
+    programs.clean_output_folder()
+    
+    for i in range(0, sweep_steps):
+        tf = common.interpolate(min_tf, max_tf, i, sweep_steps)
+        a0 = common.interpolate(min_a0, max_a0, i, sweep_steps)
+        steps_electromag = int(common.interpolate(min_steps_electromag, max_steps_electromag, i, sweep_steps))
+        steps_electromag = common.modulo_steps(steps_electromag, substeps_electromag)
+        steps_pond = int(common.interpolate(min_steps_pond, max_steps_pond, i, sweep_steps))
+        steps_pond = common.modulo_steps(steps_pond, substeps_pond)
+        a0_array = np.append(a0_array, a0)
+        
+        lasers = []
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, np.radians(180.0), phi, np.radians(180.0), psi, pond_integrate_steps))
+        
+        # ------------------------------------------------------- #
+        
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, all_particles,
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+        
+        programs.run_simulation("electromagnetic", sim_parameters, lasers)
+        
+        programs.find_final_p("electromagnetic", sim_parameters, x_axis, x_axis)
+        programs.find_max_p("electromagnetic", sim_parameters, x_axis)
+        
+        programs.find_final_p("electromagnetic", sim_parameters, x_axis, y_axis)
+        programs.find_max_p("electromagnetic", sim_parameters, y_axis)
+        
+        programs.find_final_p("electromagnetic", sim_parameters, x_axis, z_axis)
+        programs.find_max_p("electromagnetic", sim_parameters, z_axis)
+        
+        programs.check_convergence("electromagnetic", sim_parameters, lasers, x_axis, x_axis, 2)
+        
+        # ------------------------------------------------------- #
+        
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
+            substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+        
+        programs.run_simulation("ponderomotive", sim_parameters, lasers)
+        
+        programs.find_final_p("ponderomotive", sim_parameters, x_axis, x_axis)
+        programs.find_max_p("ponderomotive", sim_parameters, x_axis)
+        
+        programs.find_final_p("ponderomotive", sim_parameters, x_axis, y_axis)
+        programs.find_max_p("ponderomotive", sim_parameters, y_axis)
+        
+        programs.find_final_p("ponderomotive", sim_parameters, x_axis, z_axis)
+        programs.find_max_p("ponderomotive", sim_parameters, z_axis)
+        
+        # ------------------------------------------------------- #
+        
+        programs.calculate_errors(sim_parameters, a0_array, x_axis)
+        programs.calculate_errors(sim_parameters, a0_array, y_axis)
+        programs.calculate_errors(sim_parameters, a0_array, z_axis)
+        
+        print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
+        
+        # ------------------------------------------------------- #
+        
+    plotting.plot_max_p("electromagnetic", a0_array, x_axis)
+    plotting.plot_max_p("electromagnetic", a0_array, y_axis)
+    plotting.plot_max_p("electromagnetic", a0_array, z_axis)
+    plotting.plot_max_p("ponderomotive", a0_array, x_axis)
+    plotting.plot_max_p("ponderomotive", a0_array, y_axis)
+    plotting.plot_max_p("ponderomotive", a0_array, z_axis)
+    plotting.plot_average_errors(a0_array, x_axis)
+    plotting.plot_average_errors(a0_array, y_axis)
+    plotting.plot_average_errors(a0_array, z_axis)
+    
+    plotting.plot_convergence("electromagnetic", a0_array, x_axis)
+    plotting.plot_2d_convergence_heatmap("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
+    
+    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
+    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
+    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis, z_axis)
+    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis, x_axis)
+    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis, y_axis)
+    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis, z_axis)
+    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, x_axis)
+    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, y_axis)
+    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, z_axis)
+            
+    total_time = time.time() - start_time
+    print(f"Program executed successfully.")
+    print(f"Total time taken: {total_time:0.3f}s.\a")
+    print("Ended reproducing PRL paper results.")
+    exit()

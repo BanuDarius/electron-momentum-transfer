@@ -29,6 +29,11 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
     axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
+    if(axis_text_pos == "Z"):
+        print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
+        print("Please plot the initial positions on the X axis or Y axis.")
+        exit()
+    
     num = sim_parameters.num
     r_min = sim_parameters.r_min
     r_max = sim_parameters.r_max
@@ -74,6 +79,11 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     
     axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
+    
+    if(axis_text_pos == "Z"):
+        print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
+        print("Please plot the initial positions on the X axis or Y axis.")
+        exit()
     
     num = sim_parameters.num
     r_min = sim_parameters.r_min
@@ -126,6 +136,11 @@ def plot_2d_convergence_heatmap(method, sim_parameters, a0_array, axis_pos, axis
     
     axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
+    
+    if(axis_text_pos == "Z"):
+        print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
+        print("Please plot the initial positions on the X axis or Y axis.")
+        exit()
     
     num = sim_parameters.num
     r_min = sim_parameters.r_min
@@ -326,6 +341,11 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
     axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
+    if(axis_text_pos == "Z"):
+        print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
+        print("Please plot the initial positions on the X axis or Y axis.")
+        exit()
+    
     i = sim_parameters.i
     a0 = a0_array[i]
     num = sim_parameters.num
@@ -391,6 +411,11 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
+    if(axis_text_pos == "Z"):
+        print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
+        print("Please plot the initial positions on the X axis or Y axis.")
+        exit()
+    
     i = sim_parameters.i
     a0 = a0_array[i]
     num = sim_parameters.num
@@ -451,6 +476,11 @@ def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
     
     axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
+    
+    if(axis_text_pos == "Z"):
+        print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
+        print("Please plot the initial positions on the X axis or Y axis.")
+        exit()
     
     num = sim_parameters.num
     i = sim_parameters.i

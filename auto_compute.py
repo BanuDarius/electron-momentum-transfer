@@ -79,10 +79,10 @@ if __name__ == "__main__":
     
     #Uncomment to run a quick test to showcase the program's capabilities
     #This will run a low resolution (256x256) parameter sweep
-    #Will complete in ~1 minute on consumer hardware
+    #Will complete in ~1 minute on average consumer hardware
     #quick_example.run_quick_example(thread_num)
     
-    #In the examples/ directory there are several examples
+    #In the examples/ directory there are several examples whose filenames start with 1, 2, and 3
     #Uncomment this line to reproduce any of them
     #examples.run_example(2, thread_num)
     
@@ -149,6 +149,7 @@ if __name__ == "__main__":
         programs.find_final_p("electromagnetic", sim_parameters, x_axis, z_axis)
         programs.find_max_p("electromagnetic", sim_parameters, z_axis)
         
+        #Uncomment to check the convergence of the momentum transfer by running another simulation with double the number of steps
         #programs.check_convergence("electromagnetic", sim_parameters, lasers, x_axis, x_axis, 2)
         
         #plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
@@ -190,7 +191,6 @@ if __name__ == "__main__":
         # ------------------------------------------------------- #
         
     #Plots for data analysis
-    
     plotting.plot_average_errors(a0_array, x_axis)
     plotting.plot_average_errors(a0_array, y_axis)
     plotting.plot_average_errors(a0_array, z_axis)
