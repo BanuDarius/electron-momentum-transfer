@@ -35,7 +35,7 @@ max_a0 = 0.50 #Minimum and maximum of a0 for lasers
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
 min_tf = 8000.0
-max_tf = 10000.0 #Final time for electromagnetic mode 
+max_tf = 10000.0 #Final time for electromagnetic mode
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
 num_part = 256 #Number of particless
