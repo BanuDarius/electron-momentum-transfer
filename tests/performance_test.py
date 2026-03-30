@@ -78,23 +78,25 @@ def run_example_performance_test(thread_num_final):
     lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(180.0), psi, pond_integrate_steps))
     lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(60.0), psi, pond_integrate_steps))
     lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(300.0), psi, pond_integrate_steps))
+    lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(45.0), psi, pond_integrate_steps))
+    lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
 
     sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-        substeps_electromag, v0_mag, phi_v0, theta_v0, i, all_states, rotate_angle, i, full_trajectory, wavelength, c)
+        substeps_electromag, v0_mag, phi_v0, theta_v0, 1, all_states, rotate_angle, 1, full_trajectory, wavelength, c)
     
-    while(sim_parameters.thread_num <= thread_num_final):
+    while(i <= thread_num_final):
         start_time = time.time()
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
-        
         total_time = time.time() - start_time
+        
         print(f"Time taken with {sim_parameters.thread_num} threads: {total_time:0.3f}s.")
         
         with open(f"{OUTPUT_DIR}/performance.bin", "ab") as file:
             file.write(np.double(sim_parameters.thread_num))
             file.write(np.double(total_time))
         
-        sim_parameters.thread_num = i
         i *= 2
+        sim_parameters.thread_num = i
         
         # ------------------------------------------------------- #
     

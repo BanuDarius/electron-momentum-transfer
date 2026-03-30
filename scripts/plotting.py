@@ -13,8 +13,8 @@ BIN_DIR = PROJECT_ROOT / "bin"
 OUTPUT_DIR = PROJECT_ROOT / "output"
 OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
-plt.rcParams.update({'font.size': 12})
-    
+plt.rcParams.update({'font.size': 16})
+
 # ----------------------------------------------------------------------- #
 
 def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
@@ -630,21 +630,23 @@ def plot_performance():
     plt.plot(x, y_final, c='black', linestyle='-', marker='s', markersize=2, linewidth=1, label='Speedup')
     plt.plot(x, y_ideal, c='red', linestyle='--', linewidth=1, label='Ideal Speedup')
     
-    plt.title(f"Performance graph")
-    plt.xlabel(f"Number of threads")
-    plt.ylabel(rf"Relative speedup")
+    plt.title("Performance graph")
+    plt.xlabel("Number of threads")
+    plt.ylabel("Relative speedup")
+    plt.xscale('log', base=2)
+    plt.yscale('log', base=2)
     
     max_threads = np.max(x)
-    all_ticks = [1, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
+    all_ticks = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
     ticks = [t for t in all_ticks if t <= max_threads]
     plt.xticks(ticks, ticks)
+    plt.yticks(ticks, ticks)
     
     plt.grid(True, which="both", ls="-", alpha=0.2)
     plt.legend()
-    
     plt.savefig(filename_out, dpi=250, bbox_inches='tight')
     plt.close()
     
-    print(f"Created performance plot.")
+    print("Created performance plot.")
     
 # ----------------------------------------------------------------------- #

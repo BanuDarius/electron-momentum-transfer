@@ -34,7 +34,6 @@ void potential_a(double *a, double *u, const struct laser *restrict l, int n) {
 	
 	a[0] = 0.0;
 	k_vec4[0] = 1.0;
-	epsilon4[0] = 0.0;
 	memcpy(&k_vec4[1], l[n].n, 3 * sizeof(double));
 	mult_vec4(k_vec4, k_vec4, l[n].omega / c);
 	
@@ -51,7 +50,6 @@ void potential_deriv_a(double *a, double *u, const struct laser *restrict l, int
 	
 	a[0] = 0.0;
 	k_vec4[0] = 1.0;
-	epsilon4[0] = 0.0;
 	memcpy(&k_vec4[1], l[n].n, 3 * sizeof(double));
 	mult_vec4(k_vec4, k_vec4, l[n].omega / c);
 	

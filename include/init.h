@@ -30,7 +30,7 @@ void compute_e_b(double *E, double *B, double *u, const struct laser *restrict l
 void electromag(double *restrict u, double *restrict up, const struct laser *restrict l);
 void ponderomotive(double *restrict u, double *restrict up, const struct laser *restrict l);
 void set_position(double *u, double r_min, double r_max, int i, int num, int output_mode);
-void set_initial_vel(double *vi, double m, double phi, double theta);
+void set_initial_vel(double *vi, double v_mag, double phi, double theta);
 void set_particles(struct particle *p, struct parameters *param, double *vi);
 double *create_out_chunk(struct parameters *param);
 void set_mode(void (**compute_function)(double *restrict, double *restrict, const struct laser *restrict), int mode);

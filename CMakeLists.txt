@@ -14,7 +14,7 @@ else()
     add_compile_options(-march=native)
 endif()
 
-add_compile_options(-s -O3)
+add_compile_options(-O3)
 
 file(MAKE_DIRECTORY 
     ${CMAKE_CURRENT_SOURCE_DIR}/output 

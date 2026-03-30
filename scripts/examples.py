@@ -222,7 +222,7 @@ def replicate_prl_results(thread_num):
     zetay = 1.0
     min_tf = 1500.0
     max_tf = 1500.0
-    tauf = 1000.0
+    tauf = 1500.0
     num_part = 1024
     sweep_steps = 1024
     omega = 0.057
