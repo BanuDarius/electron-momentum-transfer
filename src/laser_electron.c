@@ -43,7 +43,7 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 	
 	double dt = param->dt;
 	
-	#pragma omp parallel num_threads(thread_num)
+	#pragma omp parallel
 	{
 		int chunk_current = 0;
 		int id = omp_get_thread_num();
@@ -119,6 +119,7 @@ int main(int argc, char **argv) {
 	
 	struct parameters *param = malloc(sizeof(struct parameters));
 	set_parameters(param, argv[1]);
+	omp_set_num_threads(param->thread_num);
 	
 	double vi[3];
 	set_initial_vel(vi, param->v0_mag, param->phi_v0, param->theta_v0);
