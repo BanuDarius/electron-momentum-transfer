@@ -32,15 +32,13 @@
 #define RANXOSHI256_EXTERN
 #include "ranxoshi256.h"
 
-void simulate(struct parameters *param, void (*compute_function)(double *restrict, double *restrict, const struct laser *restrict), FILE *out,
-	double *out_chunk, struct laser *l, struct particle *p) {
+void simulate(struct parameters *param, void (*compute_function)(double *restrict, double *restrict, const struct laser *restrict), FILE *out, double *out_chunk, struct laser *l, struct particle *p) {
 	int num = param->num;
 	int mode = param->mode;
 	int steps = param->steps;
 	int substeps = param->substeps;
 	int thread_num = param->thread_num;
 	int output_mode = param->output_mode;
-	
 	double dt = param->dt;
 	
 	#pragma omp parallel
@@ -50,7 +48,6 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 		int initial_idx = initial_index(num, id, thread_num);
 		int final_idx = final_index(num, id, thread_num);
 		//Distribute N / thread_num particles to each thread
-		
 		for(int k = initial_idx; k < final_idx; k++) {
 			if(output_mode == 1) //Copy the particle's initial state to out_chunk
 				copy_initial(out_chunk, p[k].u, (k - initial_idx) % CHUNK_SIZE, id);
@@ -76,7 +73,6 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 					}
 				}
 			}
-			
 			if(output_mode == 1) {
 				for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
 					out_chunk[id * 2 * U_SIZE * CHUNK_SIZE + chunk_current + j] = p[k].u[j - U_SIZE];
@@ -91,7 +87,7 @@ void simulate(struct parameters *param, void (*compute_function)(double *restric
 						printf("Particles processed: %i/%i.\n", current, total);
 						print_chunk(out, out_chunk, thread_num);
 						memset(out_chunk, 0, 2 * U_SIZE * CHUNK_SIZE * thread_num * sizeof(double));
-					}
+					} //Output the current chunk to file
 					chunk_current = 0;
 					#pragma omp barrier
 				}
