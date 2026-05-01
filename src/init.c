@@ -159,56 +159,40 @@ void set_parameters(struct parameters *param, char *input) {
 	FILE *in = fopen(input, "r");
 	if(!in) { perror("Cannot open input file."); exit(1); }
 	
-	char current[32];
-	int i, count = 0;
+	char current[128];
+	int count = 0;
 	
 	while(fscanf(in, "%s", current) != EOF) {
-		if(!strcmp(current, "num")) {
-			i = fscanf(in, "%i", &param->num);
-			count++;
-		} else if(!strcmp(current, "num_lasers")) {
-			i = fscanf(in, "%i", &param->num_lasers);
-			count++;
-		} else if(!strcmp(current, "steps")) {
-			i = fscanf(in, "%i", &param->steps);
-			count++;
-		} else if(!strcmp(current, "substeps")) {
-			i = fscanf(in, "%i", &param->substeps);
-			count++;
-		} else if(!strcmp(current, "mode")) {
-			i = fscanf(in, "%i", &param->mode);
-			count++;
-		} else if(!strcmp(current, "tf")) {
-			i = fscanf(in, "%lf", &param->tf);
-			count++;
-		} else if(!strcmp(current, "output_mode")) {
-			i = fscanf(in, "%i", &param->output_mode);
-			count++;
-		} else if(!strcmp(current, "thread_num")) {
-			i = fscanf(in, "%i", &param->thread_num);
-			count++;
-		} else if(!strcmp(current, "r_min")) {
-			i = fscanf(in, "%lf", &param->r_min);
-			count++;
-		} else if(!strcmp(current, "r_max")) {
-			i = fscanf(in, "%lf", &param->r_max);
-			count++;
-		} else if(!strcmp(current, "rotate_angle")) {
-			i = fscanf(in, "%lf", &param->rotate_angle);
-			count++;
-		} else if(!strcmp(current, "check_polarization")) {
-			i = fscanf(in, "%i", &param->check_polarization);
-			count++;
-		} else if(!strcmp(current, "v0_mag")) {
-			i = fscanf(in, "%lf", &param->v0_mag);
-			count++;
-		} else if(!strcmp(current, "phi_v0")) {
-			i = fscanf(in, "%lf", &param->phi_v0);
-			count++;
-		} else if(!strcmp(current, "theta_v0")) {
-			i = fscanf(in, "%lf", &param->theta_v0);
-			count++;
-		}
+		if(!strcmp(current, "num"))
+			count += fscanf(in, "%i", &param->num);
+		else if(!strcmp(current, "num_lasers"))
+			count += fscanf(in, "%i", &param->num_lasers);
+		else if(!strcmp(current, "steps"))
+			count += fscanf(in, "%i", &param->steps);
+		else if(!strcmp(current, "substeps"))
+			count += fscanf(in, "%i", &param->substeps);
+		else if(!strcmp(current, "mode"))
+			count += fscanf(in, "%i", &param->mode);
+		else if(!strcmp(current, "tf"))
+			count += fscanf(in, "%lf", &param->tf);
+		else if(!strcmp(current, "output_mode"))
+			count += fscanf(in, "%i", &param->output_mode);
+		else if(!strcmp(current, "thread_num"))
+			count += fscanf(in, "%i", &param->thread_num);
+		else if(!strcmp(current, "r_min"))
+			count += fscanf(in, "%lf", &param->r_min);
+		else if(!strcmp(current, "r_max"))
+			count += fscanf(in, "%lf", &param->r_max);
+		else if(!strcmp(current, "rotate_angle"))
+			count += fscanf(in, "%lf", &param->rotate_angle);
+		else if(!strcmp(current, "check_polarization"))
+			count += fscanf(in, "%i", &param->check_polarization);
+		else if(!strcmp(current, "v0_mag"))
+			count += fscanf(in, "%lf", &param->v0_mag);
+		else if(!strcmp(current, "phi_v0"))
+			count += fscanf(in, "%lf", &param->phi_v0);
+		else if(!strcmp(current, "theta_v0"))
+			count += fscanf(in, "%lf", &param->theta_v0);
 	}
 	if(count != PARAMS) {
 		printf("Error: Invalid input file.\n");
@@ -220,8 +204,8 @@ void set_parameters(struct parameters *param, char *input) {
 
 void set_lasers(struct laser *l, struct parameters *param, char *input) {
 	FILE *in = fopen(input, "r");
-	if(!in) { perror("Cannot open input file."); abort(); }
-	char current[32];
+	if(!in) { perror("Cannot open input file."); exit(1); }
+	char current[128];
 	int k;
 	
 	for(int i = 0; i < param->num_lasers; i++) {

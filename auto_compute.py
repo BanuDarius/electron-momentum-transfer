@@ -95,7 +95,7 @@ if __name__ == "__main__":
     #analytic_test.run_complete_test(v0_mag, max_tf)
     
     #Uncomment to create a relative performance speedrup analysis for a pre-defined scenario
-    performance_test.run_example_performance_test(thread_num)
+    #performance_test.run_example_performance_test(thread_num)
     
     for i in range(0, sweep_steps):
         tf = common.interpolate(min_tf, max_tf, i, sweep_steps)
