@@ -216,9 +216,9 @@ def run_example(example_num, thread_num):
         
         # ------------------------------------------------------- #
         
-        programs.calculate_errors(sim_parameters, a0_array, x_axis)
-        programs.calculate_errors(sim_parameters, a0_array, y_axis)
-        programs.calculate_errors(sim_parameters, a0_array, z_axis)
+        programs.calculate_errors(sim_parameters, x_axis)
+        programs.calculate_errors(sim_parameters, y_axis)
+        programs.calculate_errors(sim_parameters, z_axis)
         
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
         

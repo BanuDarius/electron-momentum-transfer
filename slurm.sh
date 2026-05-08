@@ -4,7 +4,7 @@
 #SBATCH --error=errors-%j.txt
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=128
+#SBATCH --cpus-per-task=256
 #SBATCH --mem=16G
 #SBATCH --time=2:00:00
 
