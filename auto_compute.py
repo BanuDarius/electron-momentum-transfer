@@ -84,7 +84,7 @@ if __name__ == "__main__":
     
     #In the examples/ directory there are several examples whose filenames start with 1, 2, 3, and 4
     #Uncomment this line to reproduce any of them
-    #examples.run_example(2, thread_num)
+    #examples.run_example(4, thread_num)
     
     #Uncomment to replicate the results obtained in the Physical Review Letters paper
     #"Relativistic Ponderomotive Force, Uphill Acceleration, and Transition to Chaos", D. Bauer et al. (1995)

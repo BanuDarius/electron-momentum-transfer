@@ -60,6 +60,7 @@ def run_example(example_num, thread_num):
         v0_mag = 0.0 * c
         phi_v0 = np.radians(0.0)
         theta_v0 = np.radians(0.0)
+        axis_i = y_axis
     elif(example_num == 2):
         min_a0 = 0.02
         max_a0 = 0.50
@@ -90,6 +91,7 @@ def run_example(example_num, thread_num):
         v0_mag = 0.0 * c
         phi_v0 = np.radians(0.0)
         theta_v0 = np.radians(0.0)
+        axis_i = y_axis
     elif(example_num == 3):
         min_a0 = 0.05
         max_a0 = 0.50
@@ -120,6 +122,7 @@ def run_example(example_num, thread_num):
         v0_mag = 0.0 * c
         phi_v0 = np.radians(0.0)
         theta_v0 = np.radians(0.0)
+        axis_i = y_axis
     elif(example_num == 4):
         min_a0 = 0.02
         max_a0 = 0.50
@@ -128,8 +131,8 @@ def run_example(example_num, thread_num):
         min_tf = 8000.0
         max_tf = 14000.0
         tauf = 7000.0
-        num_part = 32
-        sweep_steps = 32
+        num_part = 1024
+        sweep_steps = 1024
         omega = 0.057
         etaf = 0.0 * np.pi
         sigma = 19.0 * np.pi
@@ -138,7 +141,7 @@ def run_example(example_num, thread_num):
         r_min = -1.00 * wavelength
         r_max = +1.00 * wavelength
         phi = np.radians(90.0)
-        theta = np.radians(0.0)
+        theta = np.radians(90.0)
         alpha = np.radians(0.0)
         rotate_angle = np.radians(0.0)
         min_steps_pond = 128
@@ -151,6 +154,7 @@ def run_example(example_num, thread_num):
         v0_mag = 0.0 * c
         phi_v0 = np.radians(0.0)
         theta_v0 = np.radians(0.0)
+        axis_i = x_axis
     else:
         print("Error: Example number not found.")
         exit()
@@ -189,13 +193,13 @@ def run_example(example_num, thread_num):
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
-        programs.find_final_p("electromagnetic", sim_parameters, y_axis, x_axis)
+        programs.find_final_p("electromagnetic", sim_parameters, axis_i, x_axis)
         programs.find_max_p("electromagnetic", sim_parameters, x_axis)
         
-        programs.find_final_p("electromagnetic", sim_parameters, y_axis, y_axis)
+        programs.find_final_p("electromagnetic", sim_parameters, axis_i, y_axis)
         programs.find_max_p("electromagnetic", sim_parameters, y_axis)
         
-        programs.find_final_p("electromagnetic", sim_parameters, y_axis, z_axis)
+        programs.find_final_p("electromagnetic", sim_parameters, axis_i, z_axis)
         programs.find_max_p("electromagnetic", sim_parameters, z_axis)
         
         # ------------------------------------------------------- #
@@ -205,13 +209,13 @@ def run_example(example_num, thread_num):
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
-        programs.find_final_p("ponderomotive", sim_parameters, y_axis, x_axis)
+        programs.find_final_p("ponderomotive", sim_parameters, axis_i, x_axis)
         programs.find_max_p("ponderomotive", sim_parameters, x_axis)
         
-        programs.find_final_p("ponderomotive", sim_parameters, y_axis, y_axis)
+        programs.find_final_p("ponderomotive", sim_parameters, axis_i, y_axis)
         programs.find_max_p("ponderomotive", sim_parameters, y_axis)
         
-        programs.find_final_p("ponderomotive", sim_parameters, y_axis, z_axis)
+        programs.find_final_p("ponderomotive", sim_parameters, axis_i, z_axis)
         programs.find_max_p("ponderomotive", sim_parameters, z_axis)
         
         # ------------------------------------------------------- #
@@ -234,22 +238,22 @@ def run_example(example_num, thread_num):
     plotting.plot_average_errors(a0_array, y_axis)
     plotting.plot_average_errors(a0_array, z_axis)
     
-    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, x_axis)
-    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
-    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, z_axis)
-    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, x_axis)
-    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
-    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, z_axis)
-    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, x_axis)
-    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, y_axis)
-    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, z_axis)
+    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i, x_axis)
+    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i, y_axis)
+    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i, z_axis)
+    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, axis_i, x_axis)
+    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, axis_i, y_axis)
+    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, axis_i, z_axis)
+    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, axis_i, x_axis)
+    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, axis_i, y_axis)
+    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, axis_i, z_axis)
             
     total_time = time.time() - start_time
     print(f"Program executed successfully.")
     print(f"Total time taken: {total_time:0.3f}s.\a")
     print(f"Ended reproducing example {example_num}.")
     exit()
-    
+
 def replicate_prl_results(thread_num):
     min_a0 = 0.02
     max_a0 = 1.00
