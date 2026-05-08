@@ -35,7 +35,7 @@ max_a0 = 0.50 #Minimum and maximum of a0 for lasers
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
 min_tf = 8000.0
-max_tf = 10000.0 #Final time for electromagnetic mode
+max_tf = 14000.0 #Final time for electromagnetic mode
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
 num_part = 256 #Number of particless
@@ -108,8 +108,8 @@ if __name__ == "__main__":
         
         lasers = [] #Array for all the lasers
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(145.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0 / 2.0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(60.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(60.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps))
         
         # ------------------------------------------------------- #
         
@@ -154,7 +154,6 @@ if __name__ == "__main__":
         #programs.check_convergence("electromagnetic", sim_parameters, lasers, x_axis, x_axis, 2)
         
         #plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
-        #plotting.plot_enter_exit_time("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_phases("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
         
         # ------------------------------------------------------- #
@@ -178,14 +177,13 @@ if __name__ == "__main__":
         #programs.check_convergence("ponderomotive", sim_parameters, lasers, x_axis, y_axis, 2)
         
         #plotting.plot_time_momentum("ponderomotive", sim_parameters, a0_array, x_axis, x_axis)
-        #plotting.plot_enter_exit_time("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         #plotting.plot_phases("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
         
         # ------------------------------------------------------- #
         
-        programs.calculate_errors(sim_parameters, a0_array, x_axis)
-        programs.calculate_errors(sim_parameters, a0_array, y_axis)
-        programs.calculate_errors(sim_parameters, a0_array, z_axis)
+        programs.calculate_errors(sim_parameters, x_axis)
+        programs.calculate_errors(sim_parameters, y_axis)
+        programs.calculate_errors(sim_parameters, z_axis)
         
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
         
@@ -218,7 +216,7 @@ if __name__ == "__main__":
     #Uncomment to render videos using ffmpeg
     #create_video.create_2d_colormap_video("electromagnetic", framerate, x_axis, z_axis, x_axis)
     #create_video.create_phase_video("electromagnetic", framerate, x_axis, y_axis)
-    #create_video.create_time_momentum_video("electromagnetic", framerate, x_axis, x_axis)
+    #create_video.create_time_momentum_video("electromagnetic", framerate, x_axis, y_axis)
     
     #Uncomment to remove images if you created a video
     #programs.clean_image_folder()

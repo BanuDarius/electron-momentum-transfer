@@ -26,7 +26,7 @@
 int main(int argc, char **argv) {
 	if(argc != 7) {
 		printf("This is a program which calculates the enter of exit times of electrons interacting with lasers.\n"); 
-		printf("Usage: %s <filename_output> <num> <steps> <axis_pos> <axis_p> <filename_output>\n", argv[0]);
+		printf("Usage: %s <filename_input> <num> <steps> <axis_pos> <axis_p> <filename_output>\n", argv[0]);
 		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
 		return 1;
 	}

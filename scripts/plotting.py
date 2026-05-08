@@ -466,59 +466,6 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     
 # ----------------------------------------------------------------------- #
 
-def plot_enter_exit_time(method, sim_parameters, a0_array, axis_pos, axis_p):
-    if(method == "electromagnetic"):
-        mode = "electromag"
-    else:
-        mode = "pond"
-    axis_text_pos = common.get_axis_text(axis_pos)
-    lowercase_text_pos = axis_text_pos.lower()
-    
-    axis_text_p = common.get_axis_text(axis_p)
-    lowercase_text_p = axis_text_p.lower()
-    
-    if(axis_text_pos == "Z"):
-        print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
-        print("Please plot the initial positions on the X axis or Y axis.")
-        exit()
-    
-    num = sim_parameters.num
-    i = sim_parameters.i
-    a0 = a0_array[i]
-    wavelength = sim_parameters.wavelength
-    steps = sim_parameters.steps // sim_parameters.substeps
-    
-    filename_enter_exit_time = f"{OUTPUT_DIR}/out-enter-exit-time-{mode}-{lowercase_text_pos}{lowercase_text_p}.bin"
-    filename_out = f"{OUTPUT_IMAGE_DIR}/out-enter-exit-time-{mode}-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
-    
-    data = np.fromfile(filename_enter_exit_time, dtype=np.float64).reshape(-1, 4)
-    
-    x = data[:, 0] / wavelength
-    y1 = data[:, 1] / 137.036
-    y2 = data[:, 2] / 137.036
-    
-    mask = (y1 != 0.0) & (y2 != 0.0)
-    
-    x = x[mask]
-    y1 = y1[mask]
-    y2 = y2[mask]
-    
-    plt.figure(figsize=(10,10))
-    plt.plot(x, y1, linestyle='-', c='blue', linewidth=1)
-    plt.plot(x, y2, linestyle='-', c='red', linewidth=1)
-    plt.title(f"Enter and exit time for $a_0$ = {a0:0.3f}")
-    plt.xlabel(rf"{axis_text} [$\lambda$]")
-    plt.ylabel(f"t")
-    
-    plt.axhline(0, color='black', linestyle='--')
-
-    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
-    plt.close()
-
-    print(f"Created enter exit time plot.")
-    
-# ----------------------------------------------------------------------- #
-
 def plot_trajectory_comparison(sim_parameters, lasers, axis_pos):
     axis_text_pos = common.get_axis_text(axis_pos)
     lowercase_text_pos = axis_text_pos.lower()

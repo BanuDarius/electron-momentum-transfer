@@ -182,7 +182,7 @@ def find_final_p(method, sim_parameters, axis_pos, axis_p):
 
 # ----------------------------------------------------------------------- #
 
-def calculate_errors(sim_parameters, a0_array, axis):
+def calculate_errors(sim_parameters, axis):
     axis_text = common.get_axis_text(axis)
     lowercase_text = axis_text.lower()
     
