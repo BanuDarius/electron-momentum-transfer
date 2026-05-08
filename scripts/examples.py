@@ -128,8 +128,8 @@ def run_example(example_num, thread_num):
         min_tf = 8000.0
         max_tf = 14000.0
         tauf = 7000.0
-        num_part = 1024
-        sweep_steps = 1024
+        num_part = 32
+        sweep_steps = 32
         omega = 0.057
         etaf = 0.0 * np.pi
         sigma = 19.0 * np.pi
