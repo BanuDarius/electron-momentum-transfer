@@ -126,7 +126,7 @@ def run_example(example_num, thread_num):
         zetax = 0.0
         zetay = 1.0
         min_tf = 8000.0
-        max_tf = 14000.0 
+        max_tf = 14000.0
         tauf = 7000.0
         num_part = 1024
         sweep_steps = 1024
@@ -177,7 +177,7 @@ def run_example(example_num, thread_num):
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(135.0), psi, pond_integrate_steps))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(225.0), psi, pond_integrate_steps))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
-        elif:
+        else:
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(60.0), psi, pond_integrate_steps))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps))

@@ -82,7 +82,7 @@ if __name__ == "__main__":
     #Will complete in ~1 minute on average consumer hardware
     #quick_example.run_quick_example(thread_num)
     
-    #In the examples/ directory there are several examples whose filenames start with 1, 2, and 3
+    #In the examples/ directory there are several examples whose filenames start with 1, 2, 3, and 4
     #Uncomment this line to reproduce any of them
     #examples.run_example(2, thread_num)
     
