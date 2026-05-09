@@ -1,3 +1,25 @@
+'''MIT License
+
+Copyright (c) 2026 Banu Darius-Matei
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.'''
+
 import time
 import numpy as np
 import scripts.common as common
@@ -10,20 +32,20 @@ import tests.quick_example as quick_example
 import tests.analytic_test as analytic_test
 import tests.performance_test as performance_test
 
-c = 137.036
+c = 137.036 #Speed of light in atomic units
 
 x_axis = 0
 y_axis = 1
 z_axis = 2
 
-framerate = 3
+framerate = 3 #Video output framerate
 first_eighth = 8
 first_quarter = 4
 
 all_states = False
 final_states = True
 full_trajectory = True
-trajectory_until_exit = False
+trajectory_until_exit = False #Definitions for simulation parameters
 
 # ------------------------------------------------------- #
 
