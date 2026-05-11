@@ -28,6 +28,7 @@ trajectory_until_exit = False
 # ------------------------------------------------------- #
 
 thread_num = 1
+max_tf = 100000.0
 min_a0 = 0.02
 max_a0 = 10.00
 zetax = 1.0
@@ -52,7 +53,7 @@ theta_v0 = np.radians(0.0)
 
 # ------------------------------------------------------- #
 
-def run_complete_test(v0_mag, tf):
+def run_complete_test(v0_mag):
     a0_array = np.array([])
     
     for i in range(0, sweep_steps):
@@ -62,7 +63,7 @@ def run_complete_test(v0_mag, tf):
         lasers = []
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps))
         
-        sim_parameters = sim_init.SimParameters(i, r, r, num_part, tf, steps_electromag, first_eighth,
+        sim_parameters = sim_init.SimParameters(i, r, r, num_part, max_tf, steps_electromag, first_eighth,
             substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c) 
             
         programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)

@@ -114,7 +114,7 @@ if __name__ == "__main__":
     
     #Uncomment this line to run a quick parameter sweep test for a0 = 0.02 to 10.00,
     #Comparing the Higuera-Cary integrator with an analytical solution for one laser
-    #analytic_test.run_complete_test(v0_mag, max_tf)
+    #analytic_test.run_complete_test(v0_mag)
     
     #Uncomment to create a relative performance speedrup analysis for a pre-defined scenario
     #performance_test.run_example_performance_test(thread_num)
