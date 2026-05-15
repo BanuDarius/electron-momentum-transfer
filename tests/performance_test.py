@@ -18,13 +18,15 @@ final_states = True
 full_trajectory = True
 trajectory_until_exit = False
 
+# ------------------------------------------------------- #
+
 def run_performance_test(method, sim_parameters, lasers, thread_num_final):
     a0_array = np.array([])
     programs.clean_output_folder()
     sim_parameters.thread_num = 1
     i = 1
     
-    while(sim_parameters.thread_num <= thread_num_final):
+    while(i <= thread_num_final):
         start_time = time.time()
         programs.run_simulation(method, sim_parameters, lasers)
         
@@ -35,15 +37,15 @@ def run_performance_test(method, sim_parameters, lasers, thread_num_final):
             file.write(np.double(sim_parameters.thread_num))
             file.write(np.double(total_time))
         
-        sim_parameters.thread_num = 2 * i
-        i += 1
-        
-        # ------------------------------------------------------- #
+        i *= 2
+        sim_parameters.thread_num = i
     
     plotting.plot_performance()
     
     print(f"Performance test executed successfully.\a")
     exit()
+
+# ------------------------------------------------------- #
 
 def run_example_performance_test(thread_num_final):
     i = 1
