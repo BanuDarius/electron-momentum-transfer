@@ -22,15 +22,13 @@ To remove the previously generated output data (images, videos), use:
 ```
 cmake --build build --target clean-output
 ```
-
 ### Usage
 ```
 python3 auto_compute.py
 ```
 This will automatically compute and render the final momentum transfer heatmaps for an example scenario.
 
-For more instructions, see `docs/user-manual.pdf`,
-
+For more instructions, see `docs/user-manual.pdf`
 ## Gallery
 <img width="1072" height="1078" alt="1_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/9be7793a-a5a0-4938-9984-07a3faf16b83" />
 <img width="1056" height="1078" alt="1_out-2d-heatmap-errors-yy" src="https://github.com/user-attachments/assets/50f1659c-f66d-4705-893b-606e386e63dc" />
@@ -40,8 +38,8 @@ For more instructions, see `docs/user-manual.pdf`,
 <img width="2124" height="2156" alt="_out-average-errors-x" src="https://github.com/user-attachments/assets/7417622b-7c2f-4ba3-b2c0-84dd7edfa005" />
 
 ## Performance
-<img width="2120" height="1771" alt="_out-performance" src="https://github.com/user-attachments/assets/d44f3ffa-875a-4e94-b633-403938971564" />
-This performance test was made on a system consisting of an AMD EPYC 7713 64-core processor.
+<img width="2185" height="1809" alt="performance" src="https://github.com/user-attachments/assets/6b7fcf72-b6d3-49ba-aff0-69943884de7f" />
+This performance test was made on a system consisting of 2x AMD EPYC 7713 64-core processors.
 
 ## References
 [1] Higuera, Adam V., and John R. Cary. "Structure-preserving second-order integration of relativistic charged particle trajectories in electromagnetic fields." Physics of Plasmas 24.5 (2017).
