@@ -110,7 +110,7 @@ if __name__ == "__main__":
     
     #Uncomment to replicate the results obtained in the Physical Review Letters paper
     #"Relativistic Ponderomotive Force, Uphill Acceleration, and Transition to Chaos", D. Bauer et al. (1995)
-    examples.replicate_prl_results(thread_num)
+    #examples.replicate_prl_results(thread_num)
     
     #Uncomment this line to run a quick parameter sweep test for a0 = 0.02 to 10.00,
     #Comparing the Higuera-Cary integrator with an analytical solution for one laser
