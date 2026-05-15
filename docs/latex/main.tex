@@ -1,0 +1,253 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegray},
+    keywordstyle=\color{blue},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=mystyle}
+\title{Electron Momentum Transfer \\ User Manual}
+\begin{document}
+\maketitle
+\section{Compilation}
+The main program is compiled using CMake. It will automatically detect the host compiler and link the necessary libraries.
+To compile the C binaries from source, execute the following commands in your terminal:
+\begin{lstlisting}[language=bash]
+git clone --depth 1 https://github.com/BanuDarius/electron-momentum-transfer
+cd electron-momentum-transfer/
+cmake -B build
+cmake --build build
+\end{lstlisting}
+By default, CMake applies the \texttt{-march=native} and \texttt{-O3} optimization flags for your specific CPU architecture. If you are compiling on a legacy system or encounter illegal instruction errors, you can use CMake to build for a generic x86 architecture:
+\begin{lstlisting}[language=bash]
+cmake -B build -DGENERIC=ON
+cmake --build build
+\end{lstlisting}
+To delete the previously generated output data, including images and video renders, use the clean target:
+\begin{lstlisting}[language=bash]
+cmake --build build --target clean-output
+\end{lstlisting}
+\section{Quick functions}
+To easily check the functions of the program, you can uncomment one of the lines corresponding to these functions.
+To run a low resolution parameter sweep:
+\begin{lstlisting}[language=Python]
+quick_example.run_quick_example(thread_num)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{thread\_num}}: The number of threads to allocate for the simulation.
+\end{itemize}
+To reproduce one of the parameters sweeps presented in the \texttt{examples} directory:
+\begin{lstlisting}[language=Python]
+examples.run_example(num_example, thread_num)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{num\_example}}: The  example to reproduce (1 to 4).
+    \item \textbf{\texttt{thread\_num}}: The number of threads.
+\end{itemize}
+To run a complete test between the numerical integrator and an analytical solution for one plane wave:
+\begin{lstlisting}[language=Python]
+analytic_test.run_complete_test(thread_num)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{thread\_num}}: The number of threads.
+\end{itemize}
+To replicate the results obtained by D. Bauer et al. (1995) Physical Review Letters paper:
+\begin{lstlisting}[language=Python]
+examples.replicate_prl_results(thread_num)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{thread\_num}}: The number of threads.
+\end{itemize}
+To run a strong scaling performance test, from 1 to N threads:
+\begin{lstlisting}[language=Python]
+performance_test.run_example_performance_test(thread_num_final)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{thread\_num\_final}}: The maximum number of threads for the test.
+\end{itemize}
+\section{Usage: \texttt{auto\_compute.py}}
+The intended usage of this software suite is through the master Python script, \texttt{auto\_compute.py}. This script serves as the primary user interface and handles the complete simulation.\\
+To start full parameter sweep and auto-generate the analysis figures, simply execute:
+\begin{lstlisting}[language=bash]
+python3 auto_compute.py
+\end{lstlisting}
+Configuration of the physical parameters (e.g., $a_0$, $\omega$, thread count) should be performed directly within the variables defined at the top of the \texttt{auto\_compute.py} script. The units used by the program are atomic units.
+\section{Laser Initialization and Parameters}
+In the \texttt{auto\_compute.py} master script, the laser assembly is constructed by appending individual \texttt{LaserParameters} objects (defined in \texttt{sim\_init.py}) to the \texttt{lasers} list.
+\begin{lstlisting}[language=Python]
+lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps))
+\end{lstlisting}
+The definitions of these arguments are:
+\begin{itemize}
+    \item \textbf{\texttt{a0} ($a_0$)}: The dimensionless potential amplitude $a_0 = \frac{|e|E_0}{mc\omega}$.
+    \item \textbf{\texttt{sigma} ($\sigma$)}: The width parameter of the Gaussian temporal envelope.
+    \item \textbf{\texttt{omega} ($\omega$)}: The angular frequency of the laser field in atomic units.
+    \item \textbf{\texttt{etaf} ($\eta_f$)}: The flat-top envelope parameter. It defines the duration of the constant-amplitude plateau of the pulse in terms of the phase $\eta = \omega t - \mathbf{k} \cdot \mathbf{r}$. For a standard Gaussian pulse, set $\eta_f = 0$.
+    \item \textbf{\texttt{zetax}, \texttt{zetay} ($\zeta_x, \zeta_y$)}: The polarization parameters ($\mathbf{\epsilon}_1$ and $\mathbf{\epsilon}_2$). For instance, $\zeta_x = 0, \zeta_y = 1$ is for linear polarization, while $\zeta_x = \frac{1}{\sqrt{2}}, \zeta_y = \frac{1}{\sqrt{2}}$ is for circular polarization.
+    \item \textbf{\texttt{alpha} ($\alpha$)}: The polarization rotation angle. It rotates the basis vectors $\mathbf{\epsilon}_1$ and $\mathbf{\epsilon}_2$ around the propagation axis $\mathbf{n}$ by the angle $\alpha$.
+    \item \textbf{\texttt{phi}, \texttt{theta} ($\phi, \theta$)}: The azimuthal and polar spherical angles defining the laser's propagation direction vector $\mathbf{n}$.
+    \item \textbf{\texttt{psi} ($\psi$)}: The carrier-envelope phase (CEP), which shifts the phase of the oscillating carrier wave relative to the peak of the field envelope.
+    \item \textbf{\texttt{pond\_integrate\_steps}}: A parameter used by the ponderomotive solver. It defines the number of steps used to evaluate the integrals (e.g., $\int A^2 d\phi$) with Simpson's 1/3 rule.
+\end{itemize}\par
+The line which runs the simulation itself is:
+\begin{lstlisting}[language=Python]
+programs.run_simulation(method, sim_parameters, lasers)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{method}}: Defines the numerical integrator and physical approximation to be used. The Python string is internally mapped to a discrete \texttt{mode} integer passed to the C binary:
+    \begin{itemize}
+        \item \texttt{"electromagnetic"} $\rightarrow$ \texttt{mode = 0}: Uses the Higuera-Cary particle pusher for the full Lorentz force equations.
+        \item \texttt{"ponderomotive"} $\rightarrow$ \texttt{mode = 1}: Uses the 4th-order Runge-Kutta (RK4) integrator to solve the averaged ponderomotive approximation.
+        \item \texttt{"electromagnetic-rk4"} $\rightarrow$ \texttt{mode = 2}: Uses the RK4 integrator for the Lorentz force (used for legacy comparisons or specific debugging).
+    \end{itemize}
+    \item \textbf{\texttt{sim\_parameters}}: An instance of the \texttt{SimParameters} class.
+    \item \textbf{\texttt{lasers}}: The list of \texttt{LaserParameters} objects.
+\end{itemize}
+To perform data analysis efficiently without bottlenecking Python's memory space, the next script is used, which finds the final momentum for each particle:
+\begin{lstlisting}[language=Python]
+programs.find_final_p(method, sim_parameters, axis_pos, axis_p)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{method}}: Specifies the source of the data (\texttt{"electromagnetic"}, \texttt{"ponderomotive"}, or \texttt{"analytic"}).
+    \item \textbf{\texttt{sim\_parameters}}: The current configuration state.
+    \item \textbf{\texttt{axis\_pos}}: The coordinate axis index (0 for X, 1 for Y, 2 for Z) corresponding to the initial spatial distribution of the particle assembly.
+    \item \textbf{\texttt{axis\_p}}: The coordinate axis index corresponding to the targeted final momentum component to be extracted.
+\end{itemize}
+The next program extracts the maximum momentum on one axis:
+\begin{lstlisting}[language=Python]
+programs.find_max_p(method, sim_parameters, axis)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{method}}: \texttt{"electromagnetic"} or \texttt{"ponderomotive"}.
+    \item \textbf{\texttt{sim\_parameters}}: The current configuration state.
+    \item \textbf{\texttt{axis}}: The coordinate axis index being analyzed.
+\end{itemize}
+\section{Error Analysis and Visualization}
+The software is able to automatically benchmark the ponderomotive approximation against the full electromagnetic Lorentz force solver. 
+This is executed with:
+\begin{lstlisting}[language=Python]
+programs.calculate_errors(sim_parameters, axis)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{sim\_parameters}}: The current configuration state.
+    \item \textbf{\texttt{axis}}: The coordinate axis index being analyzed.
+\end{itemize}
+The average errors are plotted with:
+\begin{lstlisting}[language=Python]
+plotting.plot_average_errors(a0_array, axis)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{a0\_array}}: The linear space of $a_0$ values swept during the simulation.
+    \item \textbf{\texttt{axis}}: The coordinate axis index corresponding to the momentum component.
+\end{itemize}
+For plotting the maximum momentum on one axis:
+\begin{lstlisting}[language=Python]
+plotting.plot_max_p(method, a0_array, axis)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{method}}:\texttt{"electromagnetic"} or \texttt{"ponderomotive"}.
+    \item \textbf{\texttt{a0\_array} }: The linear space of $a_0$ values swept during the simulation (the X-axis of the plot).
+    \item \textbf{\texttt{axis}}: The coordinate axis index corresponding to the momentum component being plotted (the Y-axis of the plot).
+\end{itemize}
+The heatmaps for visualizing the final momentum as a function of $a_0$:
+\begin{lstlisting}[language=Python]
+plotting.plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{method}}:\texttt{"electromagnetic"} or \texttt{"ponderomotive"}.
+    \item \textbf{\texttt{sim\_parameters}}: The current simulation state.
+    \item \textbf{\texttt{a0\_array}}: The linear space of $a_0$ values swept during the simulation.
+    \item \textbf{\texttt{axis\_pos}}: The coordinate axis index corresponding to the initial distribution of the particles (the X-axis of the heatmap).
+    \item \textbf{\texttt{axis\_p} }: The coordinate axis index corresponding to the final momentum component being mapped to the color gradient.
+\end{itemize}
+To plot the errors between the two methods:
+\begin{lstlisting}[language=Python]
+plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{sim\_parameters}}: The current simulation state.
+    \item \textbf{\texttt{a0\_array}}: The linear space of $a_0$ values swept during the simulation.
+    \item \textbf{\texttt{axis\_pos}}: The coordinate axis index corresponding to the initial position of the electrons.
+    \item \textbf{\texttt{axis\_p}}: The coordinate axis index corresponding to the final momentum component.
+\end{itemize}
+This function scans the trajectory data to identify when and when its momentum stabilizes (exits the field).
+\begin{lstlisting}[language=Python]
+programs.find_enter_exit_time(method, sim_parameters, axis_pos, axis_p)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{method}}: \texttt{"electromagnetic"} or \texttt{"ponderomotive"}.
+    \item \textbf{\texttt{sim\_parameters}}: The current simulation state.
+    \item \textbf{\texttt{axis\_pos}}: The coordinate axis index representing the initial spatial position.
+    \item \textbf{\texttt{axis\_p}}: The coordinate axis index corresponding to the targeted momentum component.
+\end{itemize}
+This function automatically performs a numerical convergence test by re-running the simulation with a strictly higher temporal resolution and comparing the deviation in the final momentum.
+\begin{lstlisting}[language=Python]
+programs.check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, multiplier)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{method}}: The physics solver to validate.
+    \item \textbf{\texttt{sim\_parameters}}: The current simulation configuration.
+    \item \textbf{\texttt{lasers}}: The list of laser parameters.
+    \item \textbf{\texttt{axis\_pos}}: The initial spatial position axis index.
+    \item \textbf{\texttt{axis\_p}}: The momentum axis index to check for convergence.
+    \item \textbf{\texttt{multiplier}}: The factor by which to increase the number of integration steps.
+\end{itemize}
+To track the momentum of the particles as a function of time:
+\begin{lstlisting}[language=Python]
+plotting.plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{method}}: Specifies the physics solver utilized.
+    \item \textbf{\texttt{sim\_parameters}}: The simulation configuration.
+    \item \textbf{\texttt{a0\_array}}: The $a_0$ parameter sweep array.
+    \item \textbf{\texttt{axis\_pos}}: The initial spatial coordinate axis index.
+    \item \textbf{\texttt{axis\_p}}: The momentum component tracked on the Y-axis.
+\end{itemize}
+This function generates a phase-space diagram for each particle's momentum on the y axis and their positions on the x axis:
+\begin{lstlisting}[language=Python]
+plotting.plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{method}}: Specifies the physics solver utilized.
+    \item \textbf{\texttt{sim\_parameters}}: The simulation configuration.
+    \item \textbf{\texttt{a0\_array}}: The $a_0$ parameter sweep array.
+    \item \textbf{\texttt{axis\_pos}}: The spatial coordinate mapped to the X-axis of the phase diagram.
+    \item \textbf{\texttt{axis\_p}}: The corresponding momentum component mapped to the Y-axis of the phase diagram.
+\end{itemize}
+This function generates a plot of the average convergence error as a function of $a_0$:
+\begin{lstlisting}[language=Python]
+plotting.plot_convergence(method, a0_array, axis)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{method}}: Specifies the physics solver utilized.
+    \item \textbf{\texttt{a0\_array}}: The linear space of $a_0$ values swept during the simulation (mapped to the X-axis).
+    \item \textbf{\texttt{axis}}: The coordinate axis index corresponding to the momentum component being analyzed for convergence.
+\end{itemize}
+To generate the complete convergence heatmap:
+\begin{lstlisting}[language=Python]
+plotting.plot_2d_convergence_heatmap(method, sim_parameters, a0_array, axis_pos, axis_p)
+\end{lstlisting}
+\begin{itemize}
+    \item \textbf{\texttt{method}}: Specifies the physics solver being validated.
+    \item \textbf{\texttt{sim\_parameters}}: The current simulation configuration.
+    \item \textbf{\texttt{a0\_array}}: The linear space of $a_0$ values swept during the simulation (the Y-axis).
+    \item \textbf{\texttt{axis\_pos}}: The initial spatial coordinate axis index (the X-axis).
+    \item \textbf{\texttt{axis\_p}}: The momentum component axis index used to calculate the convergence.
+\end{itemize}
+\end{document}

@@ -36,11 +36,11 @@ c = 137.036 #Speed of light in atomic units
 
 x_axis = 0
 y_axis = 1
-z_axis = 2
+z_axis = 2 #Definitions for the x, y, z axis
 
 framerate = 3 #Video output framerate
-first_eighth = 8
-first_quarter = 4
+first_eighth = 8 #First eight takes the first 1/8 of the simulation domain
+first_quarter = 4 #First quarter takes 1/4 of the simulation domain
 
 all_states = False
 final_states = True
