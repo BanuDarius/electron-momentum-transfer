@@ -1,6 +1,5 @@
 ## Introduction
-This is a C program that calculates the linear momentum transfer caused by multiple laser beams coming from arbitrary directions, to an assembly of electrons, producing a 2D momentum map.
-Parallelized with OpenMP.
+This is a program which computes the linear momentum transfer to electrons interacting with plane wave laser beams, using both the Lorentz force formalism and the relativistic ponderomotive approximation. Its main purpose is creating visual representations of the final momentum distribution for the particle ensemble, and calculating the errors between the two methods.
 
 ## Compilation
 The installation is as follows:
@@ -28,22 +27,9 @@ cmake --build build --target clean-output
 ```
 python3 auto_compute.py
 ```
-This will automatically compute and render the final momentum transfer heatmaps.
+This will automatically compute and render the final momentum transfer heatmaps for an example scenario.
 
-### Run quick test
-To run a quick parameter sweep (1 minute on consumer hardware):
-```
-python3 -c "import sys; sys.path.append('tests'); from tests.quick_example import run_quick_example; run_quick_example(<num_threads>)
-```
-And replace `<num_threads>` with the number of threads to be used in the simulation.
-### Reproduce examples
-
-In order to reproduce the results from the examples/ directory:
-```
-python3 -c "import sys; sys.path.append('scripts'); from scripts.examples import run_example; run_example(<num_example>, <num_threads>)"
-```
-
-And replace `<num_example>` with the respective example number `(1, 2, 3)`.
+For more instructions, see `docs/user-manual.pdf`,
 
 ## Gallery
 <img width="1072" height="1078" alt="1_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/9be7793a-a5a0-4938-9984-07a3faf16b83" />
