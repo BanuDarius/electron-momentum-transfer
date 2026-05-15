@@ -279,13 +279,13 @@ def run_example(example_num, thread_num):
 def replicate_prl_results(thread_num):
     min_a0 = 0.02
     max_a0 = 1.00
-    zetax = 0.0
-    zetay = 1.0
+    zetax = 1.0
+    zetay = 0.0
     min_tf = 1500.0
     max_tf = 1500.0
     tauf = 1500.0
-    num_part = 1024
-    sweep_steps = 1024
+    num_part = 256
+    sweep_steps = 256
     omega = 0.057
     etaf = 50000.0 * np.pi
     sigma = 0.1 * np.pi
@@ -362,9 +362,9 @@ def replicate_prl_results(thread_num):
         
         # ------------------------------------------------------- #
         
-        programs.calculate_errors(sim_parameters, a0_array, x_axis)
-        programs.calculate_errors(sim_parameters, a0_array, y_axis)
-        programs.calculate_errors(sim_parameters, a0_array, z_axis)
+        programs.calculate_errors(sim_parameters, x_axis)
+        programs.calculate_errors(sim_parameters, y_axis)
+        programs.calculate_errors(sim_parameters, z_axis)
         
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
         
