@@ -284,8 +284,8 @@ def replicate_prl_results(thread_num):
     min_tf = 1500.0
     max_tf = 1500.0
     tauf = 1500.0
-    num_part = 256
-    sweep_steps = 256
+    num_part = 1024
+    sweep_steps = 1024
     omega = 0.057
     etaf = 50000.0 * np.pi
     sigma = 0.1 * np.pi
