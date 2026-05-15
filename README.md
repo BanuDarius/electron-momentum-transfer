@@ -19,6 +19,11 @@ cmake --build build
 
 Which will compile for a generic x86 CPU.
 
+To remove the previously generated output data (images, videos), use:
+```
+cmake --build build --target clean-output
+```
+
 ### Usage
 ```
 python3 auto_compute.py
