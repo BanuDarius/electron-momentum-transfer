@@ -60,7 +60,7 @@ min_tf = 8000.0
 max_tf = 14000.0 #Final time for electromagnetic mode
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
-num_part = 256 #Number of particless
+num_part = 256 #Number of particles
 sweep_steps = 256 #Number of parameter sweeps
 num_full = 128000 #Number of particles for 2D colormaps
 
