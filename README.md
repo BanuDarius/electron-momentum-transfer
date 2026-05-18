@@ -32,10 +32,9 @@ For more instructions, see `docs/user-manual.pdf`
 ## Gallery
 <img width="1072" height="1078" alt="1_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/9be7793a-a5a0-4938-9984-07a3faf16b83" />
 <img width="1056" height="1078" alt="1_out-2d-heatmap-errors-yy" src="https://github.com/user-attachments/assets/50f1659c-f66d-4705-893b-606e386e63dc" />
-<img width="2147" height="2158" alt="_out-2d-heatmap-electromag-xy" src="https://github.com/user-attachments/assets/6848d32b-2676-467e-9d53-9f75aa6dd72b" />
-<img width="2115" height="2158" alt="_out-2d-heatmap-errors-xy" src="https://github.com/user-attachments/assets/d5495d2d-7e0f-4479-8370-483b5ef522cd" />
-<img width="2115" height="2158" alt="_out-2d-heatmap-errors-xx" src="https://github.com/user-attachments/assets/492e1f95-70cb-448c-a0cf-85e120a8e6ab" />
-<img width="2124" height="2156" alt="_out-average-errors-x" src="https://github.com/user-attachments/assets/7417622b-7c2f-4ba3-b2c0-84dd7edfa005" />
+<img width="2271" height="2199" alt="3_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/65746253-5e52-4519-9899-c0d6e56285e9" />
+<img width="2228" height="2199" alt="3_out-2d-heatmap-errors-yy" src="https://github.com/user-attachments/assets/cd61461f-a81d-463c-94af-699c3bac44e5" />
+<img width="2154" height="2194" alt="3_out-average-errors-y" src="https://github.com/user-attachments/assets/7e8bc865-e120-4344-b938-e8d191d0f890" />
 
 ## Performance
 <img width="2185" height="1809" alt="performance" src="https://github.com/user-attachments/assets/6b7fcf72-b6d3-49ba-aff0-69943884de7f" />
