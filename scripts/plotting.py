@@ -495,6 +495,7 @@ def plot_trajectory_comparison(sim_parameters, lasers, axis_pos):
     i = sim_parameters.i
     c_value = sim_parameters.c_value
     steps = sim_parameters.steps // sim_parameters.substeps
+    a0 = lasers[0].a0
     
     filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-comparison-{lowercase_text_pos}-{i}.png"
     filename = f"{OUTPUT_DIR}/out-data.bin"
@@ -512,7 +513,7 @@ def plot_trajectory_comparison(sim_parameters, lasers, axis_pos):
     plt.plot(x_a, y_a, c='black', linestyle='-', linewidth=1, label='Analytic solution')
     plt.plot(x, y, c='red', linestyle='--', linewidth=1, label='Numeric solution')
     
-    plt.title(f"Trajectory comparison on {axis_text_pos} axis")
+    plt.title(f"Trajectory comparison on {axis_text_pos} axis, $a_0$ = {a0:0.2f}")
     plt.xlabel(f"t [a.u.]")
     plt.ylabel(f"{axis_text_pos} [a.u.]")
     plt.legend()
