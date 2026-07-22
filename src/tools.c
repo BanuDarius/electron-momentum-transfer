@@ -21,7 +21,6 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "init.h"
 #include "tools.h"
@@ -43,8 +42,8 @@ void print_chunk(FILE *out, double *chunk, int thread_num) {
 }
 
 void copy_initial(double *ch, double *u, int k, int id) {
-	int index = 2 * id * U_SIZE * CHUNK_SIZE + 2 * U_SIZE * k;
-	for(int i = index; i < index + U_SIZE; i++)
+	size_t index = 2 * id * U_SIZE * CHUNK_SIZE + 2 * U_SIZE * k;
+	for(size_t i = index; i < index + U_SIZE; i++)
 		ch[i] = u[i - index];
 }
 
@@ -82,8 +81,8 @@ void epsilon(double *u, double *w) {
 
 void rotate_polarization(double *epsilon1, double *epsilon2, double alpha) {
 	double e1_temp[3], e2_temp[3];
-	memcpy(e1_temp, epsilon1, 3 * sizeof(double));
-	memcpy(e2_temp, epsilon2, 3 * sizeof(double));
+	copy_vec(e1_temp, epsilon1);
+	copy_vec(e2_temp, epsilon2);
 	for(int j = 0; j < 3; j++) {
 		epsilon1[j] = e1_temp[j] * cos(alpha) + e2_temp[j] * sin(alpha);
 		epsilon2[j] = e2_temp[j] * cos(alpha) - e1_temp[j] * sin(alpha);

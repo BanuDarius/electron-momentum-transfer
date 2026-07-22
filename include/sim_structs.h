@@ -22,7 +22,6 @@
 #ifndef SIM_STRUCTS_H
 #define SIM_STRUCTS_H
 
-#include <stdio.h>
 #include <stdalign.h>
 
 #define LASER_PARAMS 11 //How many parameters will be read from a file for one laser

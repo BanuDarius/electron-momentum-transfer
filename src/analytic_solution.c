@@ -22,7 +22,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "init.h"
 #include "tools.h"
@@ -42,10 +41,10 @@ void simulate_analytic(FILE *out, struct particle *p, struct parameters *param, 
 	double dphi = param->tf * l->omega / param->steps, phi_rel, phi_abs;
 	int i = 0;
 	
-	memcpy(u_i, p->u, 4 * sizeof(double));
-	memcpy(u_c, p->u, 4 * sizeof(double));
+	copy_vec4(u_i, p->u);
+	copy_vec4(u_c, p->u);
+	copy_vec(k_vec, l->n);
 	
-	memcpy(k_vec, l->n, 3 * sizeof(double));
 	mult_vec(k_vec, k_vec, l->omega / c);
 	double phi_0 = - dot(k_vec, &u_i[1]);
 	
@@ -76,19 +75,19 @@ void simulate_analytic_v0(FILE *out, struct particle *p, struct parameters *para
 	double dphi = param->tf * l->omega / param->steps, phi_rel, phi_abs, int_A2, delta_d;
 	int i = 0;
 	
-	memcpy(u_i, p->u, 4 * sizeof(double));
-	memcpy(u_c, p->u, 4 * sizeof(double));
-	memcpy(u0, &p->u[4], 4 * sizeof(double));
+	copy_vec4(u_i, p->u);
+	copy_vec4(u_c, p->u);
+	copy_vec4(u0, &p->u[4]);
 	
 	double u0_dot_n = dot(l->n, &u0[1]);
 	double lambda = u0[0] - u0_dot_n;
 	
-	memcpy(temp_vec, l->n, 3 * sizeof(double));
+	copy_vec(temp_vec, l->n);
 	mult_vec(temp_vec, temp_vec, - u0_dot_n);
-	memcpy(u0_perp, &u0[1], 3 * sizeof(double));
+	copy_vec(u0_perp, &u0[1]);
 	add_vec(u0_perp, u0_perp, temp_vec);
 	
-	memcpy(k_vec, l->n, 3 * sizeof(double));
+	copy_vec(k_vec, l->n);
 	mult_vec(k_vec, k_vec, l->omega / c);
 	double phi_0 = l->omega * (u_i[0] / c) - dot(k_vec, &u_i[1]);
 	
@@ -105,7 +104,7 @@ void simulate_analytic_v0(FILE *out, struct particle *p, struct parameters *para
 		d += delta_d;
 		
 		mult_vec(r_temp, int_A, -q / (m * lambda) * (c / l->omega));
-		memcpy(temp_vec, u0_perp, 3 * sizeof(double));
+		copy_vec(temp_vec, u0_perp);
 		mult_vec(temp_vec, temp_vec, (1.0 / lambda) * (c / l->omega) * dphi);
 		
 		add_vec(r_temp, r_temp, temp_vec);

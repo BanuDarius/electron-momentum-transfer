@@ -23,6 +23,7 @@
 #define TOOLS_H
 
 #include <stdio.h>
+
 struct ranxoshi256;
 extern struct ranxoshi256 global_rng;
 

@@ -48,6 +48,16 @@ static inline void add_vec4(double *a, double *b, double *c) {
 		a[i] = b[i] + c[i];
 }
 
+static inline void copy_vec(double *restrict a, const double *restrict b) {
+	for(int i = 0; i < 3; i++)
+		a[i] = b[i];
+}
+
+static inline void copy_vec4(double *restrict a, const double *restrict b) {
+	for(int i = 0; i < 4; i++)
+		a[i] = b[i];
+}
+
 static inline void cross(double *u, const double *a, const double *b) {
 	u[0] = a[1] * b[2] - a[2] * b[1];
 	u[1] = a[2] * b[0] - a[0] * b[2];

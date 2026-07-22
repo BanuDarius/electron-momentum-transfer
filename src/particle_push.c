@@ -53,9 +53,9 @@ void higuera_cary_step(double *u, const double dt, const struct laser *restrict 
 	hc_u_prime(u_prime, u_minus, t_rot);
 	hc_u_plus(u_plus, u_minus, u_prime, s_factor, t_rot); //Compute the rotation vector (t_rot), the s factor (2/(1+|t_rot|^2), u_prime, and u_plus
 	
-	memcpy(u_final, u_plus, 3 * sizeof(double));
+	copy_vec(u_final, u_plus);
 	add_vec(u_final, u_final, epsilon_vec);
-	memcpy(&u[5], u_final, 3 * sizeof(double)); //Full-step advancement of the four-velocity
+	copy_vec(&u[5], u_final); //Full-step advancement of the four-velocity
 	
 	gamma_fac = comp_gamma(&u[5]); //This time it's necessary to manually calculate gamma_fac at step n + 1
 	u[0] += 0.5 * c * dt;

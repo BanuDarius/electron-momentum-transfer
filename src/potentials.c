@@ -20,7 +20,6 @@
 * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 #include <math.h>
-#include <string.h>
 
 #include "units.h"
 #include "math_tools.h"
@@ -34,7 +33,7 @@ void potential_a(double *a, double *u, const struct laser *restrict l, int n) {
 	
 	a[0] = 0.0;
 	k_vec4[0] = 1.0;
-	memcpy(&k_vec4[1], l[n].n, 3 * sizeof(double));
+	copy_vec(&k_vec4[1], l[n].n);
 	mult_vec4(k_vec4, k_vec4, l[n].omega / c);
 	
 	eta = dot4(k_vec4, u) + l[n].psi;
@@ -50,7 +49,7 @@ void potential_deriv_a(double *a, double *u, const struct laser *restrict l, int
 	
 	a[0] = 0.0;
 	k_vec4[0] = 1.0;
-	memcpy(&k_vec4[1], l[n].n, 3 * sizeof(double));
+	copy_vec(&k_vec4[1], l[n].n);
 	mult_vec4(k_vec4, k_vec4, l[n].omega / c);
 	
 	eta = dot4(k_vec4, u) + l[n].psi;
@@ -66,7 +65,7 @@ void potential_a_phi(double *a, double eta, const struct laser *restrict l, int 
 	double potentialA0 = l[n].a0 * m * c / fabs(q);
 	double epsilon4[3], k_vec[3], A0mult;
 	
-	memcpy(k_vec, l[n].n, 3 * sizeof(double));
+	copy_vec(k_vec, l[n].n);
 	mult_vec(k_vec, k_vec, l[n].omega / c);
 	eta += l[n].psi;
 	

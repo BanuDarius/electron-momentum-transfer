@@ -36,7 +36,7 @@ double integrate(double *u, const struct laser *restrict l) {
 	double a1_left[4], a1_right[4], a1_center[4], a1_temp[4], u_temp[4];
 	double lambda = 2.0 * M_PI * c / l[0].omega, dh = lambda / (double) l[0].pond_integrate_steps;
 	
-	memcpy(u_temp, u, 4 * sizeof(double));
+	copy_vec4(u_temp, u);
 	u_temp[0] -= lambda / 2.0;
 	
 	//The integration is done using Simpson's 1/3 rule
@@ -107,7 +107,7 @@ void integrate_phi_vec(double *x, double phi_init, double phi_final, const struc
 		x[2] += (a1_left[2] + 4.0 * a1_center[2] + a1_right[2]) * dh / 6.0;
 		
 		phi += dh;
-		memcpy(a1_left, a1_right, 3 * sizeof(double));
+		copy_vec(a1_left, a1_right);
 	}
 }
 
@@ -151,7 +151,7 @@ double integrate_dmuda(double *u, const struct laser *restrict l, int index) {
 	double a1_left[4], a1_right[4], a1_center[4], a2_left[4], a2_right[4], a2_center[4], a1_temp[4], a2_temp[4], u_temp[4];
 	double lambda = 2.0 * M_PI * c / l[0].omega, dh = lambda / (double) l[0].pond_integrate_steps;
 	
-	memcpy(u_temp, u, 4 * sizeof(double));
+	copy_vec4(u_temp, u);
 	u_temp[0] -= lambda / 2.0;
 	
 	memset(a1_left, 0, 4 * sizeof(double)); memset(a2_left, 0, 4 * sizeof(double));

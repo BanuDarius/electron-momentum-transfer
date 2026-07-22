@@ -49,7 +49,7 @@ trajectory_until_exit = False #Definitions for simulation parameters
 
 # ------------------------------------------------------- #
 
-thread_num = 4 #Number of threads
+thread_num = 8 #Number of threads
 
 min_a0 = 0.02
 max_a0 = 0.50 #Minimum and maximum of a0 for lasers
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     
     #In the examples/ directory there are several examples whose filenames start with 1, 2, 3, and 4
     #Uncomment this line to reproduce any of them
-    #examples.run_example(4, thread_num)
+    #examples.run_example(1, thread_num)
     
     #Uncomment to replicate the results obtained in the Physical Review Letters paper
     #"Relativistic Ponderomotive Force, Uphill Acceleration, and Transition to Chaos", D. Bauer et al. (1995)

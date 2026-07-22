@@ -47,7 +47,7 @@ void compute_e(double *E, double *u, const struct laser *restrict l, int i) {
 	}
 	mult_vec(E1, E1, Ec1);
 	mult_vec(E2, E2, Ec2);
-	memcpy(E, E1, 3 * sizeof(double));
+	copy_vec(E, E1);
 	add_vec(E, E, E2);
 	mult_vec(E, E, E0);
 }
@@ -111,8 +111,7 @@ void set_position(double *u, double r_min, double r_max, int i, int num, int out
 		u[0] = r_min + i * (r_max - r_min) / num;
 		u[1] = 0.0;
 		u[2] = 0.0;
-	}
-	else {
+	} else {
 		u[0] = rand_val(r_min, r_max);
 		u[1] = 0.0;
 		u[2] = rand_val(r_min, r_max);
@@ -195,8 +194,7 @@ void set_parameters(struct parameters *param, char *input) {
 			count += fscanf(in, "%lf", &param->theta_v0);
 	}
 	if(count != PARAMS) {
-		printf("Error: Invalid input file.\n");
-		exit(1);
+		printf("Error: Invalid input file.\n"); exit(1);
 	}
 	param->dt = param->tf / param->steps;
 	fclose(in);
@@ -240,9 +238,9 @@ void set_lasers(struct laser *l, struct parameters *param, char *input) {
 		epsilon(nv, epsilon1);
 		cross(epsilon2, nv, epsilon1);
 		rotate_polarization(epsilon1, epsilon2, l[i].alpha);
-		memcpy(l[i].n, nv, 3 * sizeof(double));
-		memcpy(l[i].epsilon1, epsilon1, 3 * sizeof(double));
-		memcpy(l[i].epsilon2, epsilon2, 3 * sizeof(double));
+		copy_vec(l[i].n, nv);
+		copy_vec(l[i].epsilon1, epsilon1);
+		copy_vec(l[i].epsilon2, epsilon2);
 	}
 	if(param->check_polarization) {
 		for(int i = 0; i < param->num_lasers; i++) {

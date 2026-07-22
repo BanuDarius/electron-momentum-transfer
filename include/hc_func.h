@@ -23,7 +23,6 @@
 #define HC_FUNC_H
 
 #include <math.h>
-#include <string.h>
 
 #include "units.h"
 #include "math_tools.h"
@@ -73,7 +72,7 @@ static inline double hc_gamma_new(const double *restrict u_minus, const double *
 
 static inline void hc_u_plus(double *restrict u_plus, const double *restrict u_minus, const double *restrict u_prime, const double s_factor, const double *restrict t_rot) {
 	double t1[3], t2[3];
-	memcpy(t1, t_rot, 3 * sizeof(double));
+	copy_vec(t1, t_rot);
 	mult_vec(t1, t1, s_factor);
 	cross(t2, u_prime, t1);
 	for(int i = 0; i < 3; i++)
