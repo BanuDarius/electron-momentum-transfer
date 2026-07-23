@@ -31,7 +31,7 @@
 
 //This file contains functions needed for the ponderomotive approximation method
 
-double integrate(double *u, const struct laser *restrict l) {
+double integrate(double *u, const Laser *restrict l) {
 	double integral = 0.0, left, center, right;
 	double a1_left[4], a1_right[4], a1_center[4], a1_temp[4], u_temp[4];
 	double lambda = 2.0 * M_PI * c / l[0].omega, dh = lambda / (double) l[0].pond_integrate_steps;
@@ -77,7 +77,7 @@ double integrate(double *u, const struct laser *restrict l) {
 	return integral;
 }
 
-void integrate_phi_vec(double *x, double phi_init, double phi_final, const struct laser *restrict l) {
+void integrate_phi_vec(double *x, double phi_init, double phi_final, const Laser *restrict l) {
 	double integral = 0.0;
 	double a1_left[3], a1_right[3], a1_center[3], a1_temp[3];
 	double domain = phi_final - phi_init, dh = domain / (double) l->pond_integrate_steps;
@@ -111,7 +111,7 @@ void integrate_phi_vec(double *x, double phi_init, double phi_final, const struc
 	}
 }
 
-double integrate_phi(double phi_init, double phi_final, const struct laser *restrict l) {
+double integrate_phi(double phi_init, double phi_final, const Laser *restrict l) {
 	double integral = 0.0, left, center, right;
 	double a1_left[3], a1_right[3], a1_center[3], a1_temp[3];
 	double domain = phi_final - phi_init, dh = domain / (double) l->pond_integrate_steps;
@@ -146,7 +146,7 @@ double integrate_phi(double phi_init, double phi_final, const struct laser *rest
 	return integral;
 } //This function uses the dimensionless parameter phi = omega*t - k*x instead of the four-position u^mu
 
-double integrate_dmuda(double *u, const struct laser *restrict l, int index) {
+double integrate_dmuda(double *u, const Laser *restrict l, int index) {
 	double integral = 0.0, left, center, right;
 	double a1_left[4], a1_right[4], a1_center[4], a2_left[4], a2_right[4], a2_center[4], a1_temp[4], a2_temp[4], u_temp[4];
 	double lambda = 2.0 * M_PI * c / l[0].omega, dh = lambda / (double) l[0].pond_integrate_steps;
@@ -194,14 +194,14 @@ double integrate_dmuda(double *u, const struct laser *restrict l, int index) {
 	return integral;
 } //This represents d^mu(M(x))
 
-double compute_a(double *u, const struct laser *restrict l) {
+double compute_a(double *u, const Laser *restrict l) {
 	double lambda = 2.0 * M_PI * c / l[0].omega;
 	double a = - (q * q) / (m * m * c * c) * (1.0 / lambda);
 	a *= integrate(u, l);
 	return a;
 }
 
-double derivative_a(double *u, const struct laser *restrict l, int index) {
+double derivative_a(double *u, const Laser *restrict l, int index) {
 	double lambda = 2.0 * M_PI * c / l[0].omega;
 	double dmuda = - 2.0 * (q * q) / (m * m * c * c ) * (1.0 / lambda);
 	dmuda *= integrate_dmuda(u, l, index);

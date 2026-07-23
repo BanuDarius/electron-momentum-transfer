@@ -22,7 +22,7 @@
 #ifndef PARTICLE_PUSH_H
 #define PARTICLE_PUSH_H
 
-void rk4_step(double *u, double dt, const struct laser *restrict l, void compute_function(double *, double *, const struct laser *restrict));
-void higuera_cary_step(double *u, const double dt, const struct laser *restrict l);
+void rk4_step(double *u, double dt, const Laser *restrict l, void compute_function(double *, double *, const Laser *restrict));
+void higuera_cary_step(double *u, const double dt, const Laser *restrict l);
 
 #endif

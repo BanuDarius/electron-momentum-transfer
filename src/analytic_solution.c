@@ -30,13 +30,13 @@
 #include "math_tools.h"
 #include "ponderomotive.h"
 
-double displacement(struct parameters *param, struct laser *l) {
+double displacement(Parameters *param, Laser *l) {
 	double A0 = l->a0 * m * c / fabs(q);
 	double delta_x = (q * q * A0 * A0) / (4.0 * m * m * c * l->omega) * (2.0 * l->etaf + l->sigma * sqrt(M_PI / 2.0));
 	return delta_x;
 }
 
-void simulate_analytic(FILE *out, struct particle *p, struct parameters *param, struct laser *l) {
+void simulate_analytic(FILE *out, Particles *p, Parameters *param, Laser *l) {
 	double u_i[4], u_c[4], d = 0.0, r_1[3], r_2[3] = { 0.0 }, r_tot[3], r_temp[3], k_vec[3];
 	double dphi = param->tf * l->omega / param->steps, phi_rel, phi_abs;
 	int i = 0;
@@ -68,7 +68,7 @@ void simulate_analytic(FILE *out, struct particle *p, struct parameters *param, 
 	}
 }
 
-void simulate_analytic_v0(FILE *out, struct particle *p, struct parameters *param, struct laser *l) {
+void simulate_analytic_v0(FILE *out, Particles *p, Parameters *param, Laser *l) {
 	double u_i[4], u_c[4], u0[4], u0_perp[3];
 	double d = 0.0, r_1[3], r_tot[3], r_temp[3], k_vec[3], int_A[3];
 	double r_perp_tot[3] = { 0.0 }, temp_vec[3] = { 0.0 };
@@ -133,11 +133,11 @@ int main(int argc, char **argv) {
 	FILE *out_displacement = fopen(argv[4], "ab");
 	if(!out_displacement) { perror("Cannot open output displacement file."); return 1; }
 	
-	struct parameters *param = malloc(sizeof(struct parameters));
+	Parameters *param = malloc(sizeof(Parameters));
 	set_parameters(param, argv[1]);
 	
-	struct laser *l = malloc(param->num_lasers * sizeof(struct laser));
-	struct particle *p = aligned_alloc(64, param->num * sizeof(struct particle));
+	Laser *l = malloc(param->num_lasers * sizeof(Laser));
+	Particles *p = aligned_alloc(64, param->num * sizeof(Particles));
 	
 	if(!l || !p) { perror("Memory allocation error."); return 1; }
 	

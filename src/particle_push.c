@@ -28,7 +28,7 @@
 //The Higuera-Cary particle pusher
 //Note that it has been modified to advance the state of the particle by one step instead of a half-step
 
-void higuera_cary_step(double *u, const double dt, const struct laser *restrict l) {
+void higuera_cary_step(double *u, const double dt, const Laser *restrict l) {
 	double epsilon_vec[3], u_minus[3], beta[3], E[3], B[3];
 	double u_final[3], u_prime[3], u_plus[3], t_rot[3], s_factor;
 	double gamma_fac, gamma_minus, gamma_new;
@@ -69,7 +69,7 @@ void higuera_cary_step(double *u, const double dt, const struct laser *restrict 
 //This function is a Runge-Kutta fourth-order solver, with a general compute function
 //It is used for the ponderomotive method, or as a compatibility method for the electromagnetic mode
 
-void rk4_step(double *u, double dt, const struct laser *restrict l, void compute_function(double *, double *, const struct laser *restrict)) {
+void rk4_step(double *u, double dt, const Laser *restrict l, void compute_function(double *, double *, const Laser *restrict)) {
 	double u0[U_SIZE], u_temp[U_SIZE];
 	double k1[U_SIZE]; double k2[U_SIZE];
 	double k3[U_SIZE]; double k4[U_SIZE];

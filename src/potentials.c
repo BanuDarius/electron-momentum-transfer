@@ -27,7 +27,7 @@
 
 //This helper library contains functions for the electromagnetic potentials
 
-void potential_a(double *a, double *u, const struct laser *restrict l, int n) {
+void potential_a(double *a, double *u, const Laser *restrict l, int n) {
 	double potentialA0 = l[n].a0 * m * c / fabs(q);
 	double epsilon4[4], k_vec4[4], eta, A0mult;
 	
@@ -43,7 +43,7 @@ void potential_a(double *a, double *u, const struct laser *restrict l, int n) {
 	mult_vec(&a[1], &a[1], A0mult);
 }
 
-void potential_deriv_a(double *a, double *u, const struct laser *restrict l, int index, int n) {
+void potential_deriv_a(double *a, double *u, const Laser *restrict l, int index, int n) {
 	double potentialA0 = l[n].a0 * m * c / fabs(q);
 	double epsilon4[4], k_vec4[4], eta, sign;
 	
@@ -61,7 +61,7 @@ void potential_deriv_a(double *a, double *u, const struct laser *restrict l, int
 	}
 }
 
-void potential_a_phi(double *a, double eta, const struct laser *restrict l, int n) {
+void potential_a_phi(double *a, double eta, const Laser *restrict l, int n) {
 	double potentialA0 = l[n].a0 * m * c / fabs(q);
 	double epsilon4[3], k_vec[3], A0mult;
 	

@@ -31,7 +31,7 @@
 
 //This is a helper library which includes electromagnetic field computation functions, initializing particles and lasers, and parsing the simulation parameters
 
-void compute_e(double *E, double *u, const struct laser *restrict l, int i) {
+void compute_e(double *E, double *u, const Laser *restrict l, int i) {
 	double E0 = l[i].omega * c * l[i].a0;
 	double k = l[i].omega / c, t = u[0] / c;
 	double etaf = l[i].etaf, sigma = l[i].sigma;
@@ -52,12 +52,12 @@ void compute_e(double *E, double *u, const struct laser *restrict l, int i) {
 	mult_vec(E, E, E0);
 }
 
-void compute_b(double *B, double *E, double *u, const struct laser *restrict l, int i) {
+void compute_b(double *B, double *E, double *u, const Laser *restrict l, int i) {
 	cross(B, l[i].n, E);
 	mult_vec(B, B, 1.0 / c);
 }
 
-void compute_e_b(double *E, double *B, double *u, const struct laser *restrict l) {
+void compute_e_b(double *E, double *B, double *u, const Laser *restrict l) {
 	double Et[3], Bt[3];
 	memset(E, 0, 3 * sizeof(double));
 	memset(B, 0, 3 * sizeof(double));
@@ -71,7 +71,7 @@ void compute_e_b(double *E, double *B, double *u, const struct laser *restrict l
 	}
 }
 
-void electromag(double *restrict u, double *restrict up, const struct laser *restrict l) {
+void electromag(double *restrict u, double *restrict up, const Laser *restrict l) {
 	double E[3], B[3];
 	compute_e_b(E, B, u, l);
 	
@@ -86,7 +86,7 @@ void electromag(double *restrict u, double *restrict up, const struct laser *res
 	mult_vec4(&up[4], &up[4], q / (m * c));
 }
 
-void ponderomotive(double *restrict u, double *restrict up, const struct laser *restrict l) {
+void ponderomotive(double *restrict u, double *restrict up, const Laser *restrict l) {
 	double dmdx[4];
 	double a = compute_a(u, l);
 	double mass = m * sqrt(1.0 + a);
@@ -123,7 +123,7 @@ void set_initial_vel(double *vi, double v_mag, double phi, double theta) {
 	mult_vec(vi, vi, v_mag);
 }
 
-void set_particles(struct particle *p, struct parameters *param, double *vi) {
+void set_particles(Particles *p, Parameters *param, double *vi) {
 	for(int i = 0; i < param->num; i++) {
 		p[i].u[0] = 0.0;
 		set_position(&p[i].u[1], param->r_min, param->r_max, i, param->num, param->output_mode);
@@ -138,7 +138,7 @@ void set_particles(struct particle *p, struct parameters *param, double *vi) {
 
 //This function dynamically allocates output_chunk based on the output mode.
 
-double *create_out_chunk(struct parameters *param) {
+double *create_out_chunk(Parameters *param) {
 	if(param->output_mode == 0)
 		return malloc((size_t)U_SIZE * param->steps * param->num / param->substeps * sizeof(double));
 	else
@@ -147,14 +147,14 @@ double *create_out_chunk(struct parameters *param) {
 
 //This function switched the compute_function to be either the electromagnetic method or the ponderomotive method.
 
-void set_mode(void (**compute_function)(double *, double *, const struct laser *restrict), int mode) {
+void set_mode(void (**compute_function)(double *, double *, const Laser *restrict), int mode) {
 	if(mode == 1)
 		*compute_function = ponderomotive;
 	else if(mode == 2)
 		*compute_function = electromag;
 }
 
-void set_parameters(struct parameters *param, char *input) {
+void set_parameters(Parameters *param, char *input) {
 	FILE *in = fopen(input, "r");
 	if(!in) { perror("Cannot open input file."); exit(1); }
 	
@@ -200,7 +200,7 @@ void set_parameters(struct parameters *param, char *input) {
 	fclose(in);
 }
 
-void set_lasers(struct laser *l, struct parameters *param, char *input) {
+void set_lasers(Laser *l, Parameters *param, char *input) {
 	FILE *in = fopen(input, "r");
 	if(!in) { perror("Cannot open input file."); exit(1); }
 	char current[128];

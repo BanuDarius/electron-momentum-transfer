@@ -32,7 +32,7 @@
 #define RANXOSHI256_EXTERN
 #include "ranxoshi256.h"
 
-void simulate(struct parameters *param, void (*compute_function)(double *restrict, double *restrict, const struct laser *restrict), FILE *out, double *out_chunk, struct laser *l, struct particle *p) {
+void simulate(Parameters *param, void (*compute_function)(double *restrict, double *restrict, const Laser *restrict), FILE *out, double *out_chunk, Laser *l, Particles *p) {
 	int num = param->num;
 	int mode = param->mode;
 	int steps = param->steps;
@@ -113,18 +113,18 @@ int main(int argc, char **argv) {
 	FILE *out = fopen(argv[3], "wb");
 	if(!out) { perror("Cannot open output file."); return 1; }
 	
-	struct parameters *param = malloc(sizeof(struct parameters));
+	Parameters *param = malloc(sizeof(Parameters));
 	set_parameters(param, argv[1]);
 	omp_set_num_threads(param->thread_num);
 	
 	double vi[3];
 	set_initial_vel(vi, param->v0_mag, param->phi_v0, param->theta_v0);
 	
-	struct laser *l = malloc(param->num_lasers * sizeof(struct laser));
-	struct particle *p = aligned_alloc(64, param->num * sizeof(struct particle));
+	Laser *l = malloc(param->num_lasers * sizeof(Laser));
+	Particles *p = aligned_alloc(64, param->num * sizeof(Particles));
 	//Aligned memory allocation to avoid false sharing
 	double *out_chunk = create_out_chunk(param);
-	void (*compute_function)(double *restrict, double *restrict, const struct laser *restrict);
+	void (*compute_function)(double *restrict, double *restrict, const Laser *restrict);
 	//Initialize all the simulation structures
 	
 	if(!l || !p || !out_chunk) { perror("Memory allocation error."); return 1; }

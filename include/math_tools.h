@@ -28,12 +28,12 @@
 
 //This file includes optimized general purpose math functions
 
-static inline void mult_vec(double *u, double *v, const double a) {
+static inline void mult_vec(double *u, double *v, double a) {
 	for(int i = 0; i < 3; i++)
 		u[i] = v[i] * a;
 }
 
-static inline void mult_vec4(double *u, double *v, const double a) {
+static inline void mult_vec4(double *u, double *v, double a) {
 	for(int i = 0; i < 4; i++)
 		u[i] = v[i] * a;
 }
@@ -93,7 +93,7 @@ static inline double comp_gamma(const double *u) {
 
 //These functions are for the envelope
 
-static inline double env(const double xi, const double xif, const double sigma) {
+static inline double env(double xi, double xif, double sigma) {
 	if(xi > -xif && xi < xif)
 		return 1.0;
 	else if(xi >= xif)
@@ -102,7 +102,7 @@ static inline double env(const double xi, const double xif, const double sigma) 
 		return exp(-(xi + xif) * (xi + xif) / (sigma * sigma));
 }
 
-static inline double env_prime(const double xi, const double xif, const double sigma) {
+static inline double env_prime(double xi, double xif, double sigma) {
 	if(xi > -xif && xi < xif)
 		return 0.0;
 	else if(xi >= xif)

@@ -24,17 +24,17 @@
 
 #include "sim_structs.h"
 
-void compute_e(double *E, double *u, const struct laser *restrict l, int i);
-void compute_b(double *B, double *E, double *u, const struct laser *restrict l, int i);
-void compute_e_b(double *E, double *B, double *u, const struct laser *restrict l);
-void electromag(double *restrict u, double *restrict up, const struct laser *restrict l);
-void ponderomotive(double *restrict u, double *restrict up, const struct laser *restrict l);
+void compute_e(double *E, double *u, const Laser *restrict l, int i);
+void compute_b(double *B, double *E, double *u, const Laser *restrict l, int i);
+void compute_e_b(double *E, double *B, double *u, const Laser *restrict l);
+void electromag(double *restrict u, double *restrict up, const Laser *restrict l);
+void ponderomotive(double *restrict u, double *restrict up, const Laser *restrict l);
 void set_position(double *u, double r_min, double r_max, int i, int num, int output_mode);
 void set_initial_vel(double *vi, double v_mag, double phi, double theta);
-void set_particles(struct particle *p, struct parameters *param, double *vi);
-double *create_out_chunk(struct parameters *param);
-void set_mode(void (**compute_function)(double *restrict, double *restrict, const struct laser *restrict), int mode);
-void set_parameters(struct parameters *param, char *input);
-void set_lasers(struct laser *l, struct parameters *param, char *input);
+void set_particles(Particles *p, Parameters *param, double *vi);
+double *create_out_chunk(Parameters *param);
+void set_mode(void (**compute_function)(double *restrict, double *restrict, const Laser *restrict), int mode);
+void set_parameters(Parameters *param, char *input);
+void set_lasers(Laser *l, Parameters *param, char *input);
 
 #endif
