@@ -36,10 +36,10 @@ OUTPUT_DIR = PROJECT_ROOT / "output"
 OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
 plt.rcParams.update({'font.size': 16})
-
+        
 # ----------------------------------------------------------------------- #
 
-def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
+def plot_2d_heatmap(method, sim_parameters, a0_array, axis_pos, axis_p):
     if(method == "electromagnetic"):
         mode = "electromag"
     else:
@@ -115,16 +115,18 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     wavelength = sim_parameters.wavelength
     sweep_steps = sim_parameters.sweep_steps
     
-    filename_in = f"{OUTPUT_DIR}/out-error-all-{lowercase_text_p}.bin"
-    filename_in_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-electromag.bin"
+    filename_in = f"{OUTPUT_DIR}/out-error-all.bin"
+    filename_in_max_p = f"{OUTPUT_DIR}/out-max-p-electromag.bin"
+    filename_in_pos = f"{OUTPUT_DIR}/out-initial-pos-electromag.bin"
     filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-errors-{lowercase_text_pos}{lowercase_text_p}.png"
     
-    data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
-    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 1)
+    data_pos = np.fromfile(filename_in_pos, dtype=np.float64).reshape(num, 3)
+    data_errors = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 3)
+    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 3)
     
-    max_p = data_max_p[:, 0][:, np.newaxis]
-    difference = data[:, :, 1]
-    x = data[:, :, 0] / wavelength
+    max_p = data_max_p[:, axis_p][:, np.newaxis]
+    difference = data_errors[:, :, axis_p]
+    x = data_pos[:, axis_pos] / wavelength
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
     z = difference / max_p * 100.0
     
@@ -164,7 +166,7 @@ def plot_2d_convergence_heatmap(method, sim_parameters, a0_array, axis_pos, axis
     if(axis_text_pos == "Z"):
         print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
         print("Please plot the initial positions on the X axis or Y axis.")
-        exit()
+        exit(1)
     
     num = sim_parameters.num
     r_min = sim_parameters.r_min
@@ -235,27 +237,24 @@ def plot_max_p(method, a0_array, axis):
     
     print(f"Created max(p) scatter plot for {method} mode.")
     
-# ----------------------------------------------------------------------- #    
+# ----------------------------------------------------------------------- #
 
 def plot_average_errors(a0_array, axis):
     axis_text = common.get_axis_text(axis)
     lowercase_text = axis_text.lower()
     
+    filename_max_p = f"{OUTPUT_DIR}/out-max-p-electromag.bin"
+    filename_average_error = f"{OUTPUT_DIR}/out-average-error.bin"
     filename_out = f"{OUTPUT_IMAGE_DIR}/_out-average-errors-{lowercase_text}.png"
-    filename_average_error = f"{OUTPUT_DIR}/out-average-error-{lowercase_text}.bin"
-    filename_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-electromag.bin"
     
-    data_average_error = np.fromfile(filename_average_error, dtype=np.float64).reshape(-1, 1)
-    data_max = np.fromfile(filename_max_p, dtype=np.float64).reshape(-1, 1)
+    data_average_error = np.fromfile(filename_average_error, dtype=np.float64).reshape(-1, 3)
+    data_max_p = np.fromfile(filename_max_p, dtype=np.float64).reshape(-1, 3)
     
     x = a0_array
-    y = data_average_error[:, 0]
-    y_max = data_max[:, 0]
-    
-    y_final = y / y_max * 100.0
+    y = 100.0 * data_average_error[:, axis] / data_max_p[:, axis]
     
     plt.figure(figsize=(10,10))
-    plt.plot(x, y_final, c='black', linestyle='-', linewidth=1)
+    plt.plot(x, y, c='black', linestyle='-', linewidth=1)
     plt.title(f"Average errors on {axis_text} axis")
     plt.xlabel(r"$a_0$")
     plt.ylabel(rf"Average error <$\epsilon$> [%]")
@@ -368,7 +367,7 @@ def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
     if(axis_text_pos == "Z"):
         print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
         print("Please plot the initial positions on the X axis or Y axis.")
-        exit()
+        exit(1)
     
     i = sim_parameters.i
     a0 = a0_array[i]
@@ -438,7 +437,7 @@ def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
     if(axis_text_pos == "Z"):
         print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
         print("Please plot the initial positions on the X axis or Y axis.")
-        exit()
+        exit(1)
     
     i = sim_parameters.i
     a0 = a0_array[i]
@@ -621,4 +620,22 @@ def plot_performance():
     
     print("Created performance plot.")
     
+# ----------------------------------------------------------------------- #
+
+def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos):
+    for i in np.arange(3):
+        plot_2d_heatmap(method, sim_parameters, a0_array, axis_pos, i)
+        
+def plot_2d_errors_heatmap_all(sim_parameters, a0_array, axis_pos):
+    for i in np.arange(3):
+        plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, i)
+        
+def plot_max_p_all(method, a0_array):
+    for i in np.arange(3):
+        plot_max_p(method, a0_array, i)
+        
+def plot_average_errors_all(a0_array):
+    for i in np.arange(3):
+        plot_average_errors(a0_array, i)
+
 # ----------------------------------------------------------------------- #

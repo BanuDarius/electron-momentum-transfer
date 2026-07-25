@@ -97,28 +97,21 @@ def run_quick_example(thread_num):
         
         # ------------------------------------------------------- #
         
-    plotting.plot_max_p("electromagnetic", a0_array, x_axis)
-    plotting.plot_max_p("electromagnetic", a0_array, y_axis)
-    plotting.plot_max_p("electromagnetic", a0_array, z_axis)
-    plotting.plot_max_p("ponderomotive", a0_array, x_axis)
-    plotting.plot_max_p("ponderomotive", a0_array, y_axis)
-    plotting.plot_max_p("ponderomotive", a0_array, z_axis)
-    #plotting.plot_average_errors(a0_array, x_axis)
-    #plotting.plot_average_errors(a0_array, y_axis)
-    #plotting.plot_average_errors(a0_array, z_axis)
+    programs.calculate_errors(sim_parameters)
     
-    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, x_axis)
-    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, y_axis)
-    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis, z_axis)
-    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, x_axis)
-    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
-    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis, z_axis)
-    #plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, x_axis)
-    #plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, y_axis)
-    #plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, y_axis, z_axis)
+    plotting.plot_average_errors_all(a0_array)
+    plotting.plot_max_p_all("electromagnetic", a0_array)
+    plotting.plot_max_p_all("ponderomotive", a0_array)
+    
+    #plotting.plot_convergence("electromagnetic", a0_array, x_axis)
+    #plotting.plot_2d_convergence_heatmap("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
+    
+    plotting.plot_2d_errors_heatmap_all(sim_parameters, a0_array, y_axis)
+    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis)
+    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis)
             
     total_time = time.time() - start_time
     print(f"Program executed successfully.")
     print(f"Total time taken: {total_time:0.3f}s.\a")
     print(f"Ended quick example parameter sweep.")
-    exit()
+    exit(0)

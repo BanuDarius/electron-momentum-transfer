@@ -46,7 +46,7 @@ def run_simulation(method, sim_parameters, lasers):
         mode = 2
     else:
         print("Invalid simulation mode.")
-        exit()
+        exit(1)
 
     sim_parameters.mode = mode    
     program_path = f"{BIN_DIR}/laser_electron"
@@ -60,7 +60,7 @@ def run_simulation(method, sim_parameters, lasers):
         res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
-        exit()
+        exit(1)
 
 # ----------------------------------------------------------------------- #
 
@@ -97,135 +97,28 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, multipli
         res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
-        exit()
+        exit(1)
         
 # ----------------------------------------------------------------------- #
 
-def find_enter_exit_time(method, sim_parameters, axis_pos, axis_p):
-    if(method == "electromagnetic"):
-        mode = "electromag"
-    else:
-        mode = "pond"
-    axis_text_pos = common.get_axis_text(axis_pos)
-    lowercase_text_pos = axis_text_pos.lower()
-    
-    axis_text_p = common.get_axis_text(axis_p)
-    lowercase_text_p = axis_text_p.lower()
-    
-    filename_out = f"{OUTPUT_DIR}/out-enter-exit-time-{mode}-{lowercase_text_pos}{lowercase_text_p}.bin"
-    
-    program_enter_exit = f"{BIN_DIR}/find_enter_exit_time"
-    filename = sim_parameters.filename_out
-    
+def calculate_errors(sim_parameters):
     num = sim_parameters.num
-    steps_final = sim_parameters.steps // sim_parameters.substeps
+    sweep_steps = sim_parameters.sweep_steps
     
-    arguments = [program_enter_exit, filename, num, steps_final, axis_pos, axis_p, filename_out]
-    arguments = [str(x) for x in arguments]
-    
-    try:
-        res = subprocess.run(arguments, text=True, check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Critical error: {e.returncode}")
-        exit()
-        
-# ----------------------------------------------------------------------- #
-
-def find_max_p(method, sim_parameters, axis):
-    if(method == "electromagnetic"):
-        mode = "electromag"
-    else:
-        mode = "pond"
-    
-    if(sim_parameters.check_convergence):
-        mode = mode + "-conv"
-        
-    axis_text = common.get_axis_text(axis)
-    lowercase_text = axis_text.lower()
-    
-    filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text}-{mode}.bin"
-    filename_out = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-{mode}.bin"
-    
-    program_path = f"{BIN_DIR}/find_max_p"
-    
-    index = sim_parameters.i
-    num = sim_parameters.num
-    steps_final = sim_parameters.steps // sim_parameters.substeps
-    
-    arguments = [program_path, filename_in, num, steps_final, filename_out]
-    arguments = [str(x) for x in arguments]
-    
-    try:
-        res = subprocess.run(arguments, text=True, check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Critical error: {e.returncode}")
-        exit()
-    
-# ----------------------------------------------------------------------- #
-
-def find_final_p(method, sim_parameters, axis_pos, axis_p):
-    read_num = 8
-    filename = sim_parameters.filename_out
-    
-    if(method == "electromagnetic"):
-        mode = "electromag"
-    elif(method == "ponderomotive"):
-        mode = "pond"
-    else:
-        mode = "analytic"
-        filename = f"{OUTPUT_DIR}/out-data-analytic.bin"
-        read_num = 4
-    
-    if(sim_parameters.check_convergence):
-        mode = mode + "-conv"
-    
-    if(axis_p < 0):
-        axis_text_p = common.get_axis_text(axis_p + 4)
-    else:
-        axis_text_p = common.get_axis_text(axis_p)
-    
-    lowercase_text_p = axis_text_p.lower()
-    filename_out = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-{mode}.bin"
-    filename_out_all = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-{mode}.bin"
-    
-    program_path = f"{BIN_DIR}/find_final_p"
-    
-    num = sim_parameters.num
-    steps_final = sim_parameters.steps // sim_parameters.substeps
-    
-    arguments = [program_path, filename, num, steps_final, axis_pos, axis_p, read_num, filename_out, filename_out_all]
-    arguments = [str(x) for x in arguments]
-    
-    try:
-        res = subprocess.run(arguments, text=True, check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Critical error: {e.returncode}")
-        exit()
-
-# ----------------------------------------------------------------------- #
-
-def calculate_errors(sim_parameters, axis):
-    axis_text = common.get_axis_text(axis)
-    lowercase_text = axis_text.lower()
-    
-    filename = sim_parameters.filename_out
     program_path = f"{BIN_DIR}/error_calc"
-    filename_in_a = f"{OUTPUT_DIR}/out-final-p{lowercase_text}-electromag.bin"
-    filename_in_b = f"{OUTPUT_DIR}/out-final-p{lowercase_text}-pond.bin"
-    filename_out = f"{OUTPUT_DIR}/out-error-{lowercase_text}.bin"
-    filename_out_average_error = f"{OUTPUT_DIR}/out-average-error-{lowercase_text}.bin"
-    filename_out_error_all = f"{OUTPUT_DIR}/out-error-all-{lowercase_text}.bin"
+    filename_in_b = f"{OUTPUT_DIR}/out-final-p-pond.bin"
+    filename_in_a = f"{OUTPUT_DIR}/out-final-p-electromag.bin"
+    filename_out_error_all = f"{OUTPUT_DIR}/out-error-all.bin"
+    filename_out_average_error = f"{OUTPUT_DIR}/out-average-error.bin"
     
-    num = sim_parameters.num
-    
-    arguments = [program_path, num, filename_in_a, filename_in_b, filename_out, filename_out_average_error, filename_out_error_all]
+    arguments = [program_path, num, sweep_steps, filename_in_a, filename_in_b, filename_out_error_all, filename_out_average_error]
     arguments = [str(x) for x in arguments]
     
     try:
         res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
-        exit()
+        exit(1)
 
 # ----------------------------------------------------------------------- #
 
@@ -257,7 +150,7 @@ def check_analytic_solution(method, sim_parameters, lasers):
         res = subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
-        exit()
+        exit(1)
     
 # ----------------------------------------------------------------------- #
 
@@ -318,7 +211,7 @@ def check_passed_comparison_test(sim_parameters):
 def check_laser_polarization(method, sim_parameters, lasers):
     sim_parameters.check_polarization = True
     run_simulation(method, sim_parameters, lasers)
-    exit()
+    exit(1)
 
 # ----------------------------------------------------------------------- #
 

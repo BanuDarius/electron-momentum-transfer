@@ -102,15 +102,15 @@ if __name__ == "__main__":
     #Uncomment to run a quick test to showcase the program's capabilities
     #This will run a low resolution (256x256) parameter sweep
     #Will complete in ~1 minute on average consumer hardware
-    quick_example.run_quick_example(thread_num)
+    #quick_example.run_quick_example(thread_num)
     
     #In the examples/ directory there are several examples whose filenames start with 1, 2, 3, and 4
     #Uncomment this line to reproduce any of them
-    #examples.run_example(1, thread_num)
+    examples.run_example(2, thread_num)
     
     #Uncomment to replicate the results obtained in the Physical Review Letters paper
     #"Relativistic Ponderomotive Force, Uphill Acceleration, and Transition to Chaos", D. Bauer et al. (1995)
-    examples.replicate_prl_results(thread_num)
+    #examples.replicate_prl_results(thread_num)
     
     #Uncomment this line to run a quick parameter sweep test for a0 = 0.02 to 10.00,
     #Comparing the Higuera-Cary integrator with an analytical solution for one laser
@@ -183,35 +183,23 @@ if __name__ == "__main__":
         
         # ------------------------------------------------------- #
         
-        #programs.calculate_errors(sim_parameters)
-        
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
         
         # ------------------------------------------------------- #
         
+    programs.calculate_errors(sim_parameters)
+    
     #Plots for data analysis
-    #plotting.plot_average_errors(a0_array, x_axis)
-    #plotting.plot_average_errors(a0_array, y_axis)
-    #plotting.plot_average_errors(a0_array, z_axis)
-    plotting.plot_max_p("electromagnetic", a0_array, x_axis)
-    plotting.plot_max_p("electromagnetic", a0_array, y_axis)
-    plotting.plot_max_p("electromagnetic", a0_array, z_axis)
-    plotting.plot_max_p("ponderomotive", a0_array, x_axis)
-    plotting.plot_max_p("ponderomotive", a0_array, y_axis)
-    plotting.plot_max_p("ponderomotive", a0_array, z_axis)
+    plotting.plot_average_errors_all(a0_array)
+    plotting.plot_max_p_all("electromagnetic", a0_array)
+    plotting.plot_max_p_all("ponderomotive", a0_array)
     
     #plotting.plot_convergence("electromagnetic", a0_array, x_axis)
     #plotting.plot_2d_convergence_heatmap("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
     
-    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
-    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
-    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis, z_axis)
-    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis, x_axis)
-    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis, y_axis)
-    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis, z_axis)
-    #plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, x_axis)
-    #plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, y_axis)
-    #plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, z_axis)
+    plotting.plot_2d_errors_heatmap_all(sim_parameters, a0_array, x_axis)
+    plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis)
+    plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis)
     
     #Uncomment to render videos using ffmpeg
     #create_video.create_2d_colormap_video("electromagnetic", framerate, x_axis, z_axis, x_axis)
