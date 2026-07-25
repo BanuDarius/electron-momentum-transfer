@@ -50,7 +50,7 @@ def run_simulation(method, sim_parameters, lasers):
 
     sim_parameters.mode = mode    
     program_path = f"{BIN_DIR}/laser_electron"
-    filename_out = sim_parameters.filename_out
+    filename_out = OUTPUT_DIR
     
     common.output_all_parameters(sim_parameters, lasers)
     

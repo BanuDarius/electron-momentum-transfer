@@ -215,15 +215,6 @@ def run_example(example_num, thread_num):
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
-        programs.find_final_p("electromagnetic", sim_parameters, axis_i, x_axis)
-        programs.find_max_p("electromagnetic", sim_parameters, x_axis)
-        
-        programs.find_final_p("electromagnetic", sim_parameters, axis_i, y_axis)
-        programs.find_max_p("electromagnetic", sim_parameters, y_axis)
-        
-        programs.find_final_p("electromagnetic", sim_parameters, axis_i, z_axis)
-        programs.find_max_p("electromagnetic", sim_parameters, z_axis)
-        
         # ------------------------------------------------------- #
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
@@ -231,20 +222,11 @@ def run_example(example_num, thread_num):
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
-        programs.find_final_p("ponderomotive", sim_parameters, axis_i, x_axis)
-        programs.find_max_p("ponderomotive", sim_parameters, x_axis)
-        
-        programs.find_final_p("ponderomotive", sim_parameters, axis_i, y_axis)
-        programs.find_max_p("ponderomotive", sim_parameters, y_axis)
-        
-        programs.find_final_p("ponderomotive", sim_parameters, axis_i, z_axis)
-        programs.find_max_p("ponderomotive", sim_parameters, z_axis)
-        
         # ------------------------------------------------------- #
         
-        programs.calculate_errors(sim_parameters, x_axis)
-        programs.calculate_errors(sim_parameters, y_axis)
-        programs.calculate_errors(sim_parameters, z_axis)
+        #programs.calculate_errors(sim_parameters, x_axis)
+        #programs.calculate_errors(sim_parameters, y_axis)
+        #programs.calculate_errors(sim_parameters, z_axis)
         
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
         
@@ -256,9 +238,9 @@ def run_example(example_num, thread_num):
     plotting.plot_max_p("ponderomotive", a0_array, x_axis)
     plotting.plot_max_p("ponderomotive", a0_array, y_axis)
     plotting.plot_max_p("ponderomotive", a0_array, z_axis)
-    plotting.plot_average_errors(a0_array, x_axis)
-    plotting.plot_average_errors(a0_array, y_axis)
-    plotting.plot_average_errors(a0_array, z_axis)
+    #plotting.plot_average_errors(a0_array, x_axis)
+    #plotting.plot_average_errors(a0_array, y_axis)
+    #plotting.plot_average_errors(a0_array, z_axis)
     
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i, x_axis)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i, y_axis)
@@ -266,9 +248,9 @@ def run_example(example_num, thread_num):
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, axis_i, x_axis)
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, axis_i, y_axis)
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, axis_i, z_axis)
-    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, axis_i, x_axis)
-    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, axis_i, y_axis)
-    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, axis_i, z_axis)
+    #plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, axis_i, x_axis)
+    #plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, axis_i, y_axis)
+    #plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, axis_i, z_axis)
             
     total_time = time.time() - start_time
     print(f"Program executed successfully.")
@@ -333,16 +315,7 @@ def replicate_prl_results(thread_num):
         
         #programs.check_laser_polarization("electromagnetic", sim_parameters, lasers)
         
-        programs.find_final_p("electromagnetic", sim_parameters, x_axis, x_axis)
-        programs.find_max_p("electromagnetic", sim_parameters, x_axis)
-        
-        programs.find_final_p("electromagnetic", sim_parameters, x_axis, y_axis)
-        programs.find_max_p("electromagnetic", sim_parameters, y_axis)
-        
-        programs.find_final_p("electromagnetic", sim_parameters, x_axis, z_axis)
-        programs.find_max_p("electromagnetic", sim_parameters, z_axis)
-        
-        programs.check_convergence("electromagnetic", sim_parameters, lasers, x_axis, x_axis, 2)
+        #programs.check_convergence("electromagnetic", sim_parameters, lasers, x_axis, x_axis, 2)
         
         # ------------------------------------------------------- #
         
@@ -351,20 +324,11 @@ def replicate_prl_results(thread_num):
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
-        programs.find_final_p("ponderomotive", sim_parameters, x_axis, x_axis)
-        programs.find_max_p("ponderomotive", sim_parameters, x_axis)
-        
-        programs.find_final_p("ponderomotive", sim_parameters, x_axis, y_axis)
-        programs.find_max_p("ponderomotive", sim_parameters, y_axis)
-        
-        programs.find_final_p("ponderomotive", sim_parameters, x_axis, z_axis)
-        programs.find_max_p("ponderomotive", sim_parameters, z_axis)
-        
         # ------------------------------------------------------- #
         
-        programs.calculate_errors(sim_parameters, x_axis)
-        programs.calculate_errors(sim_parameters, y_axis)
-        programs.calculate_errors(sim_parameters, z_axis)
+        #programs.calculate_errors(sim_parameters, x_axis)
+        #programs.calculate_errors(sim_parameters, y_axis)
+        #programs.calculate_errors(sim_parameters, z_axis)
         
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
         
@@ -376,9 +340,9 @@ def replicate_prl_results(thread_num):
     plotting.plot_max_p("ponderomotive", a0_array, x_axis)
     plotting.plot_max_p("ponderomotive", a0_array, y_axis)
     plotting.plot_max_p("ponderomotive", a0_array, z_axis)
-    plotting.plot_average_errors(a0_array, x_axis)
-    plotting.plot_average_errors(a0_array, y_axis)
-    plotting.plot_average_errors(a0_array, z_axis)
+    #plotting.plot_average_errors(a0_array, x_axis)
+    #plotting.plot_average_errors(a0_array, y_axis)
+    #plotting.plot_average_errors(a0_array, z_axis)
     
     plotting.plot_convergence("electromagnetic", a0_array, x_axis)
     plotting.plot_2d_convergence_heatmap("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
@@ -389,9 +353,9 @@ def replicate_prl_results(thread_num):
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis, x_axis)
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis, y_axis)
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis, z_axis)
-    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, x_axis)
-    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, y_axis)
-    plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, z_axis)
+    #plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, x_axis)
+    #plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, y_axis)
+    #plotting.plot_2d_errors_heatmap(sim_parameters, a0_array, x_axis, z_axis)
             
     total_time = time.time() - start_time
     print(f"Program executed successfully.")

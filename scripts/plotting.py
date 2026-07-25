@@ -45,16 +45,16 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
     else:
         mode = "pond"
     
-    axis_text_pos = common.get_axis_text(axis_pos)
-    lowercase_text_pos = axis_text_pos.lower()
-    
     axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
+    
+    axis_text_pos = common.get_axis_text(axis_pos)
+    lowercase_text_pos = axis_text_pos.lower()
     
     if(axis_text_pos == "Z"):
         print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
         print("Please plot the initial positions on the X axis or Y axis.")
-        exit()
+        exit(1)
     
     num = sim_parameters.num
     r_min = sim_parameters.r_min
@@ -62,17 +62,19 @@ def plot_2d_heatmap_all(method, sim_parameters, a0_array, axis_pos, axis_p):
     wavelength = sim_parameters.wavelength
     sweep_steps = sim_parameters.sweep_steps
     
-    filename_in = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-all-{mode}.bin"
-    filename_in_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-{mode}.bin"
+    filename_in_p = f"{OUTPUT_DIR}/out-final-p-{mode}.bin"
+    filename_in_pos = f"{OUTPUT_DIR}/out-initial-pos-{mode}.bin"
+    filename_in_max_p = f"{OUTPUT_DIR}/out-max-p-{mode}.bin"
     filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-{mode}-{lowercase_text_pos}{lowercase_text_p}.png"
     
-    data = np.fromfile(filename_in, dtype=np.float64).reshape(sweep_steps, num, 2)
-    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 1)
+    data_pos = np.fromfile(filename_in_pos, dtype=np.float64).reshape(num, 3)
+    data_p = np.fromfile(filename_in_p, dtype=np.float64).reshape(sweep_steps, num, 3)
+    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 3)
     
-    x = data[:, :, 0] / wavelength
+    x = data_pos[:, axis_pos] / wavelength
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
-    max_py = data_max_p[:, 0][:, np.newaxis]
-    z = data[:, :, 1] / max_py
+    max_p = data_max_p[:, axis_p][:, np.newaxis]
+    z = data_p[:, :, axis_p] / max_p
     fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
     
     with warnings.catch_warnings(record=True) as warn:
@@ -105,7 +107,7 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
     if(axis_text_pos == "Z"):
         print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
         print("Please plot the initial positions on the X axis or Y axis.")
-        exit()
+        exit(1)
     
     num = sim_parameters.num
     r_min = sim_parameters.r_min
@@ -212,13 +214,13 @@ def plot_max_p(method, a0_array, axis):
     axis_text = common.get_axis_text(axis)
     lowercase_text = axis_text.lower()
     
-    filename = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-{mode}.bin"
+    filename = f"{OUTPUT_DIR}/out-max-p-{mode}.bin"
     filename_out = f"{OUTPUT_IMAGE_DIR}/_out-max-p{lowercase_text}-{mode}.png"
     
-    data = np.fromfile(filename, dtype=np.float64).reshape(-1, 1)
+    data = np.fromfile(filename, dtype=np.float64).reshape(-1, 3)
     
     x = a0_array
-    y = data[:, 0]
+    y = data[:, axis]
     
     plt.figure(figsize=(10,10))
     plt.plot(x, y, c='black', linestyle='-', linewidth=1)

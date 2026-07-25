@@ -48,11 +48,12 @@ def output_all_parameters(sim_parameters, lasers):
     filename_parameters = sim_parameters.filename_parameters
     filename_lasers = sim_parameters.filename_lasers
     
-    mode = sim_parameters.mode
     output_mode = int(sim_parameters.output_mode == True)
+    is_first_run = int(sim_parameters.i == 0)
     check_polarization = int(sim_parameters.check_polarization == True)
     
     with open(filename_parameters, "w") as file:
+        file.write(f"is_first_run {is_first_run}\n")
         file.write(f"r_min {sim_parameters.r_min}\n")
         file.write(f"r_max {sim_parameters.r_max}\n")
         file.write(f"num {sim_parameters.num}\n")
@@ -61,7 +62,7 @@ def output_all_parameters(sim_parameters, lasers):
         file.write(f"substeps {sim_parameters.substeps}\n")
         file.write(f"thread_num {sim_parameters.thread_num}\n")
         file.write(f"output_mode {output_mode}\n")
-        file.write(f"mode {mode}\n")
+        file.write(f"mode {sim_parameters.mode}\n")
         file.write(f"check_polarization {check_polarization}\n")
         file.write(f"rotate_angle {sim_parameters.rotate_angle}\n")
         file.write(f"num_lasers {len(lasers)}\n")

@@ -159,7 +159,7 @@ void set_parameters(Parameters *param, char *input) {
 	if(!in) { perror("Cannot open input file."); exit(1); }
 	
 	char current[128];
-	int count = 0;
+	int count = 0, is_first_run;
 	
 	while(fscanf(in, "%s", current) != EOF) {
 		if(!strcmp(current, "num"))
@@ -192,11 +192,14 @@ void set_parameters(Parameters *param, char *input) {
 			count += fscanf(in, "%lf", &param->phi_v0);
 		else if(!strcmp(current, "theta_v0"))
 			count += fscanf(in, "%lf", &param->theta_v0);
+		else if(!strcmp(current, "is_first_run"))
+			count += fscanf(in, "%i", &is_first_run);
 	}
 	if(count != PARAMS) {
 		printf("Error: Invalid input file.\n"); exit(1);
 	}
 	param->dt = param->tf / param->steps;
+	param->is_first_run = (is_first_run == 1) ? true : false;
 	fclose(in);
 }
 

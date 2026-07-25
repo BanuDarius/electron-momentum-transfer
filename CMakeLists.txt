@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(LaserElectronSimulation LANGUAGES C)
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED True)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
@@ -24,11 +24,12 @@ file(MAKE_DIRECTORY
 )
 
 add_library(physics_modules OBJECT
-    src/particle_push.c
-    src/tools.c
     src/init.c
-    src/ponderomotive.c
+    src/tools.c
     src/potentials.c
+    src/particle_push.c
+    src/ponderomotive.c
+	src/data_analysis.c
 )
 
 target_include_directories(physics_modules PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -41,10 +42,7 @@ add_executable(analytic_solution src/analytic_solution.c)
 target_link_libraries(analytic_solution PRIVATE physics_modules OpenMP::OpenMP_C ${MATH_LIBRARY})
 
 set(UTILITY_SRCS 
-    error_calc 
-    find_enter_exit_time 
-    find_final_p 
-    find_max_p
+    error_calc
 )
 
 foreach(util_name IN LISTS UTILITY_SRCS)

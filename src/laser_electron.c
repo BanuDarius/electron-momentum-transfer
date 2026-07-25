@@ -29,10 +29,11 @@
 #include "init.h"
 #include "tools.h"
 #include "particle_push.h"
+#include "data_analysis.h"
 #define RANXOSHI256_EXTERN
 #include "ranxoshi256.h"
 
-void simulate(Parameters *param, void (*compute_function)(double *restrict, double *restrict, const Laser *restrict), FILE *out, double *out_chunk, Laser *l, Particles *p) {
+void simulate(Parameters *param, void (*compute_function)(double *restrict, double *restrict, const Laser *restrict), FILE *out, double *out_chunk, Laser *lasers, Particles *particles) {
 	int num = param->num;
 	int mode = param->mode;
 	int steps = param->steps;
@@ -50,19 +51,19 @@ void simulate(Parameters *param, void (*compute_function)(double *restrict, doub
 		//Distribute N / thread_num particles to each thread
 		for(int k = initial_idx; k < final_idx; k++) {
 			if(output_mode == 1) //Copy the particle's initial state to out_chunk
-				copy_initial(out_chunk, p[k].u, (k - initial_idx) % CHUNK_SIZE, id);
+				copy_initial(out_chunk, particles[k].u, (k - initial_idx) % CHUNK_SIZE, id);
 			for(int i = 0; i < steps; i++) {
 				if(mode > 0)
-					rk4_step(&p[k].u[0], dt, l, compute_function);
+					rk4_step(&particles[k].u[0], dt, lasers, compute_function);
 				else
-					higuera_cary_step(&p[k].u[0], dt, l);
+					higuera_cary_step(&particles[k].u[0], dt, lasers);
 				
 				if(output_mode == 0 && i % substeps == 0) {
 					size_t idx = (size_t)id * U_SIZE * steps * num / (substeps * thread_num)
 						+ (size_t)(k - initial_idx) * U_SIZE * steps / substeps
 						+ (size_t)i * U_SIZE / substeps; //Offset necessary for out_chunk
 					
-					memcpy(&out_chunk[idx], &p[k].u[0], U_SIZE * sizeof(double));
+					memcpy(&out_chunk[idx], &particles[k].u[0], U_SIZE * sizeof(double));
 					#pragma omp master
 					{
 						if((k + 1) % CHUNK_SIZE == 0 && i == 0) {
@@ -75,7 +76,7 @@ void simulate(Parameters *param, void (*compute_function)(double *restrict, doub
 			}
 			if(output_mode == 1) {
 				for(int j = U_SIZE; j < 2 * U_SIZE; j++) {
-					out_chunk[id * 2 * U_SIZE * CHUNK_SIZE + chunk_current + j] = p[k].u[j - U_SIZE];
+					out_chunk[id * 2 * U_SIZE * CHUNK_SIZE + chunk_current + j] = particles[k].u[j - U_SIZE];
 				} //Copy the particle final state to out_chunk
 				chunk_current += 2 * U_SIZE;
 				if((k + 1) % CHUNK_SIZE == 0 && k - initial_idx != 0) {
@@ -110,7 +111,9 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	
-	FILE *out = fopen(argv[3], "wb");
+	char output_filename[STRING_SIZE];
+	sprintf(output_filename, "%s/out-data.bin", argv[3]);
+	FILE *out = fopen(output_filename, "wb");
 	if(!out) { perror("Cannot open output file."); return 1; }
 	
 	Parameters *param = malloc(sizeof(Parameters));
@@ -120,25 +123,26 @@ int main(int argc, char **argv) {
 	double vi[3];
 	set_initial_vel(vi, param->v0_mag, param->phi_v0, param->theta_v0);
 	
-	Laser *l = malloc(param->num_lasers * sizeof(Laser));
-	Particles *p = aligned_alloc(64, param->num * sizeof(Particles));
+	Laser *lasers = malloc(param->num_lasers * sizeof(Laser));
+	Particles *particles = aligned_alloc(64, param->num * sizeof(Particles));
 	//Aligned memory allocation to avoid false sharing
 	double *out_chunk = create_out_chunk(param);
 	void (*compute_function)(double *restrict, double *restrict, const Laser *restrict);
 	//Initialize all the simulation structures
 	
-	if(!l || !p || !out_chunk) { perror("Memory allocation error."); return 1; }
+	if(!lasers || !particles || !out_chunk) { perror("Memory allocation error."); return 1; }
 	
-	set_lasers(l, param, argv[2]);
-	set_particles(p, param, vi);
+	set_lasers(lasers, param, argv[2]);
+	set_particles(particles, param, vi);
 	set_mode(&compute_function, param->mode);
 	
 	printf("Simulation started.\n");
-	simulate(param, compute_function, out, out_chunk, l, p);
+	simulate(param, compute_function, out, out_chunk, lasers, particles);
+	post_process_data(out_chunk, param, argv[3]);
 	printf("Simulation ended.\n");
 	
 	printf("Time taken: %0.3fs.\n", omp_get_wtime() - start_time);
-	free(out_chunk); free(param); free(p); free(l);
+	free(out_chunk); free(param); free(particles); free(lasers);
 	fclose(out);
 	return 0;
 }

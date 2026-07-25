@@ -19,41 +19,11 @@
 * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
 * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef DATA_ANALYSIS_H
+#define DATA_ANALYSIS_H
 
-int main(int argc, char **argv) {
-	if(argc != 5) {
-		printf("This is a program which calculates the maximum momentum on one axis.\n"); 
-		printf("Usage: %s <filename_input> <num> <steps> <filename_output>\n", argv[0]);
-		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
-		return 1;
-	}
-	FILE *in = fopen(argv[1], "rb");
-	FILE *out_max_p = fopen(argv[4], "ab");
-	if(!in || !out_max_p) {
-		perror("Cannot open file.");
-		return 1;
-	}
-	int num = atoi(argv[2]), steps = atoi(argv[3]);
-	double data[num], t[2];
-	
-	for(int i = 0; i < num; i++) {
-		int x = fread(t, sizeof(double), 2, in);
-		data[i] = t[1];
-	}
-	
-	double max_p = -INFINITY;
-	for(int i = 0; i < num; i++) {
-		double p = data[i];
-		if(fabs(p) > max_p)
-			max_p = fabs(p);
-	}
-	
-	fwrite(&max_p, sizeof(double), 1, out_max_p);
-	
-	fclose(out_max_p); fclose(in);
-	printf("Ended calculating maximum momentum.\n");
-	return 0;
-}
+#include "sim_structs.h"
+
+void post_process_data(double *out_chunk, Parameters *param, char *output_directory);
+
+#endif
