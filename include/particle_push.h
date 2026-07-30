@@ -22,7 +22,76 @@
 #ifndef PARTICLE_PUSH_H
 #define PARTICLE_PUSH_H
 
-void rk4_step(double *u, double dt, const Laser *restrict l, void compute_function(double *, double *, const Laser *restrict));
-void higuera_cary_step(double *u, const double dt, const Laser *restrict l);
+#include <string.h>
+
+#include "init.h"
+#include "hc_func.h"
+
+//The Higuera-Cary particle pusher
+//Note that it has been modified to advance the state of the particle by one step instead of a half-step
+
+static inline void higuera_cary_step(double *u, const double dt, const Laser *restrict l) {
+	double epsilon_vec[3], u_minus[3], beta[3], E[3], B[3];
+	double u_final[3], u_prime[3], u_plus[3], t_rot[3], s_factor;
+	double gamma_fac, gamma_minus, gamma_new;
+	
+	gamma_fac = u[4] / c; //No need to manually compute gamma_fac = comp_gamma(&u[5]) as gamma is already present in the first value of the four-velocity at step n
+	u[0] += 0.5 * c * dt;
+	u[1] += 0.5 * u[5] * dt / gamma_fac;
+	u[2] += 0.5 * u[6] * dt / gamma_fac;
+	u[3] += 0.5 * u[7] * dt / gamma_fac; //Half-step advancement of the four-position
+	
+	compute_e_b(E, B, u, l); //Evaluate E and B at the half-step
+	
+	hc_beta(beta, B, dt);
+	hc_epsilon(epsilon_vec, E, dt);
+	hc_u_minus(u_minus, &u[5], epsilon_vec); //Compute beta, epsilon, and u_minus
+	
+	gamma_minus = comp_gamma(u_minus);
+	gamma_new = hc_gamma_new(u_minus, beta, gamma_minus); //Compute gamma_minus, then gamma_new, as specified in the original Higuera-Cary paper
+	
+	hc_t_rot(t_rot, beta, gamma_new);
+	s_factor = hc_s_factor(t_rot);
+	hc_u_prime(u_prime, u_minus, t_rot);
+	hc_u_plus(u_plus, u_minus, u_prime, s_factor, t_rot); //Compute the rotation vector (t_rot), the s factor (2/(1+|t_rot|^2), u_prime, and u_plus
+	
+	copy_vec(u_final, u_plus);
+	add_vec(u_final, u_final, epsilon_vec);
+	copy_vec(&u[5], u_final); //Full-step advancement of the four-velocity
+	
+	gamma_fac = comp_gamma(&u[5]); //This time it's necessary to manually calculate gamma_fac at step n + 1
+	u[0] += 0.5 * c * dt;
+	u[1] += 0.5 * u[5] * dt / gamma_fac;
+	u[2] += 0.5 * u[6] * dt / gamma_fac;
+	u[3] += 0.5 * u[7] * dt / gamma_fac;
+	u[4] = gamma_fac * c; //Half-step advancement of the four-position again
+	//At the end of one call of this function, the particle state has been updated from step n to step n + 1: two position half-steps, so one full-step, and one momentum full-step
+}
+
+//This function is a Runge-Kutta fourth-order solver, with a general compute function
+//It is used for the ponderomotive method, or as a compatibility method for the electromagnetic mode
+
+static inline void rk4_step(double *u, double dt, const Laser *restrict l, void compute_function(double *, double *, const Laser *restrict)) {
+	double u0[U_SIZE], u_temp[U_SIZE];
+	double k1[U_SIZE]; double k2[U_SIZE];
+	double k3[U_SIZE]; double k4[U_SIZE];
+	memcpy(u0, u, U_SIZE * sizeof(double));
+	
+	compute_function(u0, k1, l);
+	for (int i = 0; i < U_SIZE; i++)
+		u_temp[i] = u0[i] + 0.5 * k1[i] * dt;
+	
+	compute_function(u_temp, k2, l);
+	for (int i = 0; i < U_SIZE; i++)
+		u_temp[i] = u0[i] + 0.5 * k2[i] * dt;
+	
+	compute_function(u_temp, k3, l);
+	for (int i = 0; i < U_SIZE; i++)
+		u_temp[i] = u0[i] + k3[i] * dt;
+	
+	compute_function(u_temp, k4, l);
+	for (int i = 0; i < U_SIZE; i++)
+		u[i] = u0[i] + (dt / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
+}
 
 #endif
