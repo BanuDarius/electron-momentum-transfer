@@ -258,6 +258,18 @@ void set_lasers(Laser *l, Parameters *param, char *input) {
 		l[i].w0 = lambda * w0;
 		l[i].z_r = M_PI * l[i].w0 * l[i].w0 / lambda;
 		
+		l[i].ex_prime[0] = cos(l[i].theta) * cos(l[i].phi);
+		l[i].ex_prime[1] = cos(l[i].theta) * sin(l[i].phi);
+		l[i].ex_prime[2] = - sin(l[i].theta);
+		
+		l[i].ey_prime[0] = - sin(l[i].phi);
+		l[i].ey_prime[1] = cos(l[i].phi);
+		l[i].ey_prime[2] = 0.0;
+		
+		l[i].ez_prime[0] = sin(l[i].theta) * cos(l[i].phi);
+		l[i].ez_prime[1] = sin(l[i].theta) * sin(l[i].phi);
+		l[i].ez_prime[2] = cos(l[i].theta);
+		
 		l[i].num_lasers = param->num_lasers;
 		double epsilon1[3], epsilon2[3], nv[3];
 		direction_vec(nv, l[i].phi, l[i].theta);

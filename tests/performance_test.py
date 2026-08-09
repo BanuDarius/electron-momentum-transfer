@@ -43,7 +43,7 @@ def run_performance_test(method, sim_parameters, lasers, thread_num_final):
     plotting.plot_performance()
     
     print(f"Performance test executed successfully.\a")
-    exit()
+    exit(0)
 
 # ------------------------------------------------------- #
 
@@ -110,4 +110,4 @@ def run_example_performance_test(thread_num_final):
     plotting.plot_performance()
     
     print(f"Example performance test executed successfully.\a")
-    exit()
+    exit(0)

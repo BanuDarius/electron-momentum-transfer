@@ -28,6 +28,22 @@
 #include "sim_structs.h"
 #include "math_tools.h"
 
+static inline void pos_global_to_local(double r_vec_local[3], double r_vec_global[3], const Laser *laser) {
+	r_vec_local[0] = dot(laser->ex_prime, r_vec_global);
+	r_vec_local[1] = dot(laser->ey_prime, r_vec_global);
+	r_vec_local[2] = dot(laser->ez_prime, r_vec_global);
+}
+static inline void vec_local_to_global(double r_vec_global[3], double vec_local[3], const Laser *laser) {
+	double ex_prime_vec[3], ey_prime_vec[3], ez_prime_vec[3];
+	
+	mult_vec(ex_prime_vec, laser->ex_prime, vec_local[0]);
+	mult_vec(ey_prime_vec, laser->ey_prime, vec_local[1]);
+	mult_vec(ez_prime_vec, laser->ez_prime, vec_local[2]);
+	
+	add_vec(r_vec_global, ex_prime_vec, ey_prime_vec);
+	add_vec(r_vec_global, r_vec_global, ez_prime_vec);
+}
+
 static inline double compute_w_z(double w0, double z, double z_r) {
 	double w_z = w0 * sqrt(1.0 + z * z / (z_r * z_r));
 	return w_z;
@@ -94,12 +110,17 @@ static inline void compute_e_b_gauss_one(double e_vec[3], double b_vec[3], const
 	b_vec[2] = creal(u_pm * b_z) / c;
 }
 
-static inline void compute_e_b_gauss(double e_vec[3], double b_vec[3], const Laser *laser, double r_vec[3], double t) {
-	double e_vec_temp[3], b_vec_temp[3];
+static inline void compute_e_b_gauss(double e_vec[3], double b_vec[3], const Laser *laser, double r_vec_global[3], double t) {
+	double e_vec_temp[3], b_vec_temp[3], vec_temp_global[3], vec_temp_local[3];
 	for(int i = 0; i < laser[0].num_lasers; i++) {
-		compute_e_b_gauss_one(e_vec_temp, b_vec_temp, laser, r_vec, t);
-		add_vec(e_vec, e_vec, e_vec_temp);
-		add_vec(b_vec, b_vec, b_vec_temp);
+		pos_global_to_local(vec_temp_local, r_vec_global, laser);
+		compute_e_b_gauss_one(e_vec_temp, b_vec_temp, laser, vec_temp_local, t);
+		
+		vec_local_to_global(vec_temp_global, e_vec_temp, laser);
+		add_vec(e_vec, e_vec, vec_temp_global);
+		
+		vec_local_to_global(vec_temp_global, b_vec_temp, laser);
+		add_vec(b_vec, b_vec, vec_temp_global);
 	}
 }
 

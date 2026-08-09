@@ -43,6 +43,7 @@ typedef struct Laser {
 	
 	double w0, z_r;
 	double complex zeta_x_gauss, zeta_y_gauss;
+	double ex_prime[3], ey_prime[3], ez_prime[3];
 } Laser;
 
 typedef struct Parameters {

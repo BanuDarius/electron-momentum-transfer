@@ -28,22 +28,22 @@
 
 //This file includes optimized general purpose math functions
 
-static inline void mult_vec(double *u, double *v, double a) {
+static inline void mult_vec(double *u, const double *v, double a) {
 	for(int i = 0; i < 3; i++)
 		u[i] = v[i] * a;
 }
 
-static inline void mult_vec4(double *u, double *v, double a) {
+static inline void mult_vec4(double *u, const double *v, double a) {
 	for(int i = 0; i < 4; i++)
 		u[i] = v[i] * a;
 }
 
-static inline void add_vec(double *a, double *b, double *c) {
+static inline void add_vec(double *a, const double *b, const double *c) {
 	for(int i = 0; i < 3; i++)
 		a[i] = b[i] + c[i];
 }
 
-static inline void add_vec4(double *a, double *b, double *c) {
+static inline void add_vec4(double *a, const double *b, const double *c) {
 	for(int i = 0; i < 4; i++)
 		a[i] = b[i] + c[i];
 }
