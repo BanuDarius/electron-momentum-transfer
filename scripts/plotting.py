@@ -498,9 +498,9 @@ def plot_trajectory_comparison(sim_parameters, lasers, axis_pos):
     steps = sim_parameters.steps // sim_parameters.substeps
     a0 = lasers[0].a0
     
-    filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-comparison-{lowercase_text_pos}-{i}.png"
     filename = f"{OUTPUT_DIR}/out-data.bin"
     filename_analytic = f"{OUTPUT_DIR}/out-data-analytic.bin"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-comparison-{lowercase_text_pos}-{i}.png"
     
     data = np.fromfile(filename, dtype=np.float64).reshape(steps, 8)
     data_analytic = np.fromfile(filename_analytic, dtype=np.float64).reshape(-1, 4)
@@ -537,15 +537,15 @@ def plot_final_position_comparison(a0_array, sim_parameters, axis_pos):
     sweep_steps = sim_parameters.sweep_steps
     steps = sim_parameters.steps // sim_parameters.substeps
     
-    filename_out = f"{OUTPUT_IMAGE_DIR}/out-comparison-{lowercase_text_pos}.png"
-    filename_out_all = f"{OUTPUT_DIR}/out-final-p{lowercase_text_pos}-all-electromag.bin"
-    filename_out_all_analytic = f"{OUTPUT_DIR}/out-final-p{lowercase_text_pos}-all-analytic.bin"
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-comparison-{lowercase_text_pos}.png"
+    filename_out_all = f"{OUTPUT_DIR}/out-final-pos-electromag.bin"
+    filename_out_all_analytic = f"{OUTPUT_DIR}/out-final-pos-analytic.bin"
     
-    data = np.fromfile(filename_out_all, dtype=np.float64).reshape(sweep_steps, 2)
-    data_analytic = np.fromfile(filename_out_all_analytic, dtype=np.float64).reshape(sweep_steps, 2)
+    data = np.fromfile(filename_out_all, dtype=np.float64).reshape(-1, 3)
+    data_analytic = np.fromfile(filename_out_all_analytic, dtype=np.float64).reshape(-1, 4)
     
-    y_a = data_analytic[:, 1]
-    y = data[:, 1]
+    y_a = data_analytic[:, axis_pos + 1]
+    y = data[:, axis_pos]
     
     plt.figure(figsize=(10,10))
     plt.plot(a0_array, y_a, c='black', linestyle='-', linewidth=1, label='Analytic solution')
@@ -566,7 +566,7 @@ def plot_final_position_comparison(a0_array, sim_parameters, axis_pos):
 def plot_analytic_errors(a0_array, sim_parameters):
     sweep_steps = sim_parameters.sweep_steps
     filename_out = f"{OUTPUT_IMAGE_DIR}/_out-analytic-errors.png"
-    filename = f"{OUTPUT_DIR}/analytic_error.bin"
+    filename = f"{OUTPUT_DIR}/analytic-error.bin"
     
     data = np.fromfile(filename, dtype=np.float64).reshape(sweep_steps, 1)
     

@@ -47,6 +47,7 @@ class SimParameters:
         self.substeps = substeps
         self.thread_num = thread_num
         self.wavelength = wavelength
+        self.output_final_pos = False
         self.check_convergence = False
         self.check_polarization = False
         self.output_mode = output_mode
@@ -60,7 +61,7 @@ class SimParameters:
 # ------------------------------------------------------- #
 
 class LaserParameters:
-    def __init__(self, a0, sigma, omega, etaf, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps):
+    def __init__(self, a0, sigma, omega, etaf, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss):
         self.a0 = a0
         self.etaf = etaf
         self.phi = phi
@@ -72,5 +73,10 @@ class LaserParameters:
         self.omega = omega
         self.theta = theta
         self.pond_integrate_steps = pond_integrate_steps
+        
+        self.use_gaussian = use_gaussian
+        self.w0 = w0
+        self.zeta_x_gauss = zeta_x_gauss
+        self.zeta_y_gauss = zeta_y_gauss
 
 # ------------------------------------------------------- #

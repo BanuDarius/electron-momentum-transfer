@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 	double *buffer_a = malloc(3 * steps * num * sizeof(double));
 	double *buffer_b = malloc(3 * steps * num * sizeof(double));
 	double *error = malloc(3 * steps * num * sizeof(double));
-	double *sum_errors = malloc(3 * steps * sizeof(double));
+	double *sum_errors = calloc(3 * steps,  sizeof(double));
 	if(!buffer_a || !buffer_b || !error || !sum_errors) {
 		fprintf(stderr, "Cannot create memory buffer.\n"); return 1;
 	}

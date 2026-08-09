@@ -51,6 +51,11 @@ pond_integrate_steps = 4
 phi_v0 = np.radians(90.0)
 theta_v0 = np.radians(0.0)
 
+use_gaussian = False
+w0 = 5.0
+zeta_x_gauss = [ 1.0, 0.0 ]
+zeta_y_gauss = [ 0.0, 0.0 ]
+
 # ------------------------------------------------------- #
 
 def run_complete_test(v0_mag):
@@ -61,20 +66,14 @@ def run_complete_test(v0_mag):
         a0_array = np.append(a0_array, a0)
         
         lasers = []
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
         
         sim_parameters = sim_init.SimParameters(i, r, r, num_part, max_tf, steps_electromag, first_eighth,
-            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c) 
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+        
+        sim_parameters.output_final_pos = True
             
         programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
-        
-        programs.find_final_p("electromagnetic", sim_parameters, x_axis, x_pos_axis)
-        programs.find_final_p("electromagnetic", sim_parameters, x_axis, y_pos_axis)
-        programs.find_final_p("electromagnetic", sim_parameters, x_axis, z_pos_axis)
-        
-        programs.find_final_p("analytic", sim_parameters, x_axis, x_pos_axis)
-        programs.find_final_p("analytic", sim_parameters, x_axis, y_pos_axis)
-        programs.find_final_p("analytic", sim_parameters, x_axis, z_pos_axis)
         
         if(v0_mag < 1e-3):
             pos_i = programs.spherical_coordinates(r, np.radians(90.0), rotate_angle)
@@ -92,8 +91,9 @@ def run_complete_test(v0_mag):
     plotting.plot_final_position_comparison(a0_array, sim_parameters, x_axis)
     plotting.plot_final_position_comparison(a0_array, sim_parameters, y_axis)
     plotting.plot_final_position_comparison(a0_array, sim_parameters, z_axis)
+    
     if(v0_mag < 1e-3):
         plotting.plot_analytic_errors(a0_array, sim_parameters)
         programs.check_passed_comparison_test(sim_parameters)
     print(f"Completed analytical comparison test.")
-    exit()
+    exit(0)

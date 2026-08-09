@@ -36,7 +36,7 @@ double displacement(Parameters *param, Laser *l) {
 	return delta_x;
 }
 
-void simulate_analytic(FILE *out, Particles *p, Parameters *param, Laser *l) {
+void simulate_analytic(FILE *out, FILE *out_final, Particles *p, Parameters *param, Laser *l) {
 	double u_i[4], u_c[4], d = 0.0, r_1[3], r_2[3] = { 0.0 }, r_tot[3], r_temp[3], k_vec[3];
 	double dphi = param->tf * l->omega / param->steps, phi_rel, phi_abs;
 	int i = 0;
@@ -66,9 +66,10 @@ void simulate_analytic(FILE *out, Particles *p, Parameters *param, Laser *l) {
 		fwrite(u_c, sizeof(double), 4, out);
 		i++;
 	}
+	fwrite(u_c, sizeof(double), 4, out_final);
 }
 
-void simulate_analytic_v0(FILE *out, Particles *p, Parameters *param, Laser *l) {
+void simulate_analytic_v0(FILE *out, FILE *out_final, Particles *p, Parameters *param, Laser *l) {
 	double u_i[4], u_c[4], u0[4], u0_perp[3];
 	double d = 0.0, r_1[3], r_tot[3], r_temp[3], k_vec[3], int_A[3];
 	double r_perp_tot[3] = { 0.0 }, temp_vec[3] = { 0.0 };
@@ -119,18 +120,19 @@ void simulate_analytic_v0(FILE *out, Particles *p, Parameters *param, Laser *l) 
 		fwrite(u_c, sizeof(double), 4, out);
 		i++;
 	}
+	fwrite(u_c, sizeof(double), 4, out_final);
 }
 
 int main(int argc, char **argv) {
-	if(argc != 5) {
+	if(argc != 6) {
 		printf("This is a program which simulates the trajectories of an electron interacting with a single laser, using an analytic solution.\n"); 
 		printf("Usage: %s <filename_input> <filename_lasers> <filename_output> <filename_output_displacement>\n", argv[0]);
 		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
 		return 1;
 	}
-	FILE *out = fopen(argv[3], "wb");
-	if(!out) { perror("Cannot open output file."); return 1; }
-	FILE *out_displacement = fopen(argv[4], "ab");
+	FILE *out = fopen(argv[3], "wb"), *out_final = fopen(argv[4], "ab");
+	if(!out || !out_final) { perror("Cannot open output file."); return 1; }
+	FILE *out_displacement = fopen(argv[5], "ab");
 	if(!out_displacement) { perror("Cannot open output displacement file."); return 1; }
 	
 	Parameters *param = malloc(sizeof(Parameters));
@@ -148,15 +150,15 @@ int main(int argc, char **argv) {
 	
 	printf("Simulation started.\n");
 	if(magnitude(vi) < 1e-3)
-		simulate_analytic(out, p, param, &l[0]);
+		simulate_analytic(out, out_final, p, param, &l[0]);
 	else
-		simulate_analytic_v0(out, p, param, &l[0]);
+		simulate_analytic_v0(out, out_final, p, param, &l[0]);
 	printf("Simulation ended.\n");
 	
 	double delta_x = displacement(param, l);
 	fwrite(&delta_x, sizeof(double), 1, out_displacement);
 	
-	fclose(out_displacement); fclose(out);
+	fclose(out_displacement); fclose(out_final); fclose(out);
 	free(param); free(p); free(l);
 	return 0;
 }

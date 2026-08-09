@@ -159,7 +159,7 @@ void set_parameters(Parameters *param, char *input) {
 	if(!in) { perror("Cannot open input file."); exit(1); }
 	
 	char current[128];
-	int count = 0, is_first_run;
+	int count = 0, is_first_run, output_final_pos;
 	
 	while(fscanf(in, "%s", current) != EOF) {
 		if(!strcmp(current, "num"))
@@ -194,12 +194,15 @@ void set_parameters(Parameters *param, char *input) {
 			count += fscanf(in, "%lf", &param->theta_v0);
 		else if(!strcmp(current, "is_first_run"))
 			count += fscanf(in, "%i", &is_first_run);
+		else if(!strcmp(current, "output_final_pos"))
+			count += fscanf(in, "%i", &output_final_pos);
 	}
 	if(count != PARAMS) {
-		printf("Error: Invalid input file.\n"); exit(1);
+		fprintf(stderr, "Error: Invalid input file.\n"); exit(1);
 	}
 	param->dt = param->tf / param->steps;
 	param->is_first_run = (is_first_run == 1) ? true : false;
+	param->output_final_pos = (output_final_pos == 1) ? true : false;
 	fclose(in);
 }
 
@@ -207,35 +210,55 @@ void set_lasers(Laser *l, Parameters *param, char *input) {
 	FILE *in = fopen(input, "r");
 	if(!in) { perror("Cannot open input file."); exit(1); }
 	char current[128];
-	int k;
+	double w0;
+	int k, use_gaussian;
 	
 	for(int i = 0; i < param->num_lasers; i++) {
-		l[i].num_lasers = param->num_lasers;
+		k = 0;
 		for(int j = 0; j < LASER_PARAMS; j++) {
-			k = fscanf(in, "%s", current);
+			k += fscanf(in, "%s", current);
 			if(!strcmp(current, "a0"))
-				k = fscanf(in, "%lf", &l[i].a0);
+				k += fscanf(in, "%lf", &l[i].a0);
 			else if(!strcmp(current, "sigma"))
-				k = fscanf(in, "%lf", &l[i].sigma);
+				k += fscanf(in, "%lf", &l[i].sigma);
 			else if(!strcmp(current, "omega"))
-				k = fscanf(in, "%lf", &l[i].omega);
+				k += fscanf(in, "%lf", &l[i].omega);
 			else if(!strcmp(current, "etaf"))
-				k = fscanf(in, "%lf", &l[i].etaf);
+				k += fscanf(in, "%lf", &l[i].etaf);
 			else if(!strcmp(current, "zetax"))
-				k = fscanf(in, "%lf", &l[i].zetax);
+				k += fscanf(in, "%lf", &l[i].zetax);
 			else if(!strcmp(current, "zetay"))
-				k = fscanf(in, "%lf", &l[i].zetay);
+				k += fscanf(in, "%lf", &l[i].zetay);
 			else if(!strcmp(current, "phi"))
-				k = fscanf(in, "%lf", &l[i].phi);
+				k += fscanf(in, "%lf", &l[i].phi);
 			else if(!strcmp(current, "theta"))
-				k = fscanf(in, "%lf", &l[i].theta);
+				k += fscanf(in, "%lf", &l[i].theta);
 			else if(!strcmp(current, "psi"))
-				k = fscanf(in, "%lf", &l[i].psi);
+				k += fscanf(in, "%lf", &l[i].psi);
 			else if(!strcmp(current, "pond_integrate_steps"))
-				k = fscanf(in, "%i", &l[i].pond_integrate_steps);
+				k += fscanf(in, "%i", &l[i].pond_integrate_steps);
 			else if(!strcmp(current, "alpha"))
-				k = fscanf(in, "%lf", &l[i].alpha);
+				k += fscanf(in, "%lf", &l[i].alpha);
+			
+			else if(!strcmp(current, "use_gaussian"))
+				k += fscanf(in, "%i", &use_gaussian);
+			else if(!strcmp(current, "w0"))
+				k += fscanf(in, "%lf", &w0);
+			else if(!strcmp(current, "zeta_x_gauss_real"))
+				k += fscanf(in, "%lf", (double *)(&l[i].zeta_x_gauss));
+			else if(!strcmp(current, "zeta_x_gauss_imag"))
+				k += fscanf(in, "%lf", (double *)(&l[i].zeta_x_gauss) + 1);
+			else if(!strcmp(current, "zeta_y_gauss_imag"))
+				k += fscanf(in, "%lf", (double *)(&l[i].zeta_y_gauss));
+			else if(!strcmp(current, "zeta_y_gauss_imag"))
+				k += fscanf(in, "%lf", (double *)(&l[i].zeta_y_gauss) + 1);
 		}
+		l[i].use_gaussian = (use_gaussian == 1) ? true : false;
+		double lambda = 2.0 * M_PI * c / l[i].omega;
+		l[i].w0 = lambda * w0;
+		l[i].z_r = M_PI * l[i].w0 * l[i].w0 / lambda;
+		
+		l[i].num_lasers = param->num_lasers;
 		double epsilon1[3], epsilon2[3], nv[3];
 		direction_vec(nv, l[i].phi, l[i].theta);
 		epsilon(nv, epsilon1);

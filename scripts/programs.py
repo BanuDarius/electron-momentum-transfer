@@ -73,11 +73,11 @@ def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, multipli
     lowercase_text_p = axis_text_p.lower()
     num = sim_parameters.num
     
-    filename_final_1 = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-{mode}.bin"
-    filename_final_2 = f"{OUTPUT_DIR}/out-final-p{lowercase_text_p}-{mode}-conv.bin"
-    filename_out_conv = f"{OUTPUT_DIR}/out-data-conv-{mode}-{lowercase_text_p}.bin"
-    filename_conv_average = f"{OUTPUT_DIR}/average-conv-{mode}-{lowercase_text_p}.bin"
-    filename_conv_all = f"{OUTPUT_DIR}/average-conv-all-{mode}-{lowercase_text_p}.bin"
+    filename_final_1 = f"{OUTPUT_DIR}/out-final-p-{mode}.bin"
+    filename_final_2 = f"{OUTPUT_DIR}/out-final-p-{mode}-conv.bin"
+    filename_out_conv = f"{OUTPUT_DIR}/out-data-conv-{mode}.bin"
+    filename_conv_average = f"{OUTPUT_DIR}/average-conv-{mode}.bin"
+    filename_conv_all = f"{OUTPUT_DIR}/average-conv-all-{mode}.bin"
     
     filename_conv = f"{OUTPUT_DIR}/conv.bin"
     program_conv = f"{BIN_DIR}/error_calc"
@@ -140,11 +140,12 @@ def check_analytic_solution(method, sim_parameters, lasers):
     
     program_path = f"{BIN_DIR}/analytic_solution"
     filename_out = f"{OUTPUT_DIR}/out-data-analytic.bin"
+    filename_out_final_pos = f"{OUTPUT_DIR}/out-final-pos-analytic.bin"
     filename_out_displacement = f"{OUTPUT_DIR}/out-displacement.bin"
     
     common.output_all_parameters(sim_parameters, lasers)
     
-    arguments = [program_path, sim_parameters.filename_parameters, sim_parameters.filename_lasers, filename_out, filename_out_displacement]
+    arguments = [program_path, sim_parameters.filename_parameters, sim_parameters.filename_lasers, filename_out, filename_out_final_pos, filename_out_displacement]
     
     try:
         res = subprocess.run(arguments, text=True, check=True)
@@ -167,18 +168,14 @@ def calculate_displacement_error(sim_parameters, pos_i, phi, theta):
     i = sim_parameters.i
     
     filename_displacement_analytic = f"{OUTPUT_DIR}/out-displacement.bin"
-    filename_final_pos_numeric_x = f"{OUTPUT_DIR}/out-final-px-electromag.bin"
-    filename_final_pos_numeric_y = f"{OUTPUT_DIR}/out-final-py-electromag.bin"
-    filename_final_pos_numeric_z = f"{OUTPUT_DIR}/out-final-pz-electromag.bin"
+    filename_final_pos_numeric = f"{OUTPUT_DIR}/out-final-pos-electromag.bin"
     
     data_analytic = np.fromfile(filename_displacement_analytic, dtype=np.float64).reshape(-1, 1)
-    data_x = np.fromfile(filename_final_pos_numeric_x, dtype=np.float64).reshape(1, 2)
-    data_y = np.fromfile(filename_final_pos_numeric_y, dtype=np.float64).reshape(1, 2)
-    data_z = np.fromfile(filename_final_pos_numeric_z, dtype=np.float64).reshape(1, 2)
+    data = np.fromfile(filename_final_pos_numeric, dtype=np.float64).reshape(-1, 3)
     
-    x = data_x[0, 1]
-    y = data_y[0, 1]
-    z = data_z[0, 1]
+    x = data[i, 0]
+    y = data[i, 1]
+    z = data[i, 2]
     pos_f_numeric = np.array([x, y, z])
     
     displacement = data_analytic[i, 0]
@@ -186,7 +183,7 @@ def calculate_displacement_error(sim_parameters, pos_i, phi, theta):
     
     analytic_error = np.linalg.norm(pos_f_analytic - pos_f_numeric) / np.linalg.norm(pos_f_analytic) * 100.0
     
-    filename_error = f"{OUTPUT_DIR}/analytic_error.bin"
+    filename_error = f"{OUTPUT_DIR}/analytic-error.bin"
     with open(filename_error, "ab") as file:
         analytic_error.tofile(file)
 
@@ -195,7 +192,7 @@ def calculate_displacement_error(sim_parameters, pos_i, phi, theta):
 def check_passed_comparison_test(sim_parameters):
     i = sim_parameters.i
     
-    filename = f"{OUTPUT_DIR}/analytic_error.bin"
+    filename = f"{OUTPUT_DIR}/analytic-error.bin"
     data = np.fromfile(filename, dtype=np.float64).reshape(-1, 1)
     final_error = data[i, 0]
     

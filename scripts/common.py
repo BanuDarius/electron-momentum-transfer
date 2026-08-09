@@ -53,6 +53,7 @@ def output_all_parameters(sim_parameters, lasers):
     check_polarization = int(sim_parameters.check_polarization == True)
     
     with open(filename_parameters, "w") as file:
+        file.write(f"output_final_pos {int(sim_parameters.output_final_pos)}\n")
         file.write(f"is_first_run {is_first_run}\n")
         file.write(f"r_min {sim_parameters.r_min}\n")
         file.write(f"r_max {sim_parameters.r_max}\n")
@@ -83,5 +84,12 @@ def output_all_parameters(sim_parameters, lasers):
             file.write(f"psi {lasers[i].psi}\n")
             file.write(f"alpha {lasers[i].alpha}\n")
             file.write(f"pond_integrate_steps {lasers[i].pond_integrate_steps}\n")
+            
+            file.write(f"w0 {lasers[i].w0}\n")
+            file.write(f"use_gaussian {int(lasers[i].use_gaussian)}\n")
+            file.write(f"zeta_x_gauss_real {lasers[i].zeta_x_gauss[0]}\n")
+            file.write(f"zeta_x_gauss_imag {lasers[i].zeta_x_gauss[1]}\n")
+            file.write(f"zeta_y_gauss_real {lasers[i].zeta_y_gauss[0]}\n")
+            file.write(f"zeta_y_gauss_imag {lasers[i].zeta_y_gauss[1]}\n")
 
 # ----------------------------------------------------------------------- #

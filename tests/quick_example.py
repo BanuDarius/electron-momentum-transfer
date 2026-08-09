@@ -58,6 +58,11 @@ def run_quick_example(thread_num):
     phi_v0 = np.radians(0.0)
     theta_v0 = np.radians(0.0)
     
+    use_gaussian = False
+    w0 = 5.0
+    zeta_x_gauss = [ 1.0, 0.0 ]
+    zeta_y_gauss = [ 0.0, 0.0 ]
+    
     start_time = time.time()
     a0_array = np.array([])
     programs.clean_output_folder()
@@ -72,8 +77,8 @@ def run_quick_example(thread_num):
         a0_array = np.append(a0_array, a0)
         
         lasers = []
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
         
         # ------------------------------------------------------- #
         

@@ -30,18 +30,19 @@ void post_process_data(double *out_chunk, Parameters *param, char *output_direct
 	int num = param->num;
 	int total_steps = param->steps / param->substeps;
 	
-	char filename_final_p[STRING_SIZE], filename_max_p[STRING_SIZE], filename_initial_pos[STRING_SIZE];
+	char filename_final_p[STRING_SIZE], filename_final_pos[STRING_SIZE], filename_max_p[STRING_SIZE], filename_initial_pos[STRING_SIZE];
 	char *mode = (param->mode == 0) ? "electromag" : "pond";
 	sprintf(filename_max_p, "%s/out-max-p-%s.bin", output_directory, mode);
 	sprintf(filename_final_p, "%s/out-final-p-%s.bin", output_directory, mode);
 	sprintf(filename_initial_pos, "%s/out-initial-pos-%s.bin", output_directory, mode);
+	sprintf(filename_final_pos, "%s/out-final-pos-%s.bin", output_directory, mode);
 	
 	FILE *out_max_p = fopen(filename_max_p, "ab");
 	FILE *out_final_p = fopen(filename_final_p, "ab");
 	if(!out_max_p || !out_final_p) {
 		fprintf(stderr, "Cannot open data analysis files!\n"); exit(1);
 	}
-	if(param->is_first_run == true) {
+	if(param->is_first_run) {
 		FILE *out_initial_pos = fopen(filename_initial_pos, "wb");
 		if(!out_initial_pos) {
 			fprintf(stderr, "Cannot open initial particle positions file!\n"); exit(1);
@@ -58,6 +59,24 @@ void post_process_data(double *out_chunk, Parameters *param, char *output_direct
 		fwrite(initial_pos, sizeof(double), 3 * num, out_initial_pos);
 		fclose(out_initial_pos);
 		free(initial_pos);
+	}
+	if(param->output_final_pos) {
+		FILE *out_final_pos = fopen(filename_final_pos, "ab");
+		if(!out_final_pos) {
+			fprintf(stderr, "Cannot open final particle positions file!\n"); exit(1);
+		}
+	
+		double *final_pos = malloc(3 * num * sizeof(double));
+		if(!final_pos) {
+			fprintf(stderr, "Cannot allocate memory!\n"); exit(1);
+		}
+		
+		for(int i = 0; i < num; i++)
+			memcpy(&final_pos[3 * i], &out_chunk[(i + 1) * total_steps * U_SIZE - 7], 3 * sizeof(double));
+		
+		fwrite(final_pos, sizeof(double), 3 * num, out_final_pos);
+		fclose(out_final_pos);
+		free(final_pos);
 	}
 	
 	double *final_p = malloc(3 * num * sizeof(double));
