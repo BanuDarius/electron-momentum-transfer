@@ -22,6 +22,7 @@
 #ifndef SIM_STRUCTS_H
 #define SIM_STRUCTS_H
 
+#include <complex.h>
 #include <stdalign.h>
 
 #define LASER_PARAMS 11 //How many parameters will be read from a file for one laser
@@ -31,13 +32,17 @@
 #define STRING_SIZE 128 //Maximum string size
 
 typedef struct Particles {
-	alignas(64) double u[U_SIZE]; //u[0] = ct, u[1-3] = x, y, z, u[4] = gamma * c, u[5-7] = gamma * v
+	alignas(64) double u[U_SIZE]; //u[0] = c * t, u[1-3] = x, y, z, u[4] = gamma * c, u[5-7] = gamma * v
 } Particles; //This struct has sizeof(Particles) = 64 bytes, which is conveniently equal to a standard cache line
 
 typedef struct Laser {
+	bool use_gaussian;
 	int num_lasers, pond_integrate_steps;
 	double alpha, sigma, zetax, zetay, omega, theta, phi, psi, etaf, a0;
 	double epsilon1[3], epsilon2[3], n[3];
+	
+	double w0, z_r;
+	double complex zeta_x_gauss, zeta_y_gauss;
 } Laser;
 
 typedef struct Parameters {

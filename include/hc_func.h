@@ -27,24 +27,24 @@
 #include "units.h"
 #include "math_tools.h"
 
-//These are optimized helper functions for the Higuera-Cary push
+//These are helper functions for the Higuera-Cary push
 
 static inline double hc_s_factor(const double *restrict t_rot) {
 	double s_factor = 2.0 / (1.0 + dot(t_rot, t_rot));
 	return s_factor;
 }
 
-static inline void hc_beta(double *restrict beta, const double *restrict B, const double dt) {
+static inline void hc_beta(double *restrict beta, const double *restrict B,  double dt) {
 	for(int i = 0; i < 3; i++)
 		beta[i] = B[i] * q * dt / (2.0 * m);
 }
 
-static inline void hc_epsilon(double *restrict epsilon, const double *restrict E, const double dt) {
+static inline void hc_epsilon(double *restrict epsilon, const double *restrict E, double dt) {
 	for(int i = 0; i < 3; i++)
 		epsilon[i] = E[i] * q * dt / (2.0 * m);
 }
 
-static inline void hc_t_rot(double *restrict t_rot, const double *restrict beta, const double gamma_new) {
+static inline void hc_t_rot(double *restrict t_rot, const double *restrict beta, double gamma_new) {
 	for(int i = 0; i < 3; i++)
 		t_rot[i] = beta[i] / gamma_new;
 }

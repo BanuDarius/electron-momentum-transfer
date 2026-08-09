@@ -26,6 +26,7 @@
 
 #include "init.h"
 #include "hc_func.h"
+#include "gaussian.h"
 
 //The Higuera-Cary particle pusher
 //Note that it has been modified to advance the state of the particle by one step instead of a half-step
@@ -41,7 +42,10 @@ static inline void higuera_cary_step(double *u, const double dt, const Laser *re
 	u[2] += 0.5 * u[6] * dt / gamma_fac;
 	u[3] += 0.5 * u[7] * dt / gamma_fac; //Half-step advancement of the four-position
 	
-	compute_e_b(E, B, u, l); //Evaluate E and B at the half-step
+	if(!l[0].use_gaussian)
+		compute_e_b(E, B, u, l); //Evaluate E and B at the half-step
+	else
+		compute_e_b_gauss(E, B, l, &u[1], u[0] / c);
 	
 	hc_beta(beta, B, dt);
 	hc_epsilon(epsilon_vec, E, dt);
