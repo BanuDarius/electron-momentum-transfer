@@ -248,7 +248,7 @@ void set_lasers(Laser *l, Parameters *param, char *input) {
 				k += fscanf(in, "%lf", (double *)(&l[i].zeta_x_gauss));
 			else if(!strcmp(current, "zeta_x_gauss_imag"))
 				k += fscanf(in, "%lf", (double *)(&l[i].zeta_x_gauss) + 1);
-			else if(!strcmp(current, "zeta_y_gauss_imag"))
+			else if(!strcmp(current, "zeta_y_gauss_real"))
 				k += fscanf(in, "%lf", (double *)(&l[i].zeta_y_gauss));
 			else if(!strcmp(current, "zeta_y_gauss_imag"))
 				k += fscanf(in, "%lf", (double *)(&l[i].zeta_y_gauss) + 1);

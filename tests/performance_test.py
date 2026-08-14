@@ -66,7 +66,7 @@ def run_example_performance_test(thread_num_final):
     alpha = np.radians(0.0)
     rotate_angle = np.radians(0.0)
     steps_electromag = 64000
-    substeps_electromag = 6400
+    substeps_electromag = 64000
     pond_integrate_steps = 4
     v0_mag = 0.0 * c
     phi_v0 = np.radians(0.0)

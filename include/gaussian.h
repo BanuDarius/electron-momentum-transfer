@@ -112,14 +112,16 @@ static inline void compute_e_b_gauss_one(double e_vec[3], double b_vec[3], const
 
 static inline void compute_e_b_gauss(double e_vec[3], double b_vec[3], const Laser *laser, double r_vec_global[3], double t) {
 	double e_vec_temp[3], b_vec_temp[3], vec_temp_global[3], vec_temp_local[3];
+	memset(e_vec, 0, 3 * sizeof(double));
+	memset(b_vec, 0, 3 * sizeof(double));
 	for(int i = 0; i < laser[0].num_lasers; i++) {
-		pos_global_to_local(vec_temp_local, r_vec_global, laser);
-		compute_e_b_gauss_one(e_vec_temp, b_vec_temp, laser, vec_temp_local, t);
+		pos_global_to_local(vec_temp_local, r_vec_global, &laser[i]);
+		compute_e_b_gauss_one(e_vec_temp, b_vec_temp, &laser[i], vec_temp_local, t);
 		
-		vec_local_to_global(vec_temp_global, e_vec_temp, laser);
+		vec_local_to_global(vec_temp_global, e_vec_temp, &laser[i]);
 		add_vec(e_vec, e_vec, vec_temp_global);
 		
-		vec_local_to_global(vec_temp_global, b_vec_temp, laser);
+		vec_local_to_global(vec_temp_global, b_vec_temp, &laser[i]);
 		add_vec(b_vec, b_vec, vec_temp_global);
 	}
 }
