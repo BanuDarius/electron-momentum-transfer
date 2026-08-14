@@ -31,7 +31,7 @@
 //The Higuera-Cary particle pusher
 //Note that it has been modified to advance the state of the particle by one step instead of a half-step
 
-static inline void higuera_cary_step(double *u, const double dt, const Laser *restrict l) {
+static inline void higuera_cary_step(double *u, double dt, const Laser *restrict l) {
 	double epsilon_vec[3], u_minus[3], beta[3], E[3], B[3];
 	double u_final[3], u_prime[3], u_plus[3], t_rot[3], s_factor;
 	double gamma_fac, gamma_minus, gamma_new;

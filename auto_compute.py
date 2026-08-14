@@ -49,7 +49,7 @@ trajectory_until_exit = False #Definitions for simulation parameters
 
 # ------------------------------------------------------- #
 
-thread_num = 4 #Number of threads
+thread_num = 8 #Number of threads
 
 min_a0 = 0.02
 max_a0 = 0.50 #Minimum and maximum of a0 for lasers
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     #analytic_test.run_complete_test(v0_mag)
     
     #Uncomment to create a relative performance speedrup analysis for a pre-defined scenario
-    #performance_test.run_example_performance_test(thread_num)
+    performance_test.run_example_performance_test(thread_num)
     
     for i in range(0, sweep_steps):
         tf = common.interpolate(min_tf, max_tf, i, sweep_steps)

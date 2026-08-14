@@ -83,10 +83,10 @@ def run_example_performance_test(thread_num_final):
     lasers = []
     lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
     lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(180.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
-    lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(60.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
-    lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(300.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
-    lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(45.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
-    lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
+    #lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(60.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
+    #lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(300.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
+    #lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(45.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
+    #lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
 
     sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
         substeps_electromag, v0_mag, phi_v0, theta_v0, 1, all_states, rotate_angle, 1, full_trajectory, wavelength, c)
