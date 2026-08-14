@@ -115,14 +115,14 @@ if __name__ == "__main__":
     
     #Uncomment to replicate the results obtained in the Physical Review Letters paper
     #"Relativistic Ponderomotive Force, Uphill Acceleration, and Transition to Chaos", D. Bauer et al. (1995)
-    #examples.replicate_prl_results(thread_num)
+    examples.replicate_prl_results(thread_num)
     
     #Uncomment this line to run a quick parameter sweep test for a0 = 0.02 to 10.00,
     #Comparing the Higuera-Cary integrator with an analytical solution for one laser
     #analytic_test.run_complete_test(v0_mag)
     
     #Uncomment to create a relative performance speedrup analysis for a pre-defined scenario
-    performance_test.run_example_performance_test(thread_num)
+    #performance_test.run_example_performance_test(thread_num)
     
     for i in range(0, sweep_steps):
         tf = common.interpolate(min_tf, max_tf, i, sweep_steps)

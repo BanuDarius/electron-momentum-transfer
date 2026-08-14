@@ -138,7 +138,8 @@ int main(int argc, char **argv) {
 	
 	printf("Simulation started.\n");
 	simulate(param, compute_function, out, out_chunk, lasers, particles);
-	post_process_data(out_chunk, param, argv[3]);
+	if(param->output_mode == 0)
+		post_process_data(out_chunk, param, argv[3]);
 	printf("Simulation ended.\n");
 	
 	printf("Time taken: %0.3fs.\n", omp_get_wtime() - start_time);
