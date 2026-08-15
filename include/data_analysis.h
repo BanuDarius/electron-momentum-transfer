@@ -24,6 +24,6 @@
 
 #include "sim_structs.h"
 
-void post_process_data(double *out_chunk, Parameters *param, char *output_directory);
+void post_process_data(double *out_chunk, Parameters *param, char *filename_max_p, char *filename_final_p, char *filename_initial_pos, char *filename_final_pos);
 
 #endif

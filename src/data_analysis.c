@@ -26,16 +26,9 @@
 
 #include "data_analysis.h"
 
-void post_process_data(double *out_chunk, Parameters *param, char *output_directory) {
+void post_process_data(double *out_chunk, Parameters *param, char *filename_max_p, char *filename_final_p, char *filename_initial_pos, char *filename_final_pos) {
 	int num = param->num;
 	int total_steps = param->steps / param->substeps;
-	
-	char filename_final_p[STRING_SIZE], filename_final_pos[STRING_SIZE], filename_max_p[STRING_SIZE], filename_initial_pos[STRING_SIZE];
-	char *mode = (param->mode == 0) ? "electromag" : "pond";
-	sprintf(filename_max_p, "%s/out-max-p-%s.bin", output_directory, mode);
-	sprintf(filename_final_p, "%s/out-final-p-%s.bin", output_directory, mode);
-	sprintf(filename_initial_pos, "%s/out-initial-pos-%s.bin", output_directory, mode);
-	sprintf(filename_final_pos, "%s/out-final-pos-%s.bin", output_directory, mode);
 	
 	FILE *out_max_p = fopen(filename_max_p, "ab");
 	FILE *out_final_p = fopen(filename_final_p, "ab");

@@ -152,7 +152,7 @@ def plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, axis_p):
 # ----------------------------------------------------------------------- #
 
 def plot_2d_convergence_heatmap(method, sim_parameters, a0_array, axis_pos, axis_p):
-    if(method == "electromagnetic"):
+    if method == "electromagnetic":
         mode = "electromag"
     else:
         mode = "pond"
@@ -163,37 +163,46 @@ def plot_2d_convergence_heatmap(method, sim_parameters, a0_array, axis_pos, axis
     axis_text_p = common.get_axis_text(axis_p)
     lowercase_text_p = axis_text_p.lower()
     
-    if(axis_text_pos == "Z"):
-        print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
-        print("Please plot the initial positions on the X axis or Y axis.")
+    if axis_text_pos == "Z":
+        print("Warning: Particle initialization is in the XY plane; all initial Z values are identical.")
+        print("Please plot initial positions on the X or Y axis.")
         exit(1)
-    
+        
     num = sim_parameters.num
     r_min = sim_parameters.r_min
     r_max = sim_parameters.r_max
     wavelength = sim_parameters.wavelength
     sweep_steps = sim_parameters.sweep_steps
     
-    filename_conv_all = f"{OUTPUT_DIR}/average-conv-all-{mode}-{lowercase_text_p}.bin"
-    filename_in_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text_p}-{mode}-conv.bin"
+    filename_conv_all = f"{OUTPUT_DIR}/conv-all-{mode}.bin"
+    filename_in_pos = f"{OUTPUT_DIR}/out-initial-pos-{mode}.bin"
+    filename_in_max_p = f"{OUTPUT_DIR}/out-max-p-{mode}.bin"
     filename_out = f"{OUTPUT_IMAGE_DIR}/_out-2d-heatmap-conv-{mode}-{lowercase_text_pos}{lowercase_text_p}.png"
     
-    data = np.fromfile(filename_conv_all, dtype=np.float64).reshape(sweep_steps, num, 2)
-    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 1)
+    data_pos = np.fromfile(filename_in_pos, dtype=np.float64).reshape(num, 3)
+    data_errors = np.fromfile(filename_conv_all, dtype=np.float64).reshape(sweep_steps, num, 3)
+    data_max_p = np.fromfile(filename_in_max_p, dtype=np.float64).reshape(sweep_steps, 3)
     
-    max_p = data_max_p[:, 0][:, np.newaxis]
-    difference = data[:, :, 1]
-    x = data[:, :, 0] / wavelength
+    max_p = data_max_p[:, axis_p][:, np.newaxis]
+    difference = data_errors[:, :, axis_p]
+    
+    x = data_pos[:, axis_pos] / wavelength
     y = np.repeat(a0_array[:, np.newaxis], num, axis=1)
-    z = difference / max_p * 100.0
+    z = (difference / max_p) * 100.0
     
     fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
-    with warnings.catch_warnings(record=True) as warn:
+    with warnings.catch_warnings(record=True):
         warnings.simplefilter("always")
-        pcm = ax.pcolormesh(x, y, z, cmap='inferno', shading='auto', rasterized=True, norm=LogNorm(vmin=1e-3, vmax=100.0))
-    
+        pcm = ax.pcolormesh(
+            x, y, z, 
+            cmap='inferno', 
+            shading='auto', 
+            rasterized=True, 
+            norm=LogNorm(vmin=1e-3, vmax=100.0)
+        )
+        
     cbar = plt.colorbar(pcm, ax=ax)
-    cbar.set_label(rf"Convergence [%]")
+    cbar.set_label(rf"Convergence error $\epsilon$ [%]")
     
     plt.xlim(r_min / wavelength, r_max / wavelength)
     plt.ylim(min(a0_array), max(a0_array))
@@ -269,31 +278,32 @@ def plot_average_errors(a0_array, axis):
 # ----------------------------------------------------------------------- #
 
 def plot_convergence(method, a0_array, axis):
-    if(method == "electromagnetic"):
+    if method == "electromagnetic":
         mode = "electromag"
     else:
         mode = "pond"
+        
     axis_text = common.get_axis_text(axis)
     lowercase_text = axis_text.lower()
+    sweep_steps = len(a0_array)
     
     filename_out = f"{OUTPUT_IMAGE_DIR}/_out-conv-{mode}-{lowercase_text}.png"
-    filename_max_p = f"{OUTPUT_DIR}/out-max-p{lowercase_text}-{mode}-conv.bin"
-    filename_conv_average = f"{OUTPUT_DIR}/average-conv-{mode}-{lowercase_text}.bin"
+    filename_max_p = f"{OUTPUT_DIR}/out-max-p-{mode}.bin"
+    filename_conv_average = f"{OUTPUT_DIR}/average-conv-{mode}.bin"
     
-    data_conv = np.fromfile(filename_conv_average, dtype=np.float64).reshape(-1, 1)
-    data_max = np.fromfile(filename_max_p, dtype=np.float64).reshape(-1, 1)
+    data_conv = np.fromfile(filename_conv_average, dtype=np.float64).reshape(sweep_steps, 3)
+    data_max = np.fromfile(filename_max_p, dtype=np.float64).reshape(sweep_steps, 3)
     
     x = a0_array
-    y = data_conv[:, 0]
-    y_max = data_max[:, 0]
-    y_final = y / y_max * 100.0
+    y = data_conv[:, axis]
+    y_max = data_max[:, axis]
+    y_final = (y / y_max) * 100.0
     
-    plt.figure(figsize=(10,10))
+    plt.figure(figsize=(10, 10))
     plt.plot(x, y_final, c='black', linestyle='-', linewidth=1)
     plt.title(rf"Convergence on {axis_text} axis ({method})")
-    plt.xlabel(rf"$a_0$")
-    plt.ylabel(rf"Average error of convergence [%]")
-    
+    plt.xlabel(r"$a_0$")
+    plt.ylabel(r"Average error of convergence [%]")
     plt.axhline(0, color='black', linestyle='--')
     
     plt.savefig(filename_out, dpi=250, bbox_inches='tight')

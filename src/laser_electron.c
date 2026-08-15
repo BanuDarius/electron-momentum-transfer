@@ -104,16 +104,14 @@ int main(int argc, char **argv) {
 	memset(seed, 128, 32 * sizeof(char));
 	ranxoshi256Seed(&global_rng, seed);
 	double start_time = omp_get_wtime();
-	if(argc != 4) {
+	if(argc != 8) {
 		printf("This is a program which simulates laser-electron interactions.\n"); 
 		printf("Usage: %s <filename_input> <filename_lasers> <filename_output>\n", argv[0]);
 		printf("For more details visit: https://github.com/BanuDarius/electron-momentum-transfer.\n");
 		return 1;
 	}
 	
-	char output_filename[STRING_SIZE];
-	sprintf(output_filename, "%s/out-data.bin", argv[3]);
-	FILE *out = fopen(output_filename, "wb");
+	FILE *out = fopen(argv[3], "wb");
 	if(!out) { perror("Cannot open output file."); return 1; }
 	
 	Parameters *param = malloc(sizeof(Parameters));
@@ -139,7 +137,7 @@ int main(int argc, char **argv) {
 	printf("Simulation started.\n");
 	simulate(param, compute_function, out, out_chunk, lasers, particles);
 	if(param->output_mode == 0)
-		post_process_data(out_chunk, param, argv[3]);
+		post_process_data(out_chunk, param, argv[4], argv[5], argv[6], argv[7]);
 	printf("Simulation ended.\n");
 	
 	printf("Time taken: %0.3fs.\n", omp_get_wtime() - start_time);

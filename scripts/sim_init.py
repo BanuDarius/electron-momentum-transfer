@@ -55,6 +55,7 @@ class SimParameters:
         self.filename_out = filename_out
         self.rotate_angle = rotate_angle
         self.full_trajectory = full_trajectory
+        self.filename_out = OUTPUT_DIR / "out-data.bin"
         self.filename_lasers = f"{INPUT_DIR}/lasers.txt"
         self.filename_parameters = f"{INPUT_DIR}/input.txt"
 

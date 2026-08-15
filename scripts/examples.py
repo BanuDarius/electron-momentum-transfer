@@ -326,7 +326,7 @@ def replicate_prl_results(thread_num):
         
         #programs.check_laser_polarization("electromagnetic", sim_parameters, lasers)
         
-        #programs.check_convergence("electromagnetic", sim_parameters, lasers, x_axis, x_axis, 2)
+        programs.check_convergence("electromagnetic", sim_parameters, lasers, 2)
         
         # ------------------------------------------------------- #
         
@@ -342,13 +342,14 @@ def replicate_prl_results(thread_num):
         # ------------------------------------------------------- #
         
     programs.calculate_errors(sim_parameters)
+    programs.calculate_convergence_errors("electromagnetic", sim_parameters)
     
     plotting.plot_average_errors_all(a0_array)
     plotting.plot_max_p_all("electromagnetic", a0_array)
     plotting.plot_max_p_all("ponderomotive", a0_array)
     
-    #plotting.plot_convergence("electromagnetic", a0_array, x_axis)
-    #plotting.plot_2d_convergence_heatmap("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
+    plotting.plot_convergence("electromagnetic", a0_array, x_axis)
+    plotting.plot_2d_convergence_heatmap("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
     
     plotting.plot_2d_errors_heatmap_all(sim_parameters, a0_array, x_axis)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis)

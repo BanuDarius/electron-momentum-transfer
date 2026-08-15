@@ -37,67 +37,52 @@ OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
 # ----------------------------------------------------------------------- #
 
-def run_simulation(method, sim_parameters, lasers):
+def run_simulation(method, sim_parameters, lasers, filename_final_p_custom=None, filename_max_p_custom=None):
     if method == "electromagnetic":
         mode = 0
+        mode_text = "electromag"
     elif method == "ponderomotive":
         mode = 1
+        mode_text = "pond"
     elif method == "electromagnetic-rk4":
         mode = 2
+        mode_text = "electromag"
     else:
         print("Invalid simulation mode.")
         exit(1)
-
-    sim_parameters.mode = mode    
+    sim_parameters.mode = mode
+    
     program_path = f"{BIN_DIR}/laser_electron"
-    filename_out = OUTPUT_DIR
+    
+    filename_max_p = filename_max_p_custom if filename_max_p_custom else (OUTPUT_DIR / f"out-max-p-{mode_text}.bin")
+    filename_final_p = filename_final_p_custom if filename_final_p_custom else (OUTPUT_DIR / f"out-final-p-{mode_text}.bin")
+    filename_final_pos = OUTPUT_DIR / f"out-final-pos-{mode_text}.bin"
+    filename_initial_pos = OUTPUT_DIR / f"out-initial-pos-{mode_text}.bin"
     
     common.output_all_parameters(sim_parameters, lasers)
     
-    arguments = [program_path, sim_parameters.filename_parameters, sim_parameters.filename_lasers, filename_out]
+    arguments = [program_path,sim_parameters.filename_parameters,sim_parameters.filename_lasers,sim_parameters.filename_out,filename_max_p,filename_final_p,filename_initial_pos,filename_final_pos]
     
     try:
-        res = subprocess.run(arguments, text=True, check=True)
+        subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         exit(1)
 
 # ----------------------------------------------------------------------- #
 
-def check_convergence(method, sim_parameters, lasers, axis_pos, axis_p, multiplier):
-    if(method == "electromagnetic"):
+def check_convergence(method, sim_parameters, lasers, multiplier=2):
+    if method == "electromagnetic":
         mode = "electromag"
     else:
         mode = "pond"
-    axis_text_p = common.get_axis_text(axis_p)
-    lowercase_text_p = axis_text_p.lower()
-    num = sim_parameters.num
+        
+    filename_final_conv = OUTPUT_DIR / f"out-final-p-{mode}-conv.bin"
+    filename_max_p_conv = OUTPUT_DIR / f"out-max-p-{mode}-conv.bin"
     
-    filename_final_1 = f"{OUTPUT_DIR}/out-final-p-{mode}.bin"
-    filename_final_2 = f"{OUTPUT_DIR}/out-final-p-{mode}-conv.bin"
-    filename_out_conv = f"{OUTPUT_DIR}/out-data-conv-{mode}.bin"
-    filename_conv_average = f"{OUTPUT_DIR}/average-conv-{mode}.bin"
-    filename_conv_all = f"{OUTPUT_DIR}/average-conv-all-{mode}.bin"
-    
-    filename_conv = f"{OUTPUT_DIR}/conv.bin"
-    program_conv = f"{BIN_DIR}/error_calc"
-    
-    sim_parameters.steps = sim_parameters.steps * multiplier
-    sim_parameters.filename_out = filename_out_conv
-    sim_parameters.check_convergence = True
-    
-    run_simulation(method, sim_parameters, lasers)
-    find_final_p(method, sim_parameters, axis_pos, axis_p)
-    find_max_p(method, sim_parameters, axis_p)
-    
-    arguments = [program_conv, num, filename_final_1, filename_final_2, filename_conv, filename_conv_average, filename_conv_all]
-    arguments = [str(x) for x in arguments]
-    
-    try:
-        res = subprocess.run(arguments, text=True, check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Critical error: {e.returncode}")
-        exit(1)
+    sim_parameters.steps *= multiplier
+    run_simulation(method, sim_parameters, lasers, filename_final_p_custom=filename_final_conv, filename_max_p_custom=filename_max_p_conv)
+    sim_parameters.steps //= multiplier
         
 # ----------------------------------------------------------------------- #
 
@@ -116,6 +101,34 @@ def calculate_errors(sim_parameters):
     
     try:
         res = subprocess.run(arguments, text=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Critical error: {e.returncode}")
+        exit(1)
+
+# ----------------------------------------------------------------------- #
+
+
+def calculate_convergence_errors(method, sim_parameters):
+    if method == "electromagnetic":
+        mode = "electromag"
+    else:
+        mode = "pond"
+        
+    num = sim_parameters.num
+    sweep_steps = sim_parameters.sweep_steps
+    
+    filename_final_1 = OUTPUT_DIR / f"out-final-p-{mode}.bin"
+    filename_final_2 = OUTPUT_DIR / f"out-final-p-{mode}-conv.bin"
+    filename_conv_all = OUTPUT_DIR / f"conv-all-{mode}.bin"
+    filename_conv_avg = OUTPUT_DIR / f"average-conv-{mode}.bin"
+    
+    program_conv = f"{BIN_DIR}/error_calc"
+    
+    arguments = [program_conv, num, sweep_steps, filename_final_1, filename_final_2, filename_conv_all, filename_conv_avg]
+    arguments = [str(x) for x in arguments]
+    
+    try:
+        subprocess.run(arguments, text=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Critical error: {e.returncode}")
         exit(1)
