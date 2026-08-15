@@ -235,7 +235,7 @@ def run_example(example_num, thread_num):
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
-        programs.check_convergence("electromagnetic", sim_parameters, lasers, 2)
+        #programs.check_convergence("electromagnetic", sim_parameters, lasers, 2)
         
         # ------------------------------------------------------- 
         
@@ -256,9 +256,9 @@ def run_example(example_num, thread_num):
     plotting.plot_max_p_all("electromagnetic", a0_array)
     plotting.plot_max_p_all("ponderomotive", a0_array)
 
-    programs.calculate_convergence_errors("electromagnetic", sim_parameters)
-    plotting.plot_convergence_all("electromagnetic", a0_array)
-    plotting.plot_2d_convergence_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i)
+    #programs.calculate_convergence_errors("electromagnetic", sim_parameters)
+    #plotting.plot_convergence_all("electromagnetic", a0_array)
+    #plotting.plot_2d_convergence_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i)
     
     plotting.plot_2d_errors_heatmap_all(sim_parameters, a0_array, axis_i)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i)
