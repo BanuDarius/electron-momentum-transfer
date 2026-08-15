@@ -235,6 +235,8 @@ def run_example(example_num, thread_num):
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
+        programs.check_convergence("electromagnetic", sim_parameters, lasers, 2)
+        
         # ------------------------------------------------------- 
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
@@ -253,6 +255,10 @@ def run_example(example_num, thread_num):
     plotting.plot_average_errors_all(a0_array)
     plotting.plot_max_p_all("electromagnetic", a0_array)
     plotting.plot_max_p_all("ponderomotive", a0_array)
+
+    programs.calculate_convergence_errors("electromagnetic", sim_parameters)
+    plotting.plot_convergence_all("electromagnetic", a0_array)
+    plotting.plot_2d_convergence_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i)
     
     plotting.plot_2d_errors_heatmap_all(sim_parameters, a0_array, axis_i)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i)
@@ -342,14 +348,14 @@ def replicate_prl_results(thread_num):
         # ------------------------------------------------------- #
         
     programs.calculate_errors(sim_parameters)
-    programs.calculate_convergence_errors("electromagnetic", sim_parameters)
     
     plotting.plot_average_errors_all(a0_array)
     plotting.plot_max_p_all("electromagnetic", a0_array)
     plotting.plot_max_p_all("ponderomotive", a0_array)
     
-    plotting.plot_convergence("electromagnetic", a0_array, x_axis)
-    plotting.plot_2d_convergence_heatmap("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
+    programs.calculate_convergence_errors("electromagnetic", sim_parameters)
+    plotting.plot_convergence_all("electromagnetic", a0_array)
+    plotting.plot_2d_convergence_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis)
     
     plotting.plot_2d_errors_heatmap_all(sim_parameters, a0_array, x_axis)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis)

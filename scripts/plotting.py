@@ -640,9 +640,17 @@ def plot_2d_errors_heatmap_all(sim_parameters, a0_array, axis_pos):
     for i in np.arange(3):
         plot_2d_errors_heatmap(sim_parameters, a0_array, axis_pos, i)
         
+def plot_2d_convergence_heatmap_all(method, sim_parameters, a0_array, axis_pos):
+    for i in np.arange(3):
+        plot_2d_convergence_heatmap(method, sim_parameters, a0_array, axis_pos, i)
+        
 def plot_max_p_all(method, a0_array):
     for i in np.arange(3):
         plot_max_p(method, a0_array, i)
+
+def plot_convergence_all(method, a0_array):
+    for i in np.arange(3):
+        plot_convergence(method, a0_array, i)
         
 def plot_average_errors_all(a0_array):
     for i in np.arange(3):
