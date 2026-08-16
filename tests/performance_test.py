@@ -65,8 +65,8 @@ def run_example_performance_test(thread_num_final):
     theta = np.radians(0.0)
     alpha = np.radians(0.0)
     rotate_angle = np.radians(0.0)
-    steps_electromag = 16000
-    substeps_electromag = 16000
+    steps_electromag = 64000
+    substeps_electromag = 640
     pond_integrate_steps = 4
     v0_mag = 0.0 * c
     phi_v0 = np.radians(0.0)
