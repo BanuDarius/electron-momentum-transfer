@@ -64,21 +64,22 @@ static inline double compute_phi(double x, double y) {
 	return phi;
 }
 
-static inline double complex compute_u(const Laser *laser, double r_vec[3], double w_z) {
+static inline double complex compute_u(const Laser *laser, double r_vec[3], double r_z, double w_z) {
 	double w0 = laser->w0, k = laser->omega / c, z_r = laser->z_r;
 	double x = r_vec[0], y = r_vec[1], z = r_vec[2];
 	double rho = sqrt(x * x + y * y);
 	double w_z2 = w_z * w_z, rho2 = rho * rho;
 	
 	double psi_g = compute_guoy(z, z_r);
+	double amplitude, phase, phi;
 	
-	double inv_r_z = z / (z * z + z_r * z_r); 
-	double amplitude = w0 / w_z * exp(-rho2 / w_z2);
-	double phase = - k * rho2 * inv_r_z / 2.0 + psi_g;
+	amplitude = w0 / w_z * exp(-rho2 / w_z2);
+	phase = - k * rho2 / (2.0 * r_z) + psi_g;
 	
 	double real = amplitude * cos(phase);
 	double imag = amplitude * sin(phase);
-	return CMPLX(real, imag);
+	double complex u = CMPLX(real, imag);
+	return u;
 }
 
 static inline void compute_e_b_gauss_one(double e_vec[3], double b_vec[3], const Laser *laser, double r_vec[3], double t) {
@@ -91,7 +92,7 @@ static inline void compute_e_b_gauss_one(double e_vec[3], double b_vec[3], const
 	double w_z = compute_w_z(w0, z, z_r);
 	double eta = laser->omega * t - k * z + psi;
 	
-	double complex u_pm = compute_u(laser, r_vec, w_z);
+	double complex u_pm = compute_u(laser, r_vec, r_z, w_z);
 	double complex phase = CMPLX(cos(eta), sin(eta));
 	u_pm *= E0 * phase * env(eta, etaf, sigma);
 	
