@@ -37,11 +37,8 @@ def interpolate(min_v, max_v, i, f):
     return min_v + (max_v - min_v) * i / f
     
 def modulo_steps(s, substep):
-    modulo = s % substep
-    if(modulo != 0):
-        s -= modulo
-    return s
-
+    return s - s % substep
+    
 # ----------------------------------------------------------------------- #
 
 def output_all_parameters(sim_parameters, lasers):

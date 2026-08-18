@@ -90,8 +90,8 @@ void ponderomotive(double *restrict u, double *restrict up, const Laser *restric
 	double dmdx[4];
 	double a = compute_a(u, l);
 	double mass = m * sqrt(1.0 + a);
-	
 	double m_sqrt_a = 0.5 * m / sqrt(1.0 + a);
+	
 	for(int i = 0; i < 4; i++)
 		dmdx[i] = derivative_a(u, l, i) * m_sqrt_a;
 	

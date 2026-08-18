@@ -227,7 +227,7 @@ double compute_a(double *u, const Laser *restrict l) {
 
 double derivative_a(double *u, const Laser *restrict l, int index) {
 	double lambda = 2.0 * M_PI * c / l[0].omega;
-	double dmuda = - 2.0 * (q * q) / (m * m * c * c ) * (1.0 / lambda);
+	double dmuda = - 2.0 * (q * q) / (m * m * c * c) * (1.0 / lambda);
 	dmuda *= integrate_dmuda(u, l, index);
 	return dmuda;
 } //This represents d^mu(a(x))
