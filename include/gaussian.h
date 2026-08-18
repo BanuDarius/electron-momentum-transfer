@@ -23,22 +23,23 @@
 #define GAUSSIAN_H
 
 #include <math.h>
+#include <string.h>
 #include <complex.h>
 
 #include "sim_structs.h"
 #include "math_tools.h"
 
-static inline void pos_global_to_local(double r_vec_local[3], double r_vec_global[3], const Laser *laser) {
-	r_vec_local[0] = dot(laser->ex_prime, r_vec_global);
-	r_vec_local[1] = dot(laser->ey_prime, r_vec_global);
-	r_vec_local[2] = dot(laser->ez_prime, r_vec_global);
+static inline void pos_global_to_local(double r_vec_local[3], double r_vec_global[3], const Laser *l) {
+	r_vec_local[0] = dot(l->epsilon1, r_vec_global);
+	r_vec_local[1] = dot(l->epsilon2, r_vec_global);
+	r_vec_local[2] = dot(l->n, r_vec_global);
 }
-static inline void vec_local_to_global(double r_vec_global[3], double vec_local[3], const Laser *laser) {
+static inline void vec_local_to_global(double r_vec_global[3], double vec_local[3], const Laser *l) {
 	double ex_prime_vec[3], ey_prime_vec[3], ez_prime_vec[3];
 	
-	mult_vec(ex_prime_vec, laser->ex_prime, vec_local[0]);
-	mult_vec(ey_prime_vec, laser->ey_prime, vec_local[1]);
-	mult_vec(ez_prime_vec, laser->ez_prime, vec_local[2]);
+	mult_vec(ex_prime_vec, l->epsilon1, vec_local[0]);
+	mult_vec(ey_prime_vec, l->epsilon2, vec_local[1]);
+	mult_vec(ez_prime_vec, l->n, vec_local[2]);
 	
 	add_vec(r_vec_global, ex_prime_vec, ey_prime_vec);
 	add_vec(r_vec_global, r_vec_global, ez_prime_vec);
@@ -64,8 +65,8 @@ static inline double compute_phi(double x, double y) {
 	return phi;
 }
 
-static inline double complex compute_u(const Laser *laser, double r_vec[3], double r_z, double w_z) {
-	double w0 = laser->w0, k = laser->omega / c, z_r = laser->z_r;
+static inline double complex compute_u(const Laser *l, double r_vec[3], double r_z, double w_z) {
+	double w0 = l->w0, k = l->omega / c, z_r = l->z_r;
 	double x = r_vec[0], y = r_vec[1], z = r_vec[2];
 	double rho = sqrt(x * x + y * y);
 	double w_z2 = w_z * w_z, rho2 = rho * rho;
@@ -82,17 +83,17 @@ static inline double complex compute_u(const Laser *laser, double r_vec[3], doub
 	return u;
 }
 
-static inline void compute_e_b_gauss_one(double e_vec[3], double b_vec[3], const Laser *laser, double r_vec[3], double t) {
-	double w0 = laser->w0, z_r = laser->z_r, etaf = laser->etaf, psi = laser->psi, sigma = laser->sigma;
-	double k = laser->omega / c, E0 = laser->a0 * m * c * laser->omega / fabs(q);
-	double complex zeta_x = laser->zeta_x_gauss, zeta_y = laser->zeta_y_gauss;
+static inline void compute_e_b_gauss_one(double e_vec[3], double b_vec[3], const Laser *l, double r_vec[3], double t) {
+	double w0 = l->w0, z_r = l->z_r, etaf = l->etaf, psi = l->psi, sigma = l->sigma;
+	double k = l->omega / c, E0 = l->a0 * m * c * l->omega / fabs(q);
+	double complex zeta_x = l->zeta_x_gauss, zeta_y = l->zeta_y_gauss;
 	double x = r_vec[0], y = r_vec[1], z = r_vec[2];
 	
 	double r_z = compute_r_z(z, z_r);
 	double w_z = compute_w_z(w0, z, z_r);
-	double eta = laser->omega * t - k * z + psi;
+	double eta = l->omega * t - k * z + psi;
 	
-	double complex u_pm = compute_u(laser, r_vec, r_z, w_z);
+	double complex u_pm = compute_u(l, r_vec, r_z, w_z);
 	double complex phase = CMPLX(cos(eta), sin(eta));
 	u_pm *= E0 * phase * env(eta, etaf, sigma);
 	
@@ -110,18 +111,18 @@ static inline void compute_e_b_gauss_one(double e_vec[3], double b_vec[3], const
 	b_vec[2] = creal(u_pm * b_z) / c;
 }
 
-static inline void compute_e_b_gauss(double e_vec[3], double b_vec[3], const Laser *laser, double r_vec_global[3], double t) {
+static inline void compute_e_b_gauss(double e_vec[3], double b_vec[3], const Laser *l, double r_vec_global[3], double t) {
 	double e_vec_temp[3], b_vec_temp[3], vec_temp_global[3], vec_temp_local[3];
 	memset(e_vec, 0, 3 * sizeof(double));
 	memset(b_vec, 0, 3 * sizeof(double));
-	for(int i = 0; i < laser[0].num_lasers; i++) {
-		pos_global_to_local(vec_temp_local, r_vec_global, &laser[i]);
-		compute_e_b_gauss_one(e_vec_temp, b_vec_temp, &laser[i], vec_temp_local, t);
+	for(int i = 0; i < l[0].num_lasers; i++) {
+		pos_global_to_local(vec_temp_local, r_vec_global, &l[i]);
+		compute_e_b_gauss_one(e_vec_temp, b_vec_temp, &l[i], vec_temp_local, t);
 		
-		vec_local_to_global(vec_temp_global, e_vec_temp, &laser[i]);
+		vec_local_to_global(vec_temp_global, e_vec_temp, &l[i]);
 		add_vec(e_vec, e_vec, vec_temp_global);
 		
-		vec_local_to_global(vec_temp_global, b_vec_temp, &laser[i]);
+		vec_local_to_global(vec_temp_global, b_vec_temp, &l[i]);
 		add_vec(b_vec, b_vec, vec_temp_global);
 	}
 }

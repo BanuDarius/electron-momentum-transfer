@@ -56,12 +56,12 @@ max_a0 = 0.50 #Minimum and maximum of a0 for lasers
 
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
-min_tf = 8000.0
+min_tf = 10000.0
 max_tf = 14000.0 #Final time for electromagnetic mode
-tauf = 7000.0 #Final proper time for ponderomotive mode
+tauf = 10000.0 #Final proper time for ponderomotive mode
 
-num_part = 128 #Number of particles
-sweep_steps = 128 #Number of parameter sweeps
+num_part = 256 #Number of particles
+sweep_steps = 256 #Number of parameter sweeps
 num_full = 128000 #Number of particles for 2D colormaps
 
 omega = 0.057
@@ -70,8 +70,8 @@ sigma = 19.0 * np.pi
 psi = -4.0 * sigma #Laser parameters
 
 wavelength = 2.0 * np.pi * c / omega
-r_min = -1.00 * wavelength
-r_max = +1.00 * wavelength #Minimum and maximum radius for particle positions
+r_min = -4.00 * wavelength
+r_max = +4.00 * wavelength #Minimum and maximum radius for particle positions
 
 phi = np.radians(90.0)
 theta = np.radians(0.0) #Angles for the lasers
@@ -79,9 +79,9 @@ alpha = np.radians(0.0) #Angle for rotating the laser polarization vectors
 rotate_angle = np.radians(0.0) #Angle for rotating the initial particles
 
 min_steps_pond = 128
-max_steps_pond = 128
+max_steps_pond = 512
 min_steps_electromag = 4000
-max_steps_electromag = 16000 #Minimum and maximum simulation steps
+max_steps_electromag = 12000 #Minimum and maximum simulation steps
 substeps_pond = 1
 substeps_electromag = 16 #Substeps for data output
 pond_integrate_steps = 4 #Steps used for the integrals in ponderomotive mode
@@ -91,7 +91,7 @@ phi_v0 = np.radians(0.0)
 theta_v0 = np.radians(0.0) #Angles for the initial velocity vector
 
 use_gaussian = True #If true, use Gauss beam for laser simulation, if false use the plane wave
-w0 = 20.0 #Multiplier for the w0 beam width
+w0 = 2.0 #Multiplier for the w0 beam width
 zeta_x_gauss = [ 1.0, 0.0 ]
 zeta_y_gauss = [ 0.0, 0.0 ] #The zeta_x and zeta_y complex number parameters for the Gauss mode
 
@@ -154,11 +154,6 @@ if __name__ == "__main__":
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
             substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
         
-        #Uncomment to calculate the trajectory using an analytic solution
-        #It will only use the first laser from the lasers array
-        #programs.check_analytic_solution("electromagnetic", sim_parameters, lasers)
-        #plotting.plot_trajectory_comparison(sim_parameters, lasers, x_axis)
-        
         #Uncomment to run a performance test on this scenario
         #performance_test.run_performance_test("electromagnetic", sim_parameters, lasers, thread_num)
         
@@ -168,7 +163,6 @@ if __name__ == "__main__":
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
         #Uncomment to check the convergence of the momentum transfer by running another simulation with double the number of steps
-        #programs.check_convergence("electromagnetic", sim_parameters, lasers, x_axis, x_axis, 2)
         
         #plotting.plot_time_momentum("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
         #plotting.plot_phases("electromagnetic", sim_parameters, a0_array, x_axis, y_axis)
@@ -181,7 +175,7 @@ if __name__ == "__main__":
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
-        #programs.check_convergence("ponderomotive", sim_parameters, lasers, x_axis, y_axis, 2)
+        #programs.check_convergence("ponderomotive", sim_parameters, lasers, 2)
         
         #plotting.plot_time_momentum("ponderomotive", sim_parameters, a0_array, x_axis, x_axis)
         #plotting.plot_phases("ponderomotive", sim_parameters, a0_array, y_axis, y_axis)
@@ -199,8 +193,9 @@ if __name__ == "__main__":
     plotting.plot_max_p_all("electromagnetic", a0_array)
     plotting.plot_max_p_all("ponderomotive", a0_array)
     
-    #plotting.plot_convergence("electromagnetic", a0_array, x_axis)
-    #plotting.plot_2d_convergence_heatmap("electromagnetic", sim_parameters, a0_array, x_axis, x_axis)
+    #programs.calculate_convergence_errors("ponderomotive", sim_parameters)
+    #plotting.plot_convergence_all("ponderomotive", a0_array)
+    #plotting.plot_2d_convergence_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis)
     
     plotting.plot_2d_errors_heatmap_all(sim_parameters, a0_array, x_axis)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis)
