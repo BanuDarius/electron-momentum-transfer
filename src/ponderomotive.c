@@ -22,12 +22,12 @@
 #include <math.h>
 #include <string.h>
 
+#include "ponderomotive.h"
 #include "units.h"
 #include "tools.h"
 #include "init.h"
 #include "math_tools.h"
 #include "potentials.h"
-#include "ponderomotive.h"
 
 //This file contains functions needed for the ponderomotive approximation method
 
@@ -45,7 +45,10 @@ double integrate(double *u, const Laser *restrict l) {
 	
 	memset(a1_left, 0, 4 * sizeof(double));
 	for(int j = 0; j < l[0].num_lasers; j++) {
-		potential_a(a1_temp, u_temp, l, j);
+		if(!l[0].use_gaussian)
+			potential_a(a1_temp, u_temp, l, j);
+		else
+			potential_a_gauss(a1_temp, u_temp, l, j);
 		add_vec4(a1_left, a1_left, a1_temp);
 	}
 	left = dot4(a1_left, a1_left);
@@ -56,13 +59,19 @@ double integrate(double *u, const Laser *restrict l) {
 		memset(a1_right, 0, 4 * sizeof(double));
 		
 		for(int j = 0; j < l[0].num_lasers; j++) {
-			potential_a(a1_temp, u_temp, l, j);
+			if(!l[0].use_gaussian)
+				potential_a(a1_temp, u_temp, l, j);
+			else
+				potential_a_gauss(a1_temp, u_temp, l, j);
 			add_vec4(a1_center, a1_center, a1_temp);
 		}
 		u_temp[0] += dh / 2.0;
 		
 		for(int j = 0; j < l[0].num_lasers; j++) {
-			potential_a(a1_temp, u_temp, l, j);
+			if(!l[0].use_gaussian)
+				potential_a(a1_temp, u_temp, l, j);
+			else
+				potential_a_gauss(a1_temp, u_temp, l, j);
 			add_vec4(a1_right, a1_right, a1_temp);
 		}
 		u_temp[0] -= dh / 2.0;
@@ -76,6 +85,69 @@ double integrate(double *u, const Laser *restrict l) {
 	}
 	return integral;
 }
+
+double integrate_dmuda(double *u, const Laser *restrict l, int index) {
+	double integral = 0.0, left, center, right;
+	double a1_left[4], a1_right[4], a1_center[4], a2_left[4], a2_right[4], a2_center[4], a1_temp[4], a2_temp[4], u_temp[4];
+	double lambda = 2.0 * M_PI * c / l[0].omega, dh = lambda / (double) l[0].pond_integrate_steps;
+	
+	copy_vec4(u_temp, u);
+	u_temp[0] -= lambda / 2.0;
+	
+	memset(a1_left, 0, 4 * sizeof(double)); memset(a2_left, 0, 4 * sizeof(double));
+	for(int j = 0; j < l[0].num_lasers; j++) {
+		if(!l[0].use_gaussian) {
+			potential_a(a1_temp, u_temp, l, j);
+			potential_deriv_a(a2_temp, u_temp, l, index, j);
+		} else {
+			potential_a_gauss(a1_temp, u_temp, l, j);
+			potential_deriv_a(a2_temp, u_temp, l, index, j);
+		}
+		add_vec4(a1_left, a1_left, a1_temp);
+		add_vec4(a2_left, a2_left, a2_temp);
+	}
+	left = dot4(a1_left, a2_left);
+	u_temp[0] += dh / 2.0;
+	
+	for(int i = 0; i < l[0].pond_integrate_steps; i++) {
+		memset(a1_center, 0, 4 * sizeof(double)); memset(a2_center, 0, 4 * sizeof(double));
+		memset(a1_right, 0, 4 * sizeof(double)); memset(a2_right, 0, 4 * sizeof(double));
+		
+		for(int j = 0; j < l[0].num_lasers; j++) {
+			if(!l[0].use_gaussian) {
+				potential_a(a1_temp, u_temp, l, j);
+				potential_deriv_a(a2_temp, u_temp, l, index, j);
+			} else {
+				potential_a_gauss(a1_temp, u_temp, l, j);
+				potential_deriv_a_gauss(a2_temp, u_temp, l, index, j);
+			}
+			add_vec4(a1_center, a1_center, a1_temp);
+			add_vec4(a2_center, a2_center, a2_temp);
+		}
+		u_temp[0] += dh / 2.0;
+		
+		for(int j = 0; j < l[0].num_lasers; j++) {
+			if(!l[0].use_gaussian) {
+				potential_a(a1_temp, u_temp, l, j);
+				potential_deriv_a(a2_temp, u_temp, l, index, j);
+			} else {
+				potential_a_gauss(a1_temp, u_temp, l, j);
+				potential_deriv_a_gauss(a2_temp, u_temp, l, index, j);
+			}
+			add_vec4(a1_right, a1_right, a1_temp);
+			add_vec4(a2_right, a2_right, a2_temp);
+		}
+		u_temp[0] -= dh / 2.0;
+		
+		center = dot4(a1_center, a2_center);
+		right = dot4(a1_right, a2_right);
+		integral += (left + 4.0 * center + right) * dh / 6.0;
+		
+		u_temp[0] += dh;
+		left = right;
+	}
+	return integral;
+} //This represents d^mu(M(x))
 
 void integrate_phi_vec(double *x, double phi_init, double phi_final, const Laser *restrict l) {
 	double integral = 0.0;
@@ -145,54 +217,6 @@ double integrate_phi(double phi_init, double phi_final, const Laser *restrict l)
 	}
 	return integral;
 } //This function uses the dimensionless parameter phi = omega*t - k*x instead of the four-position u^mu
-
-double integrate_dmuda(double *u, const Laser *restrict l, int index) {
-	double integral = 0.0, left, center, right;
-	double a1_left[4], a1_right[4], a1_center[4], a2_left[4], a2_right[4], a2_center[4], a1_temp[4], a2_temp[4], u_temp[4];
-	double lambda = 2.0 * M_PI * c / l[0].omega, dh = lambda / (double) l[0].pond_integrate_steps;
-	
-	copy_vec4(u_temp, u);
-	u_temp[0] -= lambda / 2.0;
-	
-	memset(a1_left, 0, 4 * sizeof(double)); memset(a2_left, 0, 4 * sizeof(double));
-	for(int j = 0; j < l[0].num_lasers; j++) {
-		potential_a(a1_temp, u_temp, l, j);
-		potential_deriv_a(a2_temp, u_temp, l, index, j);
-		add_vec4(a1_left, a1_left, a1_temp);
-		add_vec4(a2_left, a2_left, a2_temp);
-	}
-	left = dot4(a1_left, a2_left);
-	u_temp[0] += dh / 2.0;
-	
-	for(int i = 0; i < l[0].pond_integrate_steps; i++) {
-		memset(a1_center, 0, 4 * sizeof(double)); memset(a2_center, 0, 4 * sizeof(double));
-		memset(a1_right, 0, 4 * sizeof(double)); memset(a2_right, 0, 4 * sizeof(double));
-		
-		for(int j = 0; j < l[0].num_lasers; j++) {
-			potential_a(a1_temp, u_temp, l, j);
-			potential_deriv_a(a2_temp, u_temp, l, index, j);
-			add_vec4(a1_center, a1_center, a1_temp);
-			add_vec4(a2_center, a2_center, a2_temp);
-		}
-		u_temp[0] += dh / 2.0;
-		
-		for(int j = 0; j < l[0].num_lasers; j++) {
-			potential_a(a1_temp, u_temp, l, j);
-			potential_deriv_a(a2_temp, u_temp, l, index, j);
-			add_vec4(a1_right, a1_right, a1_temp);
-			add_vec4(a2_right, a2_right, a2_temp);
-		}
-		u_temp[0] -= dh / 2.0;
-		
-		center = dot4(a1_center, a2_center);
-		right = dot4(a1_right, a2_right);
-		integral += (left + 4.0 * center + right) * dh / 6.0;
-		
-		u_temp[0] += dh;
-		left = right;
-	}
-	return integral;
-} //This represents d^mu(M(x))
 
 double compute_a(double *u, const Laser *restrict l) {
 	double lambda = 2.0 * M_PI * c / l[0].omega;

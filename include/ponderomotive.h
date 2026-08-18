@@ -22,6 +22,8 @@
 #ifndef PONDEROMOTIVE_H
 #define PONDEROMOTIVE_H
 
+#include "sim_structs.h"
+
 double integrate(double *u, const Laser *restrict l);
 void integrate_phi_vec(double *x, double phi_init, double phi_final, const Laser *restrict l);
 double integrate_phi(double phi_init, double phi_final, const Laser *restrict l);

@@ -199,7 +199,7 @@ def run_example(example_num, thread_num):
         axis_i = x_axis
     else:
         print("Error: Example number not found.")
-        exit()
+        exit(1)
         
     start_time = time.time()
     a0_array = np.array([])

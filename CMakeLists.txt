@@ -26,7 +26,6 @@ file(MAKE_DIRECTORY
 add_library(physics_modules OBJECT
     src/init.c
     src/tools.c
-    src/potentials.c
     src/ponderomotive.c
 	src/data_analysis.c
 )

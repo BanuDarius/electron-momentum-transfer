@@ -22,10 +22,75 @@
 #ifndef POTENTIALS_H
 #define POTENTIALS_H
 
+#include <math.h>
+
+#include "units.h"
+#include "math_tools.h"
 #include "sim_structs.h"
 
-void potential_a(double *a, double *u, const Laser *restrict l, int n);
-void potential_deriv_a(double *a, double *u, const Laser *restrict l, int index, int n);
-void potential_a_phi(double *a, double eta, const Laser *restrict l, int n);
+//This helper library contains functions for the electromagnetic potentials
+
+static inline void potential_a(double *a, double *u, const Laser *restrict l, int n) {
+	double potentialA0 = l[n].a0 * m * c / fabs(q);
+	double epsilon4[4], k_vec4[4], eta, A0mult;
+	
+	a[0] = 0.0;
+	k_vec4[0] = 1.0;
+	copy_vec(&k_vec4[1], l[n].n);
+	mult_vec4(k_vec4, k_vec4, l[n].omega / c);
+	
+	eta = dot4(k_vec4, u) + l[n].psi;
+	A0mult = env(eta, l[n].etaf, l[n].sigma) * potentialA0;
+	for(int i = 0; i < 3; i++)
+		a[i+1] = l[n].epsilon1[i] * l[n].zetax * (sin(eta)) + l[n].epsilon2[i] * l[n].zetay * cos(eta);
+	mult_vec(&a[1], &a[1], A0mult);
+}
+
+static inline void potential_a_gauss(double *a, double *u, const Laser *restrict l, int n) {
+	double potentialA0 = l[n].a0 * m * c / fabs(q);
+	double epsilon4[4], k_vec4[4], eta, A0mult;
+	
+	//TO BE COMPLETED
+	mult_vec(&a[1], &a[1], A0mult);
+}
+
+static inline void potential_deriv_a(double *a, double *u, const Laser *restrict l, int index, int n) {
+	double potentialA0 = l[n].a0 * m * c / fabs(q);
+	double epsilon4[4], k_vec4[4], eta, sign;
+	
+	a[0] = 0.0;
+	k_vec4[0] = 1.0;
+	copy_vec(&k_vec4[1], l[n].n);
+	mult_vec4(k_vec4, k_vec4, l[n].omega / c);
+	
+	eta = dot4(k_vec4, u) + l[n].psi;
+	sign = (index > 0) ? -1.0 : +1.0;
+	for(int i = 0; i < 3; i++) {
+		double t1 = l[n].epsilon1[i] * l[n].zetax * (sin(eta)) + l[n].epsilon2[i] * l[n].zetay * (cos(eta));
+		double t2 = l[n].epsilon1[i] * l[n].zetax * (cos(eta)) + l[n].epsilon2[i] * l[n].zetay * (-sin(eta));
+		a[i+1] = sign * potentialA0 * k_vec4[index] * (env(eta, l[n].etaf, l[n].sigma) * t2 + env_prime(eta, l[n].etaf, l[n].sigma) * t1);
+	}
+}
+
+static inline void potential_deriv_a_gauss(double *a, double *u, const Laser *restrict l, int index, int n) {
+	double potentialA0 = l[n].a0 * m * c / fabs(q);
+	double epsilon4[4], k_vec4[4], eta, sign;
+	
+	//TO BE COMPLETED
+}
+
+static inline void potential_a_phi(double *a, double eta, const Laser *restrict l, int n) {
+	double potentialA0 = l[n].a0 * m * c / fabs(q);
+	double epsilon4[3], k_vec[3], A0mult;
+	
+	copy_vec(k_vec, l[n].n);
+	mult_vec(k_vec, k_vec, l[n].omega / c);
+	eta += l[n].psi;
+	
+	A0mult = env(eta, l[n].etaf, l[n].sigma) * potentialA0;
+	for(int i = 0; i < 3; i++)
+		a[i] = l[n].epsilon1[i] * l[n].zetax * (sin(eta)) + l[n].epsilon2[i] * l[n].zetay * cos(eta);
+	mult_vec(a, a, A0mult);
+}
 
 #endif
