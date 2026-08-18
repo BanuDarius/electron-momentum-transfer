@@ -60,8 +60,8 @@ min_tf = 8000.0
 max_tf = 14000.0 #Final time for electromagnetic mode
 tauf = 7000.0 #Final proper time for ponderomotive mode
 
-num_part = 256 #Number of particles
-sweep_steps = 256 #Number of parameter sweeps
+num_part = 128 #Number of particles
+sweep_steps = 128 #Number of parameter sweeps
 num_full = 128000 #Number of particles for 2D colormaps
 
 omega = 0.057
@@ -90,8 +90,8 @@ v0_mag = 0.00 * c #Magnitude of initial velocity vector
 phi_v0 = np.radians(0.0)
 theta_v0 = np.radians(0.0) #Angles for the initial velocity vector
 
-use_gaussian = False #If true, use Gauss beam for laser simulation, if false use the plane wave
-w0 = 5.0 #Multiplier for the w0 beam width
+use_gaussian = True #If true, use Gauss beam for laser simulation, if false use the plane wave
+w0 = 20.0 #Multiplier for the w0 beam width
 zeta_x_gauss = [ 1.0, 0.0 ]
 zeta_y_gauss = [ 0.0, 0.0 ] #The zeta_x and zeta_y complex number parameters for the Gauss mode
 
@@ -135,8 +135,8 @@ if __name__ == "__main__":
         
         lasers = [] #Array for all the lasers
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(60.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
-        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
+        lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(180.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
+        #lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
         
         # ------------------------------------------------------- #
         

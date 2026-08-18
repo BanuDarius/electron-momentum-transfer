@@ -25,7 +25,7 @@
 #include <complex.h>
 #include <stdalign.h>
 
-#define LASER_PARAMS 16 //How many parameters will be read from a file for one laser
+#define LASER_PARAMS 17 //How many parameters will be read from a file for one laser
 #define PARAMS 17 //How many parameters will be read from a file for the general simulation
 #define U_SIZE 8 //Number of elements of the particle struct
 #define CHUNK_SIZE 100 //Number of particles in an output chunk

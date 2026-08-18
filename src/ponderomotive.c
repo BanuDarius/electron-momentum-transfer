@@ -101,7 +101,7 @@ double integrate_dmuda(double *u, const Laser *restrict l, int index) {
 			potential_deriv_a(a2_temp, u_temp, l, index, j);
 		} else {
 			potential_a_gauss(a1_temp, u_temp, l, j);
-			potential_deriv_a(a2_temp, u_temp, l, index, j);
+			potential_deriv_a_gauss(a2_temp, u_temp, l, index, j);
 		}
 		add_vec4(a1_left, a1_left, a1_temp);
 		add_vec4(a2_left, a2_left, a2_temp);
