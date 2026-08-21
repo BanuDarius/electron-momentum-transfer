@@ -218,11 +218,11 @@ def run_example(example_num, thread_num):
         theta = np.radians(90.0)
         alpha = np.radians(0.0)
         rotate_angle = np.radians(0.0)
-        min_steps_pond = 128
+        min_steps_pond = 256
         max_steps_pond = 512
         min_steps_electromag = 4000
         max_steps_electromag = 12000
-        substeps_pond = 1
+        substeps_pond = 16
         substeps_electromag = 16
         pond_integrate_steps = 4
         v0_mag = 0.0 * c
@@ -295,7 +295,7 @@ def run_example(example_num, thread_num):
     plotting.plot_average_errors_all(a0_array)
     plotting.plot_max_p_all("electromagnetic", a0_array)
     plotting.plot_max_p_all("ponderomotive", a0_array)
-
+    
     programs.calculate_convergence_errors("electromagnetic", sim_parameters)
     plotting.plot_convergence_all("electromagnetic", a0_array)
     plotting.plot_2d_convergence_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i)
