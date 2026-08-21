@@ -229,7 +229,7 @@ def run_example(example_num, thread_num):
         phi_v0 = np.radians(0.0)
         theta_v0 = np.radians(0.0)
         
-        use_gaussian = False
+        use_gaussian = True
         w0 = 5.0
         zeta_x_gauss = [ 1.0, 0.0 ]
         zeta_y_gauss = [ 0.0, 0.0 ]
