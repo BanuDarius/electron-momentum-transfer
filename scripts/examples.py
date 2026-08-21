@@ -197,6 +197,43 @@ def run_example(example_num, thread_num):
         zeta_x_gauss = [ 1.0, 0.0 ]
         zeta_y_gauss = [ 0.0, 0.0 ]
         axis_i = x_axis
+    elif(example_num == 5):
+        min_a0 = 0.02
+        max_a0 = 0.50
+        zetax = 0.0
+        zetay = 1.0
+        min_tf = 10000.0
+        max_tf = 14000.0
+        tauf = 14000.0
+        num_part = 1024
+        sweep_steps = 1024
+        omega = 0.057
+        etaf = 0.0 * np.pi
+        sigma = 19.0 * np.pi
+        psi = -4.0 * sigma
+        wavelength = 2.0 * np.pi * c / omega
+        r_min = -8.00 * wavelength
+        r_max = +12.00 * wavelength
+        phi = np.radians(90.0)
+        theta = np.radians(90.0)
+        alpha = np.radians(0.0)
+        rotate_angle = np.radians(0.0)
+        min_steps_pond = 128
+        max_steps_pond = 256
+        min_steps_electromag = 4000
+        max_steps_electromag = 12000
+        substeps_pond = 1
+        substeps_electromag = 16
+        pond_integrate_steps = 4
+        v0_mag = 0.0 * c
+        phi_v0 = np.radians(0.0)
+        theta_v0 = np.radians(0.0)
+        
+        use_gaussian = False
+        w0 = 5.0
+        zeta_x_gauss = [ 1.0, 0.0 ]
+        zeta_y_gauss = [ 0.0, 0.0 ]
+        axis_i = x_axis
     else:
         print("Error: Example number not found.")
         exit(1)
@@ -223,10 +260,13 @@ def run_example(example_num, thread_num):
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(135.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(225.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
-        else:
+        elif(example_num == 4):
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(0.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(60.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
             lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
+        elif(example_num == 5):
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(30.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
+            lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(150.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
         
         # ------------------------------------------------------- #
         

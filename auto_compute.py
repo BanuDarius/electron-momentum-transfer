@@ -109,9 +109,9 @@ if __name__ == "__main__":
     #Will complete in ~1 minute on average consumer hardware
     #quick_example.run_quick_example(thread_num)
     
-    #In the examples/ directory there are several examples whose filenames start with 1, 2, 3, and 4
+    #In the examples/ directory there are several examples whose filenames start with 1 to 5
     #Uncomment this line to reproduce any of them
-    #examples.run_example(4, thread_num)
+    #examples.run_example(5, thread_num)
     
     #Uncomment to replicate the results obtained in the Physical Review Letters paper
     #"Relativistic Ponderomotive Force, Uphill Acceleration, and Transition to Chaos", D. Bauer et al. (1995)
