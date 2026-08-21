@@ -97,10 +97,10 @@ static inline void compute_e_b_gauss_one(double e_vec[3], double b_vec[3], const
 	double complex phase = CMPLX(cos(eta), sin(eta));
 	u_pm *= E0 * phase * env(eta, etaf, sigma);
 	
-	double complex field_term = CMPLX(1.0 / r_z, -2.0 / (k * w_z * w_z));
+	double complex field_term = CMPLX(1.0 / r_z, - 2.0 / (k * w_z * w_z));
 	
-	double complex e_z = field_term * (zeta_x * x + zeta_y * y);
-	double complex b_z = field_term * (zeta_x * y - zeta_y * x);
+	double complex e_z = - field_term * (zeta_x * x + zeta_y * y);
+	double complex b_z = - field_term * (zeta_x * y - zeta_y * x);
 	
 	e_vec[0] = creal(u_pm * zeta_x);
 	e_vec[1] = creal(u_pm * zeta_y);
@@ -116,6 +116,7 @@ static inline void compute_e_b_gauss(double e_vec[3], double b_vec[3], const Las
 	memset(e_vec, 0, 3 * sizeof(double));
 	memset(b_vec, 0, 3 * sizeof(double));
 	for(int i = 0; i < l[0].num_lasers; i++) {
+		//Do a coordinate change from global do the laser's local frame, compute the electromagnetic fields, then take the resulting vector back to the global frame
 		pos_global_to_local(vec_temp_local, r_vec_global, &l[i]);
 		compute_e_b_gauss_one(e_vec_temp, b_vec_temp, &l[i], vec_temp_local, t);
 		

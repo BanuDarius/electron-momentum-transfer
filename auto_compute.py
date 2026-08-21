@@ -52,7 +52,7 @@ trajectory_until_exit = False #Definitions for simulation parameters
 thread_num = 8 #Number of threads
 
 min_a0 = 0.02
-max_a0 = 0.50 #Minimum and maximum of a0 for lasers
+max_a0 = 1.00 #Minimum and maximum of a0 for lasers
 
 zetax = 0.0
 zetay = 1.0 #Polarization parameters
@@ -70,8 +70,8 @@ sigma = 19.0 * np.pi
 psi = -4.0 * sigma #Laser parameters
 
 wavelength = 2.0 * np.pi * c / omega
-r_min = +8.00 * wavelength
-r_max = +12.00 * wavelength #Minimum and maximum radius for particle positions
+r_min = 0.00 * wavelength
+r_max = +4.00 * wavelength #Minimum and maximum radius for particle positions
 
 phi = np.radians(90.0)
 theta = np.radians(0.0) #Angles for the lasers
@@ -79,7 +79,7 @@ alpha = np.radians(0.0) #Angle for rotating the laser polarization vectors
 rotate_angle = np.radians(0.0) #Angle for rotating the initial particles
 
 min_steps_pond = 128
-max_steps_pond = 256
+max_steps_pond = 512
 min_steps_electromag = 4000
 max_steps_electromag = 12000 #Minimum and maximum simulation steps
 substeps_pond = 16
@@ -91,7 +91,7 @@ phi_v0 = np.radians(0.0)
 theta_v0 = np.radians(0.0) #Angles for the initial velocity vector
 
 use_gaussian = True #If true, use Gauss beam for laser simulation, if false use the plane wave
-w0 = 4.0 #Multiplier for the w0 beam width
+w0 = 2.0 #Multiplier for the w0 beam width
 zeta_x_gauss = [ 1.0, 0.0 ]
 zeta_y_gauss = [ 0.0, 0.0 ] #The zeta_x and zeta_y complex number parameters for the Gauss mode
 

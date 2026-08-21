@@ -49,33 +49,36 @@ static inline void potential_a(double *a, double *u, const Laser *restrict l, in
 
 static inline void potential_a_gauss(double *a, double *u, const Laser *restrict l, int n) {
 	double potentialA0 = l[n].a0 * m * c / fabs(q);
-	double r_vec_local[3], r_vec_global[3], k_vec4[4], eta, k = l[n].omega / c;
-	
+	double r_vec_local[3], r_vec_global[3], k_vec4[4], eta;
+	double k = l[n].omega / c;
+
 	a[0] = 0.0;
 	k_vec4[0] = 1.0;
 	copy_vec(&k_vec4[1], l[n].n);
 	copy_vec(r_vec_global, &u[1]);
 	mult_vec4(k_vec4, k_vec4, l[n].omega / c);
-	
 	eta = dot4(k_vec4, u) + l[n].psi;
+
 	pos_global_to_local(r_vec_local, r_vec_global, &l[n]);
+
+	double complex zeta_x = l[n].zeta_x_gauss, zeta_y = l[n].zeta_y_gauss;
+
+	double r_z = compute_r_z(r_vec_local[2], l[n].z_r);
+	double w_z = compute_w_z(l[n].w0, r_vec_local[2], l[n].z_r);
+	double complex u_pm = compute_u(&l[n], r_vec_local, r_z, w_z);
 	
-	double zR = 0.5 * k * l[n].w0 * l[n].w0, z_sq = r_vec_local[2] * r_vec_local[2], zR_sq = zR * zR;
-	double w2 = l[n].w0 * l[n].w0 * (1.0 + z_sq / zR_sq), inv_w = 1.0 / sqrt(w2), inv_w2 = 1.0 / w2;
+	double complex phase = CMPLX(cos(eta), sin(eta));
+	u_pm *= potentialA0 * phase * env(eta, l[n].etaf, l[n].sigma);
+
+	double complex field_term = CMPLX(1.0 / r_z, -2.0 / (k * w_z * w_z));
+	double complex a_z = - field_term * (zeta_x * r_vec_local[0] + zeta_y * r_vec_local[1]);
 	
-	double k_over_r = (k * r_vec_local[2]) / (z_sq + zR_sq), rho2 = r_vec_local[0] * r_vec_local[0] + r_vec_local[1] * r_vec_local[1];
-	double gouy = atan2(r_vec_local[2], zR), theta_phase = eta - 0.5 * k_over_r * rho2 + gouy;
-	
-	double U0 = (l[n].w0 * inv_w) * exp(-rho2 * inv_w2);
-	double A0mult = potentialA0 * U0 * env(eta, l[n].etaf, l[n].sigma);
-	
-	double Axp = l[n].zetax * sin(theta_phase), Ayp = l[n].zetay * cos(theta_phase);
-	double term_cos = 2.0 * l[n].zetax * r_vec_local[0] * inv_w2 - k_over_r * l[n].zetay * r_vec_local[1];
-	double term_sin = k_over_r * l[n].zetax * r_vec_local[0] + 2.0 * l[n].zetay * r_vec_local[1] * inv_w2;
-	double Azp = (1.0 / k) * (term_cos * cos(theta_phase) - term_sin * sin(theta_phase));
-	
+	double Axp = -cimag(u_pm * zeta_x);
+	double Ayp = -cimag(u_pm * zeta_y);
+	double Azp = -cimag(u_pm * a_z);
+
 	for(int i = 0; i < 3; i++)
-		a[i+1] = A0mult * (Axp * l[n].epsilon1[i] + Ayp * l[n].epsilon2[i] + Azp * l[n].n[i]);
+		a[i+1] = Axp * l[n].epsilon1[i] + Ayp * l[n].epsilon2[i] + Azp * l[n].n[i];
 }
 
 static inline void potential_deriv_a(double *a, double *u, const Laser *restrict l, int index, int n) {
@@ -122,7 +125,7 @@ static inline void potential_deriv_a_gauss(double *a, double *u, const Laser *re
 	
 	double k_over_r = (k * r_vec_local[2]) / den, rho2 = r_vec_local[0] * r_vec_local[0] + r_vec_local[1] * r_vec_local[1];
 	double dw2_dzp = 2.0 * l[n].w0 * l[n].w0 * r_vec_local[2] / zR_sq, dw2_dmu = dw2_dzp * dzp_dmu;
-	double dinv_w2_dmu = -inv_w2 * inv_w2 * dw2_dmu, dinv_w_over_w = -0.5 * inv_w2 * dw2_dmu;
+	double dinv_w2_dmu = - inv_w2 * inv_w2 * dw2_dmu, dinv_w_over_w = -0.5 * inv_w2 * dw2_dmu;
 	
 	double dk_over_R_dzp = k * (zR_sq - z_sq) / (den * den), dk_over_R_dmu = dk_over_R_dzp * dzp_dmu;
 	double dgouy_dzp = zR / den, dgouy_dmu = dgouy_dzp * dzp_dmu, drho2_dmu = 2.0 * r_vec_local[0] * dxp_dmu + 2.0 * r_vec_local[1] * dyp_dmu;
@@ -141,26 +144,24 @@ static inline void potential_deriv_a_gauss(double *a, double *u, const Laser *re
 	double theta_phase = eta - 0.5 * k_over_r * rho2 + gouy;
 	double dTheta_dmu = deta_dmu - 0.5 * (dk_over_R_dmu * rho2 + k_over_r * drho2_dmu) + dgouy_dmu;
 	
-	double Px = l[n].zetax * sin(theta_phase), Py = l[n].zetay * cos(theta_phase);
+	double complex zeta_x = l[n].zeta_x_gauss, zeta_y = l[n].zeta_y_gauss;
 	
-	double dPx_dmu = l[n].zetax * cos(theta_phase) * dTheta_dmu;
-	double dPy_dmu = -l[n].zetay * sin(theta_phase) * dTheta_dmu;
+	double complex phase_comp = CMPLX(cos(theta_phase), sin(theta_phase));
+	double complex S_comp = potentialA0 * phase_comp * U0 * env_val;
+	double complex dS_comp_dmu = potentialA0 * phase_comp * (denv_dmu * U0 + env_val * dU0_dmu + I * env_val * U0 * dTheta_dmu);
 	
-	double Gamma_r = 2.0 * l[n].zetax * r_vec_local[0] * inv_w2 - k_over_r * l[n].zetay * r_vec_local[1];
-	double Gamma_i = 2.0 * l[n].zetay * r_vec_local[1] * inv_w2 + k_over_r * l[n].zetax * r_vec_local[0];
+	double complex field_term = CMPLX(k_over_r / k, -2.0 * inv_w2 / k); 
+	double complex d_field_term_dmu = CMPLX(dk_over_R_dmu / k, -2.0 * dinv_w2_dmu / k);
 	
-	double dGamma_r_dmu = 2.0 * l[n].zetax * (dxp_dmu * inv_w2 + r_vec_local[0] * dinv_w2_dmu) - l[n].zetay * (dyp_dmu * k_over_r + r_vec_local[1] * dk_over_R_dmu);
-	double dGamma_i_dmu = 2.0 * l[n].zetay * (dyp_dmu * inv_w2 + r_vec_local[1] * dinv_w2_dmu) + l[n].zetax * (dxp_dmu * k_over_r + r_vec_local[0] * dk_over_R_dmu);
+	double complex Gamma_comp = - field_term * (zeta_x * r_vec_local[0] + zeta_y * r_vec_local[1]);
+	double complex dGamma_comp_dmu = - d_field_term_dmu * (zeta_x * r_vec_local[0] + zeta_y * r_vec_local[1]) - field_term * (zeta_x * dxp_dmu + zeta_y * dyp_dmu);
 	
-	double Pz = (1.0 / k) * (Gamma_r * cos(theta_phase) - Gamma_i * sin(theta_phase));
-	double dPz_dmu = (1.0 / k) * ((dGamma_r_dmu - Gamma_i * dTheta_dmu) * cos(theta_phase) - (dGamma_i_dmu + Gamma_r * dTheta_dmu) * sin(theta_phase));
-	
-	double Axp_deriv = dS_dmu * Px + S * dPx_dmu;
-	double Ayp_deriv = dS_dmu * Py + S * dPy_dmu;
-	double Azp_deriv = dS_dmu * Pz + S * dPz_dmu;
+	double Axp_deriv = -cimag(dS_comp_dmu * zeta_x);
+	double Ayp_deriv = -cimag(dS_comp_dmu * zeta_y);
+	double Azp_deriv = -cimag(dS_comp_dmu * Gamma_comp + S_comp * dGamma_comp_dmu);
 	
 	for(int i = 0; i < 3; i++)
-		a[i+1] = - (Axp_deriv * l[n].epsilon1[i] + Ayp_deriv * l[n].epsilon2[i] + Azp_deriv * l[n].n[i]);
+		a[i+1] = Axp_deriv * l[n].epsilon1[i] + Ayp_deriv * l[n].epsilon2[i] + Azp_deriv * l[n].n[i];
 }
 
 static inline void potential_a_phi(double *a, double eta, const Laser *restrict l, int n) {

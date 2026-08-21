@@ -199,7 +199,7 @@ def run_example(example_num, thread_num):
         axis_i = x_axis
     elif(example_num == 5):
         min_a0 = 0.02
-        max_a0 = 0.50
+        max_a0 = 1.00
         zetax = 0.0
         zetay = 1.0
         min_tf = 10000.0
@@ -212,14 +212,14 @@ def run_example(example_num, thread_num):
         sigma = 19.0 * np.pi
         psi = -4.0 * sigma
         wavelength = 2.0 * np.pi * c / omega
-        r_min = -8.00 * wavelength
-        r_max = +12.00 * wavelength
+        r_min = -0.00 * wavelength
+        r_max = +4.00 * wavelength
         phi = np.radians(90.0)
         theta = np.radians(90.0)
         alpha = np.radians(0.0)
         rotate_angle = np.radians(0.0)
         min_steps_pond = 128
-        max_steps_pond = 256
+        max_steps_pond = 512
         min_steps_electromag = 4000
         max_steps_electromag = 12000
         substeps_pond = 1
@@ -230,7 +230,7 @@ def run_example(example_num, thread_num):
         theta_v0 = np.radians(0.0)
         
         use_gaussian = True
-        w0 = 5.0
+        w0 = 2.0
         zeta_x_gauss = [ 1.0, 0.0 ]
         zeta_y_gauss = [ 0.0, 0.0 ]
         axis_i = x_axis
@@ -275,7 +275,7 @@ def run_example(example_num, thread_num):
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
-        #programs.check_convergence("electromagnetic", sim_parameters, lasers, 2)
+        programs.check_convergence("electromagnetic", sim_parameters, lasers, 2)
         
         # ------------------------------------------------------- 
         
@@ -296,14 +296,14 @@ def run_example(example_num, thread_num):
     plotting.plot_max_p_all("electromagnetic", a0_array)
     plotting.plot_max_p_all("ponderomotive", a0_array)
 
-    #programs.calculate_convergence_errors("electromagnetic", sim_parameters)
-    #plotting.plot_convergence_all("electromagnetic", a0_array)
-    #plotting.plot_2d_convergence_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i)
+    programs.calculate_convergence_errors("electromagnetic", sim_parameters)
+    plotting.plot_convergence_all("electromagnetic", a0_array)
+    plotting.plot_2d_convergence_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i)
     
     plotting.plot_2d_errors_heatmap_all(sim_parameters, a0_array, axis_i)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, axis_i)
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, axis_i)
-            
+    
     total_time = time.time() - start_time
     print(f"Program executed successfully.")
     print(f"Total time taken: {total_time:0.3f}s.\a")
