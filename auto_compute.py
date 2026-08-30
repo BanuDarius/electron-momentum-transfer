@@ -191,14 +191,6 @@ if __name__ == "__main__":
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis)
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis)
     
-    #Uncomment to render videos using ffmpeg
-    #create_video.create_2d_colormap_video("electromagnetic", framerate, x_axis, z_axis, x_axis)
-    #create_video.create_phase_video("electromagnetic", framerate, x_axis, y_axis)
-    #create_video.create_time_momentum_video("electromagnetic", framerate, x_axis, y_axis)
-    
-    #Uncomment to remove images if you created a video
-    #programs.clean_image_folder()
-    
     total_time = time.time() - start_time
     print(f"Program executed successfully.")
     print(f"Total time taken: {total_time:0.3f}s.\a")
