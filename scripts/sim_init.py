@@ -30,7 +30,7 @@ filename_out = f"{OUTPUT_DIR}/out-data.bin"
 # ----------------------------------------------------------------------- #
 
 class SimParameters:
-    def __init__(self, i, r_min, r_max, num, tf, steps, divider, substeps, v0_mag, phi_v0, theta_v0, thread_num, output_mode, rotate_angle, sweep_steps, full_trajectory, wavelength, c_value):
+    def __init__(self, i, r_min, r_max, num, tf, steps, divider, substeps, v0_mag, phi_v0, theta_v0, thread_num, output_mode, rotate_angle, sweep_steps, wavelength, c_value):
         self.i = i
         self.tf = tf
         self.mode = 0
@@ -54,7 +54,6 @@ class SimParameters:
         self.sweep_steps = sweep_steps
         self.filename_out = filename_out
         self.rotate_angle = rotate_angle
-        self.full_trajectory = full_trajectory
         self.filename_out = OUTPUT_DIR / "out-data.bin"
         self.filename_lasers = f"{INPUT_DIR}/lasers.txt"
         self.filename_parameters = f"{INPUT_DIR}/input.txt"

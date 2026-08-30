@@ -69,7 +69,7 @@ def run_complete_test(v0_mag):
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, theta, psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
         
         sim_parameters = sim_init.SimParameters(i, r, r, num_part, max_tf, steps_electromag, first_eighth,
-            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         sim_parameters.output_final_pos = True
             

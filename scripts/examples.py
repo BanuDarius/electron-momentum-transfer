@@ -271,7 +271,7 @@ def run_example(example_num, thread_num):
         # ------------------------------------------------------- #
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, all_particles,
-            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -280,7 +280,7 @@ def run_example(example_num, thread_num):
         # ------------------------------------------------------- 
         
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         

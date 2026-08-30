@@ -43,13 +43,11 @@ first_eighth = 8 #First eight takes the first 1/8 of the simulation domain
 first_quarter = 4 #First quarter takes 1/4 of the simulation domain
 
 all_states = False
-final_states = True
-full_trajectory = True
-trajectory_until_exit = False #Definitions for simulation parameters
+final_states = True #Definitions for simulation parameters
 
 # ------------------------------------------------------- #
 
-thread_num = 8 #Number of threads
+thread_num = 4 #Number of threads
 
 min_a0 = 0.02
 max_a0 = 1.00 #Minimum and maximum of a0 for lasers
@@ -141,7 +139,7 @@ if __name__ == "__main__":
         # ------------------------------------------------------- #
         
         '''sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_full, tf, steps_electromag, first_eighth,
-            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, final_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, final_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -152,7 +150,7 @@ if __name__ == "__main__":
         
         #Properties for the electromagneteic mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         #Uncomment to check the propagation vector, epsilon1, and epsilon2 for all lasers
         #programs.check_laser_polarization("electromagnetic", sim_parameters, lasers)
@@ -166,7 +164,7 @@ if __name__ == "__main__":
         
         #Properties for the ponderomotive mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, full_trajectory, wavelength, c)
+            substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
