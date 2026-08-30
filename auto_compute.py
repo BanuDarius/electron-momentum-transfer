@@ -27,7 +27,6 @@ import scripts.sim_init as sim_init
 import scripts.programs as programs
 import scripts.plotting as plotting
 import scripts.examples as examples
-import scripts.create_video as create_video
 import tests.quick_example as quick_example
 import tests.analytic_test as analytic_test
 import tests.performance_test as performance_test
@@ -44,8 +43,6 @@ first_quarter = 4 #First quarter takes 1/4 of the simulation domain
 
 all_states = False
 final_states = True #Definitions for simulation parameters
-
-# ------------------------------------------------------- #
 
 thread_num = 4 #Number of threads
 
@@ -95,8 +92,6 @@ zeta_y_gauss = [ 0.0, 0.0 ] #The zeta_x and zeta_y complex number parameters for
 
 square_size = 1.0 #Size of squares in 2D colormaps
 
-# ------------------------------------------------------- #
-
 if __name__ == "__main__":
     start_time = time.time()
     a0_array = np.array([]) #This array will be passed to plotting functions
@@ -105,7 +100,7 @@ if __name__ == "__main__":
     #Uncomment to run a quick test to showcase the program's capabilities
     #This will run a low resolution (256x256) parameter sweep
     #Will complete in ~1 minute on average consumer hardware
-    #quick_example.run_quick_example(thread_num)
+    quick_example.run_quick_example(thread_num)
     
     #In the examples/ directory there are several examples whose filenames start with 1 to 5
     #Uncomment this line to reproduce any of them
@@ -136,8 +131,6 @@ if __name__ == "__main__":
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(150.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
         #lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
         
-        # ------------------------------------------------------- #
-        
         '''sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_full, tf, steps_electromag, first_eighth,
             substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, final_states, rotate_angle, sweep_steps, wavelength, c)
         
@@ -145,8 +138,6 @@ if __name__ == "__main__":
         
         sim_parameters.square_size = square_size
         plotting.plot_2d_colormap("electromagnetic", sim_parameters, a0_array, x_axis, z_axis, x_axis)'''
-        
-        # ------------------------------------------------------- #
         
         #Properties for the electromagneteic mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
@@ -160,8 +151,6 @@ if __name__ == "__main__":
         #Uncomment to check the convergence of the momentum transfer by running another simulation with double the number of steps
         #programs.check_convergence("electromagnetic", sim_parameters, lasers, 2)
         
-        # ------------------------------------------------------- #
-        
         #Properties for the ponderomotive mode
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
             substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
@@ -170,12 +159,8 @@ if __name__ == "__main__":
         
         #programs.check_convergence("ponderomotive", sim_parameters, lasers, 2)
         
-        # ------------------------------------------------------- #
-        
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
-        
-        # ------------------------------------------------------- #
-        
+                
     programs.calculate_errors(sim_parameters)
     
     #Plots for data analysis

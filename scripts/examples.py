@@ -28,7 +28,6 @@ import scripts.common as common
 import scripts.sim_init as sim_init
 import scripts.programs as programs
 import scripts.plotting as plotting
-import scripts.create_video as create_video
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent

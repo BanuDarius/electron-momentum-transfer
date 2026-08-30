@@ -1,3 +1,25 @@
+'''MIT License
+
+Copyright (c) 2026 Banu Darius-Matei
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.'''
+
 import time
 import numpy as np
 from pathlib import Path
@@ -17,8 +39,6 @@ all_states = False
 final_states = True
 full_trajectory = True
 trajectory_until_exit = False
-
-# ------------------------------------------------------- #
 
 def run_performance_test(method, sim_parameters, lasers, thread_num_final):
     a0_array = np.array([])
@@ -44,8 +64,6 @@ def run_performance_test(method, sim_parameters, lasers, thread_num_final):
     
     print(f"Performance test executed successfully.\a")
     exit(0)
-
-# ------------------------------------------------------- #
 
 def run_example_performance_test(thread_num_final):
     i = 1
@@ -105,8 +123,6 @@ def run_example_performance_test(thread_num_final):
         i *= 2
         sim_parameters.thread_num = i
         
-        # ------------------------------------------------------- #
-    
     plotting.plot_performance()
     
     print(f"Example performance test executed successfully.\a")
