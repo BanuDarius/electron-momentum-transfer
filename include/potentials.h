@@ -125,7 +125,7 @@ static inline void potential_deriv_a_gauss(double *a, double *u, const Laser *re
 	
 	double k_over_r = (k * r_vec_local[2]) / den, rho2 = r_vec_local[0] * r_vec_local[0] + r_vec_local[1] * r_vec_local[1];
 	double dw2_dzp = 2.0 * l[n].w0 * l[n].w0 * r_vec_local[2] / zR_sq, dw2_dmu = dw2_dzp * dzp_dmu;
-	double dinv_w2_dmu = - inv_w2 * inv_w2 * dw2_dmu, dinv_w_over_w = -0.5 * inv_w2 * dw2_dmu;
+	double dinv_w2_dmu = - inv_w2 * inv_w2 * dw2_dmu, dinv_w_over_w = - 0.5 * inv_w2 * dw2_dmu;
 	
 	double dk_over_R_dzp = k * (zR_sq - z_sq) / (den * den), dk_over_R_dmu = dk_over_R_dzp * dzp_dmu;
 	double dgouy_dzp = zR / den, dgouy_dmu = dgouy_dzp * dzp_dmu, drho2_dmu = 2.0 * r_vec_local[0] * dxp_dmu + 2.0 * r_vec_local[1] * dyp_dmu;
@@ -156,9 +156,9 @@ static inline void potential_deriv_a_gauss(double *a, double *u, const Laser *re
 	double complex Gamma_comp = - field_term * (zeta_x * r_vec_local[0] + zeta_y * r_vec_local[1]);
 	double complex dGamma_comp_dmu = - d_field_term_dmu * (zeta_x * r_vec_local[0] + zeta_y * r_vec_local[1]) - field_term * (zeta_x * dxp_dmu + zeta_y * dyp_dmu);
 	
-	double Axp_deriv = -cimag(dS_comp_dmu * zeta_x);
-	double Ayp_deriv = -cimag(dS_comp_dmu * zeta_y);
-	double Azp_deriv = -cimag(dS_comp_dmu * Gamma_comp + S_comp * dGamma_comp_dmu);
+	double Axp_deriv = - cimag(dS_comp_dmu * zeta_x);
+	double Ayp_deriv = - cimag(dS_comp_dmu * zeta_y);
+	double Azp_deriv = - cimag(dS_comp_dmu * Gamma_comp + S_comp * dGamma_comp_dmu);
 	
 	for(int i = 0; i < 3; i++)
 		a[i+1] = Axp_deriv * l[n].epsilon1[i] + Ayp_deriv * l[n].epsilon2[i] + Azp_deriv * l[n].n[i];
