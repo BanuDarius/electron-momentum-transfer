@@ -222,7 +222,7 @@ def run_example(example_num, thread_num):
         theta_v0 = np.radians(0.0)
         
         use_gaussian = True
-        w0 = 2.0
+        w0 = 4.0
         zeta_x_gauss = [ 1.0, 0.0 ]
         zeta_y_gauss = [ 0.0, 0.0 ]
         axis_i = x_axis
