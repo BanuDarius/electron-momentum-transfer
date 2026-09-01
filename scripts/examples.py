@@ -40,15 +40,8 @@ x_axis = 0
 y_axis = 1
 z_axis = 2
 
-framerate = 3
-first_eighth = 8
-first_quarter = 4
-all_particles = 1
-
 all_states = False
 final_states = True
-full_trajectory = True
-trajectory_until_exit = False
 
 def run_example(example_num, thread_num):
     if(example_num == 1):
@@ -269,8 +262,7 @@ def run_example(example_num, thread_num):
         
         # ------------------------------------------------------- #
         
-        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, all_particles,
-            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -278,8 +270,7 @@ def run_example(example_num, thread_num):
         
         # ------------------------------------------------------- 
         
-        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
@@ -364,8 +355,7 @@ def replicate_prl_results(thread_num):
         
         # ------------------------------------------------------- #
         
-        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, all_particles,
-            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -375,8 +365,7 @@ def replicate_prl_results(thread_num):
         
         # ------------------------------------------------------- #
         
-        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
@@ -399,7 +388,7 @@ def replicate_prl_results(thread_num):
     plotting.plot_2d_errors_heatmap_all(sim_parameters, a0_array, x_axis)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, x_axis)
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, x_axis)
-            
+    
     total_time = time.time() - start_time
     print(f"Program executed successfully.")
     print(f"Total time taken: {total_time:0.3f}s.\a")

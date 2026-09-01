@@ -33,12 +33,9 @@ PROJECT_ROOT = SCRIPT_DIR.parent
 OUTPUT_DIR = PROJECT_ROOT / "output"
 
 c = 137.036
-first_eighth = 8
-first_quarter = 4
+
 all_states = False
 final_states = True
-full_trajectory = True
-trajectory_until_exit = False
 
 def run_performance_test(method, sim_parameters, lasers, thread_num_final):
     a0_array = np.array([])
@@ -106,8 +103,7 @@ def run_example_performance_test(thread_num_final):
     lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(45.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
     lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
 
-    sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-        substeps_electromag, v0_mag, phi_v0, theta_v0, 1, all_states, rotate_angle, 1, wavelength, c)
+    sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, substeps_electromag, v0_mag, phi_v0, theta_v0, 1, all_states, rotate_angle, 1, wavelength, c)
     
     while(i <= thread_num_final):
         start_time = time.time()

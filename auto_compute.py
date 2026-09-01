@@ -37,10 +37,6 @@ x_axis = 0
 y_axis = 1
 z_axis = 2 #Definitions for the x, y, z axis
 
-framerate = 3 #Video output framerate
-first_eighth = 8 #First eight takes the first 1/8 of the simulation domain
-first_quarter = 4 #First quarter takes 1/4 of the simulation domain
-
 all_states = False
 final_states = True #Definitions for simulation parameters
 
@@ -133,8 +129,7 @@ if __name__ == "__main__":
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(150.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
         #lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(120.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
         
-        '''sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_full, tf, steps_electromag, first_eighth,
-            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, final_states, rotate_angle, sweep_steps, wavelength, c)
+        '''sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_full, tf, steps_electromag, substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, final_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
@@ -142,8 +137,7 @@ if __name__ == "__main__":
         plotting.plot_2d_colormap("electromagnetic", sim_parameters, a0_array, x_axis, z_axis, x_axis)'''
         
         #Properties for the electromagneteic mode
-        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         #Uncomment to check the propagation vector, epsilon1, and epsilon2 for all lasers
         #programs.check_laser_polarization("electromagnetic", sim_parameters, lasers)
@@ -154,15 +148,14 @@ if __name__ == "__main__":
         #programs.check_convergence("electromagnetic", sim_parameters, lasers, 2)
         
         #Properties for the ponderomotive mode
-        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
         #programs.check_convergence("ponderomotive", sim_parameters, lasers, 2)
         
         print(f"Ended parameter sweep step: {i+1}/{sweep_steps}.")
-                
+        
     programs.calculate_errors(sim_parameters)
     
     #Plots for data analysis

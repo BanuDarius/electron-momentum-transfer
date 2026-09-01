@@ -40,10 +40,6 @@ x_axis = 0
 y_axis = 1
 z_axis = 2
 
-framerate = 3
-first_eighth = 8
-first_quarter = 4
-
 all_states = False
 final_states = True
 full_trajectory = True
@@ -102,13 +98,11 @@ def run_quick_example(thread_num):
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(90.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
         lasers.append(sim_init.LaserParameters(a0, sigma, omega, etaf, zetax, zetay, alpha, phi, np.radians(270.0), psi, pond_integrate_steps, use_gaussian, w0, zeta_x_gauss, zeta_y_gauss))
         
-        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, first_eighth,
-            substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, substeps_electromag, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
-        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, first_eighth,
-            substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
+        sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)
         
@@ -126,7 +120,7 @@ def run_quick_example(thread_num):
     plotting.plot_2d_errors_heatmap_all(sim_parameters, a0_array, y_axis)
     plotting.plot_2d_heatmap_all("electromagnetic", sim_parameters, a0_array, y_axis)
     plotting.plot_2d_heatmap_all("ponderomotive", sim_parameters, a0_array, y_axis)
-            
+    
     total_time = time.time() - start_time
     print(f"Program executed successfully.")
     print(f"Total time taken: {total_time:0.3f}s.\a")

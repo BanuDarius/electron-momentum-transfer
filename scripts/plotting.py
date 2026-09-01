@@ -36,7 +36,7 @@ OUTPUT_DIR = PROJECT_ROOT / "output"
 OUTPUT_IMAGE_DIR = PROJECT_ROOT / "output-image"
 
 plt.rcParams.update({'font.size': 16})
-        
+ 
 # ----------------------------------------------------------------------- #
 
 def plot_2d_heatmap(method, sim_parameters, a0_array, axis_pos, axis_p):
@@ -310,6 +310,34 @@ def plot_convergence(method, a0_array, axis):
     plt.close()
     
     print(f"Created convergence plot for {method} mode.")
+
+# ----------------------------------------------------------------------- #    
+
+def plot_analytic_errors_dt(dt_array, sim_parameters):
+    sweep_steps = sim_parameters.sweep_steps
+    filename_out = f"{OUTPUT_IMAGE_DIR}/_out-analytic-errors-dt.png"
+    filename = f"{OUTPUT_DIR}/analytic-error.bin"
+
+    data = np.fromfile(filename, dtype=np.float64).reshape(sweep_steps, 1)
+    y = data[:, 0]
+
+    plt.figure(figsize=(10, 10))
+    plt.plot(dt_array, y, c='black', linestyle='-', linewidth=1)
+
+    plt.xlabel(r"$dt$ [a.u.]")
+    plt.ylabel(r"Displacement error[%]")
+    plt.xscale('log')
+    plt.yscale('log')
+    
+    plt.xlim(1.0, 5.0)
+    plt.xticks([1, 1.5, 2, 3, 4, 5], ['1', '1.5', '2', '3', '4', '5'])
+    plt.ylim(0.03, 1.5)
+    plt.yticks([0.03, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0], ['0.03', '0.05', '0.1', '0.2', '0.5', '1.0', '2.0'])
+
+    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
+    plt.close()
+
+    print("Created analytic dt error convergence plot.")
     
 # ----------------------------------------------------------------------- #    
 
@@ -359,143 +387,6 @@ def plot_2d_colormap(method, sim_parameters, a0_array, axis_horiz, axis_vert, ax
     plt.close()
         
     print(f"Created colormap.")
-    
-# ----------------------------------------------------------------------- #
-
-def plot_phases(method, sim_parameters, a0_array, axis_pos, axis_p):
-    if(method == "electromagnetic"):
-        mode = "electromag"
-    else:
-        mode = "pond"
-    
-    axis_text_pos = common.get_axis_text(axis_pos)
-    lowercase_text_pos = axis_text_pos.lower()
-    
-    axis_text_p = common.get_axis_text(axis_p)
-    lowercase_text_p = axis_text_p.lower()
-    
-    if(axis_text_pos == "Z"):
-        print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
-        print("Please plot the initial positions on the X axis or Y axis.")
-        exit(1)
-    
-    i = sim_parameters.i
-    a0 = a0_array[i]
-    num = sim_parameters.num
-    r_min = sim_parameters.r_min
-    r_max = sim_parameters.r_max
-    wavelength = sim_parameters.wavelength
-    steps = sim_parameters.steps // sim_parameters.substeps
-    full_trajectory = sim_parameters.full_trajectory
-    divider = sim_parameters.divider
-    subsection = num // divider
-    
-    filename_out = f"{OUTPUT_IMAGE_DIR}/out-phase-space-{mode}-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
-    filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-{mode}-{lowercase_text_pos}{lowercase_text_p}.bin"
-    
-    filename = sim_parameters.filename_out
-    
-    data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
-    if(not full_trajectory):
-        data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
-        data_exit = data_exit[:subsection]
-    
-    fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
-    colmap = plt.get_cmap('Spectral')
-    
-    data = data[:subsection]
-    
-    for idx in range(subsection):
-        if(full_trajectory):
-            last_step = steps
-        else:
-            last_step = int(data_exit[idx, 3])
-        traj = data[idx]
-        traj = traj[:last_step]
-        color = idx / subsection
-        color_cmap = colmap(color)
-        
-        x = traj[:, axis_pos + 1] / wavelength
-        y = traj[:, axis_p + 5]
-        
-        sc = ax.plot(x, y, c=color_cmap, linewidth=0.5)
-        
-    ax.set_title(f"Phase space: $a_0 = {a0:0.3f}$ - $N = {subsection}$")
-    ax.set_xlabel(rf"${axis_text_pos}$ [$\lambda$]")
-    ax.set_ylabel(rf"$p_{axis_text_p}$ [a.u.]")
-    
-    plt.xlim(1.5 * r_min / wavelength, 1.5 * r_max / wavelength)
-    
-    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
-    plt.close()
-    
-    print(f"Created phase plot.")
-    
-# ----------------------------------------------------------------------- #
-
-def plot_time_momentum(method, sim_parameters, a0_array, axis_pos, axis_p):
-    if(method == "electromagnetic"):
-        mode = "electromag"
-    else:
-        mode = "pond"
-    axis_text_pos = common.get_axis_text(axis_pos)
-    lowercase_text_pos = axis_text_pos.lower()
-    
-    axis_text_p = common.get_axis_text(axis_p)
-    lowercase_text_p = axis_text_p.lower()
-    
-    if(axis_text_pos == "Z"):
-        print("Warning: The particle initialization is always in the XY plane, so all the initial positions have the same Z axis value.")
-        print("Please plot the initial positions on the X axis or Y axis.")
-        exit(1)
-    
-    i = sim_parameters.i
-    a0 = a0_array[i]
-    num = sim_parameters.num
-    divider = sim_parameters.divider
-    c_value = sim_parameters.c_value
-    wavelength = sim_parameters.wavelength
-    full_trajectory = sim_parameters.full_trajectory
-    steps = sim_parameters.steps // sim_parameters.substeps
-    subsection = num // divider
-    
-    filename_out = f"{OUTPUT_IMAGE_DIR}/out-time-momentum-{mode}-{lowercase_text_pos}{lowercase_text_p}-{i}.png"
-    filename_exit = f"{OUTPUT_DIR}/out-enter-exit-time-{mode}-{lowercase_text_pos}{lowercase_text_p}.bin"
-    filename = sim_parameters.filename_out
-    
-    data = np.fromfile(filename, dtype=np.float64).reshape(num, steps, 8)
-    if(not full_trajectory):
-        data_exit = np.fromfile(filename_exit, dtype=np.float64).reshape(num, 4)
-        data_exit = data_exit[:subsection]
-    fig, ax = plt.subplots(figsize=(10, 10), dpi=250)
-    
-    colmap = plt.get_cmap('Spectral')
-    
-    data = data[:subsection]
-    
-    for idx in range(subsection):
-        if(full_trajectory):
-            last_step = steps
-        else:
-            last_step = int(data_exit[idx, 3])
-        traj = data[idx]
-        traj = traj[:last_step]
-        color = idx / subsection
-        color_cmap = colmap(color)
-        
-        x = traj[:, 0] / c_value
-        y = traj[:, axis_p + 5]
-        
-        sc = ax.plot(x, y, c=color_cmap, linewidth=0.5)
-        
-    ax.set_title(f"Time - momentum plot for: $a_0 = {a0:0.3f}$ - $N = {subsection}$")
-    ax.set_xlabel(r"$t$")
-    ax.set_ylabel(rf"$p_{lowercase_text_p}$ [a.u.]")
-    
-    plt.savefig(filename_out, dpi=250, bbox_inches='tight')
-    plt.close()
-    
-    print(f"Created time-momentum plot.")
     
 # ----------------------------------------------------------------------- #
 
