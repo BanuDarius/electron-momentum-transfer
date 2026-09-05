@@ -37,7 +37,7 @@ For more instructions, see `docs/user-manual.pdf`
 <img width="2154" height="2194" alt="3_out-average-errors-y" src="https://github.com/user-attachments/assets/7e8bc865-e120-4344-b938-e8d191d0f890" />
 
 ## Performance
-<img width="2185" height="1809" alt="performance" src="https://github.com/user-attachments/assets/6b7fcf72-b6d3-49ba-aff0-69943884de7f" />
+<img width="2190" height="1811" alt="performance_graph" src="https://github.com/user-attachments/assets/225bb85c-2dde-4fe2-a676-044abda70718" />
 This performance test was made on a system consisting of 2x AMD EPYC 7713 64-core processors.
 
 ## References
