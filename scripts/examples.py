@@ -303,8 +303,8 @@ def run_example(example_num, thread_num):
 def replicate_prl_results(thread_num):
     min_a0 = 0.02
     max_a0 = 1.00
-    zetax = 1.0
-    zetay = 0.0
+    zetax = 0.0
+    zetay = 1.0
     min_tf = 1500.0
     max_tf = 1500.0
     tauf = 1500.0
