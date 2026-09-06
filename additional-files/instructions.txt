@@ -1,0 +1,14 @@
+In order to check this EMT vs. SMILEI test case from Section 8, please do the following steps:
+
+1. Copy the smilei_script.py and process.py scripts into the main directory of Smilei on your computer.
+2. Go to the main Smilei directory.
+3. Run ./smilei smilei_script.py.
+4. Go to the main EMT directory.
+5. Compile the program using CMake.
+6. Open the scripts/examples.py file, go to the function replicate_prl_results(thread_num), and change sweep_steps to 1, instead of the default 1024. This will only run the simulation for a0 = 0.02.
+7. Uncomment the examples.replicate_prl_results(thread_num) line from auto_compute.py.
+8. Run python3 auto_compute.py.
+9. Copy the output data file output/out-final-p-electromag.bin to the main directory of Smilei.
+10. Go to the main Smilei directory again.
+11. Run python3 process.py. This will automatically compute the errors and create the final comparison graph.
+12. Open the resulting image "emt_vs_smilei.png".
