@@ -83,7 +83,7 @@ v0_mag = 0.00 * c #Magnitude of initial velocity vector
 phi_v0 = np.radians(0.0)
 theta_v0 = np.radians(0.0) #Angles for the initial velocity vector
 
-use_gaussian = True #If true, use Gauss beam for laser simulation, if false use the plane wave
+use_gaussian = False #If true, use Gauss beam for laser simulation, if false use the plane wave
 w0 = 4.0 #Multiplier for the w0 beam width
 zeta_x_gauss = [ 1.0, 0.0 ]
 zeta_y_gauss = [ 0.0, 0.0 ] #The zeta_x and zeta_y complex number parameters for the Gauss mode
