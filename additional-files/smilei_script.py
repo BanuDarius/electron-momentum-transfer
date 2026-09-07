@@ -14,6 +14,6 @@ Main(geometry = "1Dcartesian", interpolation_order = 2, timestep = 0.95 * (grid_
 LaserPlanar1D(box_side = "xmin", a0 = a0_target, omega = 1.0, polarization_phi = 0.0, time_envelope = constant(1.0))
 LaserPlanar1D(box_side = "xmax", a0 = a0_target, omega = 1.0, polarization_phi = math.pi, time_envelope = constant(1.0))
 
-Species(name = "electron", position_initialization = 'regular', momentum_initialization = 'cold', particles_per_cell = 1024 / 1024, mass = 1.0, charge = -1.0, number_density = trapezoidal(1.0, xvacuum=1.5*lambda_norm, xplateau=lambda_norm), is_test = True, pusher = "higueracary", time_frozen = t_delay, boundary_conditions = [["remove", "remove"]])
+Species(name = "electron", position_initialization = 'regular', momentum_initialization = 'cold', particles_per_cell = 1, mass = 1.0, charge = -1.0, number_density = trapezoidal(1.0, xvacuum=1.5*lambda_norm, xplateau=lambda_norm), is_test = True, pusher = "higueracary", time_frozen = t_delay, boundary_conditions = [["remove", "remove"]])
 
 DiagTrackParticles(species = "electron", every = 20)
