@@ -42,7 +42,7 @@ final_states = True #Definitions for simulation parameters
 
 # ---------------------------------------- #
 
-thread_num = 4 #Number of threads
+thread_num = 8 #Number of threads
 
 min_a0 = 0.02
 max_a0 = 1.00 #Minimum and maximum of a0 for lasers
