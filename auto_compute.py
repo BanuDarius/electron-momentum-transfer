@@ -98,7 +98,7 @@ if __name__ == "__main__":
     #Uncomment to run a quick test to showcase the program's capabilities
     #This will run a low resolution (256x256) parameter sweep
     #Will complete in ~1 minute on average consumer hardware
-    #quick_example.run_quick_example(thread_num)
+    quick_example.run_quick_example(thread_num)
     
     #In the examples/ directory there are several examples whose filenames start with 1 to 5
     #Uncomment this line to reproduce any of them

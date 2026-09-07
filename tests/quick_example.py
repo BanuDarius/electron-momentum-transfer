@@ -102,6 +102,8 @@ def run_quick_example(thread_num):
         
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         
+        #programs.check_convergence("electromagnetic", sim_parameters, lasers, 2)
+        
         sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tauf, steps_pond, substeps_pond, v0_mag, phi_v0, theta_v0, thread_num, all_states, rotate_angle, sweep_steps, wavelength, c)
         
         programs.run_simulation("ponderomotive", sim_parameters, lasers)

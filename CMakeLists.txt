@@ -19,7 +19,6 @@ add_compile_options(-O3 -flto)
 file(MAKE_DIRECTORY 
     ${CMAKE_CURRENT_SOURCE_DIR}/output 
     ${CMAKE_CURRENT_SOURCE_DIR}/output-image 
-    ${CMAKE_CURRENT_SOURCE_DIR}/output-video 
     ${CMAKE_CURRENT_SOURCE_DIR}/input
 )
 
@@ -53,7 +52,6 @@ add_custom_target(clean-output
     COMMAND ${CMAKE_COMMAND} -E rm -rf
         ${CMAKE_CURRENT_SOURCE_DIR}/output/*
         ${CMAKE_CURRENT_SOURCE_DIR}/output-image/*
-        ${CMAKE_CURRENT_SOURCE_DIR}/output-video/*
         ${CMAKE_CURRENT_SOURCE_DIR}/input/*
     COMMENT "Removed output directories."
 )

@@ -37,32 +37,7 @@ c = 137.036
 all_states = False
 final_states = True
 
-def run_performance_test(method, sim_parameters, lasers, thread_num_final):
-    a0_array = np.array([])
-    programs.clean_output_folder()
-    sim_parameters.thread_num = 1
-    i = 1
-    
-    while(i <= thread_num_final):
-        start_time = time.time()
-        programs.run_simulation(method, sim_parameters, lasers)
-        
-        total_time = time.time() - start_time
-        print(f"Time taken with {sim_parameters.thread_num} threads: {total_time:0.3f}s.")
-        
-        with open(f"{OUTPUT_DIR}/performance.bin", "ab") as file:
-            file.write(np.double(sim_parameters.thread_num))
-            file.write(np.double(total_time))
-        
-        i *= 2
-        sim_parameters.thread_num = i
-    
-    plotting.plot_performance()
-    
-    print(f"Performance test executed successfully.\a")
-    exit(0)
-
-def run_example_performance_test(thread_num_final):
+def run_example_performance_test(thread_num):
     i = 1
     a0 = 0.50
     zetax = 0.0
@@ -105,7 +80,7 @@ def run_example_performance_test(thread_num_final):
 
     sim_parameters = sim_init.SimParameters(i, r_min, r_max, num_part, tf, steps_electromag, substeps_electromag, v0_mag, phi_v0, theta_v0, 1, all_states, rotate_angle, 1, wavelength, c)
     
-    while(i <= thread_num_final):
+    while(i <= thread_num):
         start_time = time.time()
         programs.run_simulation("electromagnetic", sim_parameters, lasers)
         total_time = time.time() - start_time
