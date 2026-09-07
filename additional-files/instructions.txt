@@ -10,5 +10,5 @@ In order to check this EMT vs. SMILEI test case from Section 8, please do the fo
 8. Run python3 auto_compute.py.
 9. Copy the output data file output/out-final-p-electromag.bin to the main directory of Smilei.
 10. Go to the main Smilei directory again.
-11. Run python3 process.py. This will automatically compute the errors and create the final comparison graph.
+11. Run python3 process.py. This will automatically compute the errors and create the final comparison graphs.
 12. Open the resulting images "emt_vs_smilei_momentum.png" and "emt_vs_smilei_errors.png".
