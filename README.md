@@ -40,17 +40,16 @@ cmake --build build
 ```
 Which will compile for a generic x86 CPU.
 
-To remove the previously generated output data (images, videos), use:
-```
-cmake --build build --target clean-output
-```
-And in order to run the program:
+In order to run the program:
 ```
 python3 auto_compute.py
 ```
+This will automatically compute and render the final momentum transfer heatmaps and error maps for an example scenario.
 
-This will automatically compute and render the final momentum transfer heatmaps for an example scenario.
-
+To remove the previously generated output data, use:
+```
+cmake --build build --target clean-output
+```
 For more instructions, see `docs/user-manual.pdf`
 ## Gallery
 <img width="1072" height="1078" alt="1_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/9be7793a-a5a0-4938-9984-07a3faf16b83" />
