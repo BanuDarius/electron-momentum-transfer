@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the associated journal article."
+title: "EMT: A multi-threaded particle pusher for validating the ponderomotive approximation in relativistic laser-electron interactions"
+authors:
+  - family-names: "Banu"
+    given-names: "Darius-Matei"
+    affiliation: "Department of Physics, University of Bucharest"
+repository-code: "https://github.com/BanuDarius/electron-momentum-transfer"
+preferred-citation:
+  type: article
+  title: "EMT: A multi-threaded particle pusher for validating the ponderomotive approximation in relativistic laser-electron interactions"
+  authors:
+    - family-names: "Banu"
+      given-names: "Darius-Matei"
+      affiliation: "Department of Physics, University of Bucharest"
+  journal: "Computer Physics Communications"
+  volume: 330
+  pages: 110445
+  year: 2027
+  doi: "10.1016/j.cpc.2026.110445"
