@@ -24,6 +24,34 @@ Computer Physics Communications, Volume 330, 2027, 110445.
 
 DOI: [10.1016/j.cpc.2026.110445](https://doi.org/10.1016/j.cpc.2026.110445)
 
+## Usage
+The compilation is as follows:
+```
+git clone --depth 1 https://github.com/BanuDarius/electron-momentum-transfer
+cd electron-momentum-transfer/
+cmake -B build
+cmake --build build
+```
+If you have an older computer and the program doesn't compile, use:
+
+```
+cmake -B build -DGENERIC=ON
+cmake --build build
+```
+Which will compile for a generic x86 CPU.
+
+To remove the previously generated output data (images, videos), use:
+```
+cmake --build build --target clean-output
+```
+And in order to run the program:
+```
+python3 auto_compute.py
+```
+
+This will automatically compute and render the final momentum transfer heatmaps for an example scenario.
+
+For more instructions, see `docs/user-manual.pdf`
 ## Gallery
 <img width="1072" height="1078" alt="1_out-2d-heatmap-electromag-yy" src="https://github.com/user-attachments/assets/9be7793a-a5a0-4938-9984-07a3faf16b83" />
 
